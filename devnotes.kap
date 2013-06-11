@@ -2,15 +2,158 @@
 
 x・NativeActivityに先に作ったOpenSLコードを実行できるアプリを作る
 XPolyphonicサンプル機械を作るってこと（４ボイス）
+最終期限はいつ？今日から三週間、自動的な機能は大体終わったって言うのは理想な状態
 
 
 2013年6月2日
 
+XGitHubにアップロード
+Xコード掃除
+X長いファイルを試してみる
+	X15個の40秒ループを同時に再生することができた
+
+X28個の声のうちに24/4に分けたらなんでも再生することができるかも
+	0から3は連続ループを再生するため
+	4から27は一発の音のため
+	
+X複数のPIDってどういう意味？IMEにもうこういうことがあったから、あまり心配しなくていいかも
+Xマルチタッチ
+
+2013年6月4日
+Xタッチマップを修復せよ
+X36個のサンプルを作って、アプリに実行することを試してみよ
+X複数のファイル・音
+X今夜：タイムアウトの問題
 
 
+2013年6月6日
+X解決しました！
+
+XファイルIOは駄目
+x取り敢えず、Assetに戻ってきたら、4個のファイルを作ったら
+Xマルチタッチ
+
+        size_t pointerCount =  AMotionEvent_getPointerCount(event);
+
+        this->updateUptime();
+
+        for (size_t i = 0; i < pointerCount; i++) {
+            size_t pointerId = AMotionEvent_getPointerId(event, i);
+            size_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
+            size_t pointerIndex = i;
+        
+            if (action == AMOTION_EVENT_ACTION_POINTER_DOWN || action == AMOTION_EVENT_ACTION_POINTER_UP) {
+                pointerIndex = (AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+                pointerId = AMotionEvent_getPointerId(event, pointerIndex);
+            }
+
+
+2013年6月7日
+X連続的な音
+
+2013年6月8日
+バグ：
+Xマルチタッチのバグ
+Xフィアルパス問題
+ｘ今はZIPとOBBをしないほうがいいと思うだが、いつか必要かもな
+xループ音を作る
+Xy軸によって音の大きさ
+
+
+2013年6月9日
+X音階を変わる機能
+
+XSLES関数を書き直す　*poly_sampler[current_looping_voice]　を消去して
+
+X二重フェードを防ぐためのコード
+クリックの問題（フェード）？？？はっきり言えばわかんない
+x音の大きさの問題を解決しなきゃ　値は200以上と再生する音の大きさがちょっと変になる
+
+2013年6月11日
+
+"The normal linux sleep functions (usleep, etc) will block the thread that calls them. 
+It's up to you which thread that is - hopefully not the UI one."
+
+
+時間差はNDKとは関係がないかも
+
+
+AMMO機能？　
+
+録音、曲を鳴らす機能など・そうするためTIC機能が必要かも（DOOMと同じように）
+
+キューベースで音階を作れ
+
+アプリ終了時の管理しなきゃ
+
+
+GLをする前に音系の機能を全部週末してやれ
+
+パン機能
+
+
+今複数の音の機能を忘れてまえ
+
+
+個人的なGitHubが必要
 
 ＋＋＋＋＋
 やるべきリスト
 ＋＋＋＋＋
 
-GitHubにアップロード
+
+今これからの計画・
+
+開発の流れ：
+ーーーーーー
+
+
+:
+
+
+「曲」みたいな機能・ループ、一発的な音、ノートをいつか鳴らす情報・一つのファイルに纏めるってこと
+
+
+フェードとか（連続的な音）
+フェードと言うったら大事なのは音階を変わるってことダネ。で、まずは英を描くへ
+
+
+GLのこと
+マルチタッチによる円形を描く
+
+音を自動的に再生。自動的な機能
+
+
+
+ZIPファイルを使うほうがマシかも
+その代わりにOBBでもいいじゃん?
+
+
+
+雑多なノート
+
+売ること
+音
+同時に不草津の音を再生する機能
+音階！！！いいなって思う
+
+
+
+06-05 09:23:34.592: W/ActivityManager(173): No content provider found for permission revoke: file:///data/local/tmp/hontouniiioto.apk
+
+
+ファイル管理：
+APad:
+06-08 16:10:18.066: D/android_main(16231): nativeActivity->externalDataPath: /mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files
+06-08 16:10:18.066: D/android_main(16231): nativeActivity->internalDataPath: /data/data/nz.kapsy.hontouniiioto/files
+Galaxy:
+06-08 16:46:57.175: D/android_main(4645): nativeActivity->externalDataPath: /storage/sdcard0/Android/data/nz.kapsy.hontouniiioto/files
+06-08 16:46:57.175: D/android_main(4645): nativeActivity->internalDataPath: /data/data/nz.kapsy.hontouniiioto/files
+
+＋＋＋＋＋＋＋＋＋＋＋
+＋　　　　　アイデア　　　　＋
+＋＋＋＋＋＋＋＋＋＋＋
+
+録音したノートが時間とともに変化
+
+

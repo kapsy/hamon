@@ -16,9 +16,12 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := hontounimain
-LOCAL_SRC_FILES := hontounimain.c
-LOCAL_SRC_FILES += slman.c
+LOCAL_MODULE    := and_main
+LOCAL_SRC_FILES := and_main.c
+LOCAL_SRC_FILES += snd_scal.c
+LOCAL_SRC_FILES += snd_sles.c
+LOCAL_SRC_FILES += snd_asst.c
+LOCAL_SRC_FILES += snd_ctrl.c
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
 # for native audio
 LOCAL_LDLIBS    += -lOpenSLES

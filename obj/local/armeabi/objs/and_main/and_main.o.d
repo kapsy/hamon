@@ -1,4 +1,4 @@
-obj/local/armeabi/objs/hontounimain/hontounimain.o: jni/hontounimain.c \
+obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/errno.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/cdefs.h \
@@ -60,7 +60,14 @@ obj/local/armeabi/objs/hontounimain/hontounimain.o: jni/hontounimain.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
- jni/slman.h jni/scales.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h \
+ jni/snd_sles.h jni/snd_asst.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
+ jni/snd_scal.h jni/snd_ctrl.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -184,6 +191,22 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/key
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h:
 
-jni/slman.h:
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:
 
-jni/scales.h:
+jni/snd_sles.h:
+
+jni/snd_asst.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h:
+
+jni/snd_scal.h:
+
+jni/snd_ctrl.h:
