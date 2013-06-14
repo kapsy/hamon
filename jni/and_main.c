@@ -21,6 +21,7 @@ typedef void* EGLNativeDisplayType;
 // kapsy
 #include <android/asset_manager.h>
 #include <android/storage_manager.h>
+#include <android/window.h>
 
 
 #include <math.h>
@@ -46,6 +47,12 @@ static float touch_segment_width;
 
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
+
+void play_rec_note(float x, float y);
+
+
+
+
 
 
 /**
@@ -236,8 +243,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_input",
 					"AMOTION_EVENT_ACTION_DOWN");
 
-			play_note(find_screen_segment(AMotionEvent_getX(event, 0)), find_vel_value(AMotionEvent_getY(event, 0)));
-
+			//play_note(find_screen_segment(AMotionEvent_getX(event, 0)), find_vel_value(AMotionEvent_getY(event, 0)));
+			play_rec_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
         engine->animating = 1;
 
 			break;
@@ -275,7 +282,12 @@ for (index = 0; index < touch_max; index++) {
 
 			if (pointer_index_mask < 4) {
 
-					play_note(find_screen_segment(AMotionEvent_getX(event, pointer_index_mask)), find_vel_value(AMotionEvent_getY(event, pointer_index_mask)));
+					//play_note(find_screen_segment(AMotionEvent_getX(event, pointer_index_mask)), find_vel_value(AMotionEvent_getY(event, pointer_index_mask)));
+
+					play_rec_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
+
+
+
 				}
 
 
@@ -313,6 +325,15 @@ for (index = 0; index < touch_max; index++) {
     return 0;
 }
 
+
+void play_rec_note(float x, float y) {
+
+	int seg = find_screen_segment(x);
+	float vel = find_vel_value(y);
+	play_note(seg, vel);
+	record_note(x, y, seg, vel);
+
+}
 
 
 static void calc_segment_width() {
@@ -432,6 +453,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
+           	 ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
             }
             break;
@@ -500,6 +522,8 @@ void android_main(struct android_app* state) {
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
 
+
+
     AAssetManager* asset_manager = state->activity->assetManager;
 
 
@@ -507,21 +531,33 @@ void android_main(struct android_app* state) {
 	load_all_assets(asset_manager);
 	init_all_voices();
 
+
+
 	play_loop();
-	init_snd_ctrl_loop();
+
+
+	// snd_ctrl‚Ì‚±‚Æ
+	init_all_parts();
+	init_timing_loop();
 
 
 
 
 
+
+//	struct timeval start_time;
+//	struct timeval finish_time;
+//	struct timeval diff_time;
+//	struct timeval curr_time;
+//	struct timezone tzp;
 
     // loop waiting for stuff to do.
 
     while (1) {
 
 
-    	clock_t c1, c2;
-    	c1 = clock();
+//		gettimeofday(&start_time, &tzp);
+
 
 
         // Read all pending events.
@@ -570,6 +606,15 @@ void android_main(struct android_app* state) {
             // is no need to do timing here.
             engine_draw_frame(&engine);
         }
+
+
+//		gettimeofday(&finish_time, &tzp);
+//		timersub(&finish_time, &start_time, &diff_time);
+//
+//
+//		gettimeofday(&curr_time, &tzp);
+//		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "gettimeofday: %d %d diff_time: %d %d",
+//				curr_time.tv_sec, curr_time.tv_usec, diff_time.tv_sec, diff_time.tv_usec);
 
 
 

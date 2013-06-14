@@ -70,17 +70,46 @@ X二重フェードを防ぐためのコード
 x音の大きさの問題を解決しなきゃ　値は200以上と再生する音の大きさがちょっと変になる
 
 2013年6月11日
-
-"The normal linux sleep functions (usleep, etc) will block the thread that calls them. 
+X"The normal linux sleep functions (usleep, etc) will block the thread that calls them. 
 It's up to you which thread that is - hopefully not the UI one."
+X時間差はNDKとは関係がないかも
+
+2013年6月12日
+	配列の最大の欠点は、要素数をプログラム中で変更出来ないことです。
+	malloc関数を使ったら、必ずfree関数を呼び出します。
+
+	プログラムが終了する直前では、free関数を使わなくても、
+	プログラム終了と同時にメモリが解放されるからです。
+
+2013年6月13日
+Xループ機能
+X？正確なタイミング問題
 
 
-時間差はNDKとは関係がないかも
+2013年6月14日
+X録音、曲を鳴らす機能など・そうするためTIC機能が必要かも（DOOMと同じように）
 
+今これからの計画
+Xパートの長さを無作為変える機能
+Gitで保存、Branch
+サンプル的な正確なタイミング機能を作ろ
+
+
+再生するとき、音の大きさがどんどん減る
+
+
+
+
+
+
+アイディア：録音したパートを全部保存して、無作為に再生している（Bloomとは違うかもな）
 
 AMMO機能？　
 
-録音、曲を鳴らす機能など・そうするためTIC機能が必要かも（DOOMと同じように）
+
+
+アイデア：時間がかかると、ループのスリープ時間がどんどん遅くなります？？面倒くさい
+
 
 キューベースで音階を作れ
 

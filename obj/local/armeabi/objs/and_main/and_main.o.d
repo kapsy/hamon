@@ -60,6 +60,7 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h \
  jni/snd_sles.h jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h \
@@ -190,6 +191,8 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/inp
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:
 

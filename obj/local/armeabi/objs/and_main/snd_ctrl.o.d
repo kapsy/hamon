@@ -48,7 +48,8 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
+ jni/snd_scal.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -151,3 +152,5 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSL
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h:
+
+jni/snd_scal.h:

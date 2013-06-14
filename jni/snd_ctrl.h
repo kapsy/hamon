@@ -8,8 +8,9 @@
 #ifndef SND_CTRL_H_
 #define SND_CTRL_H_
 
+void init_timing_loop();
+void record_note(float x, float y, int seg, float vel);
+void init_all_parts();
 
-void init_snd_ctrl_loop();
-void* sound_control_loop(void* args);
 
 #endif /* SND_CTRL_H_ */
