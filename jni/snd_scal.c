@@ -20,7 +20,7 @@
 #define START_NOTE 48// MIDIî‘çÜ
 
 int selected_scale = 1;
-extern oneshot_def oneshot_samples[];
+extern sample_def oneshot_samples[];
 
 typedef struct {
 

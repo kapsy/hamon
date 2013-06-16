@@ -19,6 +19,7 @@
 
 
 #include "snd_asst.h"
+#include "hon_type.h"
 
 # define HEADER_SIZE 44
 
@@ -28,14 +29,18 @@ char* string_join(const char* a, const char* b, const char* c);
 
 char* string_join_src(const char* join_a, const char* join_b);
 //void open_external_file(char* filepath, int samp);
-void open_external_file(oneshot_def* sample_def);
+void open_external_file(sample_def* sample_def);
+void init_silence_chunk();
 
-oneshot_def test[] = {
-		{"blah", 48, NULL, NULL}
+//sample_def test[] = {
+//		{"blah", 48, NULL, NULL}
+//
+//};
 
-};
 
-oneshot_def looping_samples[] = {
+sample_def silence_chunk = {"no_file_name", 00, NULL, NULL};
+
+sample_def looping_samples[] = {
 
 
 		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001.wav", 48, NULL, NULL},
@@ -46,7 +51,7 @@ oneshot_def looping_samples[] = {
 
 
 // 今の立場4個だけでいいかも
-oneshot_def oneshot_samples[] = {
+sample_def oneshot_samples[] = {
 //
 //		{"hontouniiioto_heavy_48.wav", 48, NULL, NULL},
 //		{"hontouniiioto_heavy_49.wav", 48, NULL, NULL},
@@ -170,6 +175,8 @@ oneshot_def oneshot_samples[] = {
 void load_all_assets(AAssetManager* mgr) {
 
 
+	init_silence_chunk();
+
 	int success; //必要ない
 
 	int i;
@@ -234,7 +241,6 @@ void load_all_assets(AAssetManager* mgr) {
 
 	for (i = 0; i < sizeof looping_samples / sizeof looping_samples[0]; i++) {
 
-
 		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
 				"looping_samples[%d].file_name: %s", i,
 				looping_samples[i].file_name);
@@ -250,10 +256,24 @@ void load_all_assets(AAssetManager* mgr) {
 
 	}
 
-
-
 	__android_log_write(ANDROID_LOG_DEBUG, "load_all_assets",
 			"loading finished");
+}
+
+void init_silence_chunk() {
+
+	sample_def* s = &silence_chunk;
+
+	s->data_size = BUFFER_SIZE;
+
+	s->buffer_data = (unsigned short*) malloc(BUFFER_SIZE);
+
+	int i;
+
+	for (i=0; i<(BUFFER_SIZE/2); i++) {
+		//s->buffer_data[i] = 0x7FFF;
+		s->buffer_data[i] = 0x0000;
+	}
 }
 
 char* string_join(const char* a, const char* b, const char* c) {
@@ -261,7 +281,6 @@ char* string_join(const char* a, const char* b, const char* c) {
 	size_t la = strlen(a);
 	size_t lb = strlen(b);
 	size_t lc = strlen(c);
-
 
 	char* p = malloc(la + lb + lc + 1);
 
@@ -276,42 +295,40 @@ char* string_join(const char* a, const char* b, const char* c) {
 
 // so these are copies of the pointer not the pointer itself, just like any other argument
 // 復讐しなきゃ・今の立場って言えば、OBB方式のファイルは一番と思う
-void open_external_file(oneshot_def* sample_def) {
+void open_external_file(sample_def* s) {
+
+	__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "open_external_file(sample_def* s) called");
 
 	FILE* fp;
 
-
-	sample_def->buffer_header = (unsigned short*) malloc(HEADER_SIZE);
+	s->buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 	//oneshot_samples[samp].buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 
-
 	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file",
-			"filepath: %s", sample_def->file_name);
+			"filepath: %s", s->file_name);
 
-
-
-	if ((fp = fopen(sample_def->file_name, "r")) != NULL) {
+	if ((fp = fopen(s->file_name, "r")) != NULL) {
 		__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "fopen()");
 
 		//fread(oneshot_samples[samp].buffer_header, sizeof(unsigned short), HEADER_SIZE/2, fp);
-		fread(sample_def->buffer_header, 1, HEADER_SIZE, fp);
+		fread(s->buffer_header, 1, HEADER_SIZE, fp);
 	}
 
 	// 変数の週類はポインターである
 	unsigned short* fmttype;
 	unsigned long* databytes;
 
-	fmttype = (sample_def->buffer_header + 10);
+	fmttype = (s->buffer_header + 10);
 	if (*fmttype != 0x1) {
 		__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "*fmttype not PCM, loading aborted.");
 		//return JNI_FALSE;
 	}
 
-	databytes = (sample_def->buffer_header + 20);
+	databytes = (s->buffer_header + 20);
 
-	sample_def->data_size = *databytes;
+	s->data_size = *databytes;
 
-	sample_def->buffer_data = (unsigned short*) malloc(*databytes);
+	s->buffer_data = (unsigned short*) malloc(*databytes);
 
 	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "*fmttype: %x", *fmttype);
 	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "*databytes: %x", *databytes);
@@ -319,7 +336,7 @@ void open_external_file(oneshot_def* sample_def) {
 
 	fseek(fp , HEADER_SIZE , SEEK_SET);
 	//fread(oneshot_samples[samp].buffer_data, sizeof(unsigned short), oneshot_samples[samp].data_size/2, fp);
-	fread(sample_def->buffer_data, 1, sample_def->data_size, fp);
+	fread(s->buffer_data, 1, s->data_size, fp);
 
 
 	fclose(fp);
@@ -332,11 +349,6 @@ void open_external_file(oneshot_def* sample_def) {
 
 
 
-
-
-
-//
-//
 //// so these are copies of the pointer not the pointer itself, just like any other argument
 //int open_asset(AAssetManager* mgr, char* filename, int samp) {
 //

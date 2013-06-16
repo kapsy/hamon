@@ -22,16 +22,24 @@ typedef struct {
 	SLBufferQueueState bqstate;
 	int is_fading;
 
+
+	size_t current_chunk;
+	size_t current_chunk_size;
+
+	sample_def* sample;
+
+	int is_playing;
+
+	int timing_test_index;
 } voice;
 
 void create_sl_engine();
 void init_all_voices();
 
-SLmillibel float_to_slmillibel(float sender_vel, float sender_range);
 void set_voice_volume(voice* voice, float vol);
 
-int enqueue_seamless_loop(oneshot_def * samp);
-int enqueue_one_shot(oneshot_def * samp, float vel);
+int enqueue_seamless_loop(sample_def * samp);
+int enqueue_one_shot(sample_def * samp, float vel);
 
 
 void* loop_fade_out(void* args);

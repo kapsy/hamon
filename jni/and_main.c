@@ -331,7 +331,7 @@ void play_rec_note(float x, float y) {
 	int seg = find_screen_segment(x);
 	float vel = find_vel_value(y);
 	play_note(seg, vel);
-	record_note(x, y, seg, vel);
+	//record_note(x, y, seg, vel);
 
 }
 
@@ -537,8 +537,8 @@ void android_main(struct android_app* state) {
 
 
 	// snd_ctrl‚Ì‚±‚Æ
-	init_all_parts();
-	init_timing_loop();
+//	init_all_parts();
+//	init_timing_loop();
 
 
 

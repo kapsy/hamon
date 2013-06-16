@@ -14,17 +14,30 @@
 typedef struct {
 	char* file_name;
 	int midi_number;
-	//unsigned sample_size;
 
 //unsigned char* buffer_header;
+
+
+//	unsigned short* buffer_header;
+//	unsigned short* buffer_data;
 	unsigned short* buffer_header;
 	unsigned short* buffer_data;
+
+
 	size_t data_size;
 
-} oneshot_def;
 
-extern oneshot_def oneshot_samples[];
-extern oneshot_def looping_samples[];
+	//size_t total_chunks;
+//	size_t final_chunk_size;
+
+
+
+} sample_def;
+
+extern sample_def oneshot_samples[];
+extern sample_def looping_samples[];
+
+extern sample_def silence_chunk;
 
 extern char* internal_path;
 
