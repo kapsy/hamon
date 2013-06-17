@@ -15,22 +15,13 @@ typedef struct {
 	char* file_name;
 	int midi_number;
 
-//unsigned char* buffer_header;
-
-
-//	unsigned short* buffer_header;
-//	unsigned short* buffer_data;
+//	signed short* buffer_header;
+//	signed short* buffer_data;
 	unsigned short* buffer_header;
 	unsigned short* buffer_data;
 
-
 	size_t data_size;
-
-
-	//size_t total_chunks;
-//	size_t final_chunk_size;
-
-
+	size_t total_chunks;
 
 } sample_def;
 

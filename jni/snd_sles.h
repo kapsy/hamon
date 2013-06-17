@@ -24,7 +24,7 @@ typedef struct {
 
 
 	size_t current_chunk;
-	size_t current_chunk_size;
+	//size_t current_chunk_size;
 
 	sample_def* sample;
 

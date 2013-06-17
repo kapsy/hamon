@@ -31,6 +31,7 @@ char* string_join_src(const char* join_a, const char* join_b);
 //void open_external_file(char* filepath, int samp);
 void open_external_file(sample_def* sample_def);
 void init_silence_chunk();
+void malloc_to_buffer_factor(sample_def* s);
 
 //sample_def test[] = {
 //		{"blah", 48, NULL, NULL}
@@ -328,7 +329,10 @@ void open_external_file(sample_def* s) {
 
 	s->data_size = *databytes;
 
-	s->buffer_data = (unsigned short*) malloc(*databytes);
+	// •K—v‚Èˆ—
+	malloc_to_buffer_factor(s);
+
+	//s->buffer_data = (unsigned short*) malloc(*databytes);
 
 	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "*fmttype: %x", *fmttype);
 	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "*databytes: %x", *databytes);
@@ -338,14 +342,45 @@ void open_external_file(sample_def* s) {
 	//fread(oneshot_samples[samp].buffer_data, sizeof(unsigned short), oneshot_samples[samp].data_size/2, fp);
 	fread(s->buffer_data, 1, s->data_size, fp);
 
-
 	fclose(fp);
 	__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "fclose(fp);");
 
 
 }
 
+void malloc_to_buffer_factor(sample_def* s) {
 
+	size_t buffer_over = s->data_size % BUFFER_SIZE;
+
+	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "s->data_size: %d", s->data_size);
+	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "buffer_over: %d", buffer_over);
+
+	if (buffer_over > 0 && buffer_over < BUFFER_SIZE) {
+
+		size_t buffer_rem = BUFFER_SIZE - buffer_over;
+
+		__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "buffer_rem: %d", buffer_rem);
+		s->buffer_data = (unsigned short*) malloc(s->data_size + buffer_rem );
+
+		s->total_chunks = (s->data_size + buffer_rem) / BUFFER_SIZE;
+
+		int i;
+
+		for (i=s->data_size; i<(buffer_rem/2); i++)
+		{
+			s->buffer_data[i] =  0x0000;
+		}
+
+
+	} else if (buffer_over == 0) {
+		s->buffer_data = (unsigned short*) malloc(s->data_size);
+		s->total_chunks = (s->data_size) / BUFFER_SIZE;
+	}
+
+
+		__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "s->total_chunks: %d", s->total_chunks);
+
+}
 
 
 

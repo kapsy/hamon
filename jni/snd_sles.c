@@ -49,7 +49,7 @@
 
 
 
-
+long elapsed_buffer_tics = 0;
 
 void cycle_looping_voice();
 void cycle_oneshot_voice();
@@ -107,59 +107,7 @@ static int currently_xfading = 0;
 //extern oneshot_def looping_samples[];
 
 
-//void* fadeInThread(void* args);
-/*
 
-
-# define HEADER_SIZE 44
-
-typedef struct {
-	char* file_name;
-	int midi_number;
-	unsigned sample_size;
-
-	size_t data_size;
-
-
-	unsigned short* buffer_header;
-	unsigned short* buffer_data;
-
-
-} oneshot_def;
-
-
-// 今の立場4個だけでいいかも
-oneshot_def oneshot_samples[] = {
-
-		{"test_p_01.wav", 48, 0, 0, NULL, NULL},
-		{"test_p_01.wav", 49, 0, 0, NULL, NULL},
-		{"test_p_01.wav", 50, 0, 0, NULL, NULL},
-
-};
-
-
-void load_all_buffers(AAssetManager* mgr) {
-
-
-	int success;//必要ない
-
-	int i;
-
-	for (i = 0; i < sizeof(oneshot_samples); i++) {
-
-		success = open_asset(
-				mgr,
-				oneshot_samples[i].file_name,
-				oneshot_samples[i].buffer_header,
-				oneshot_samples[i].buffer_data,
-				*oneshot_samples[i].data_size);
-
-		if (success == 0) break;
-	}
-}
-
-
-*/
 
 void create_sl_engine()
 {
@@ -255,9 +203,6 @@ void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 }
 
 
-
-
-
 void init_voice(voice* v) {
 
 	v->is_fading = FALSE;
@@ -317,26 +262,26 @@ void init_voice(voice* v) {
 
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_BUFFERQUEUE, &(voice->bqPlayerBufferQueue)");
 
-//    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, buffer_chunk_callback, (void *)v);
-    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, timing_test_callback, (void *)v);
+    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, buffer_chunk_callback, (void *)v);
+//    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, timing_test_callback, (void *)v);
     assert(SL_RESULT_SUCCESS == result);
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "RegisterCallback() called");
 
     // set the player's state to playing - ここで問題が起きる
-//    result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
-//    assert(SL_RESULT_SUCCESS == result);
+    result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
+    assert(SL_RESULT_SUCCESS == result);
 
-//	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING)");
-
+	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING)");
 
 	v->is_playing = FALSE;
 	v->current_chunk = 0;
-	v->current_chunk_size = BUFFER_SIZE;
+//	v->current_chunk_size = BUFFER_SIZE;
 	v->sample = &silence_chunk;
-v->timing_test_index = 0;
-//	result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, get_next_data_chunk(v), v->current_chunk_size);
+	v->timing_test_index = 0;
 
-	result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, v->sample->buffer_data, v->current_chunk_size);
+//	result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue,	v->sample->buffer_data, v->current_chunk_size);
+
+	result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue,	v->sample->buffer_data, BUFFER_SIZE);
 
 
 }
@@ -353,42 +298,22 @@ void init_all_voices() {
 		__android_log_print(ANDROID_LOG_DEBUG, "init_all_voices", "void initPolyphony() i: %d", i);
 		init_voice(&poly_sampler[i]);
 
-		if (i == 4) {
-			SLresult result;
-			voice* v = &poly_sampler[i];
-			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
-					SL_PLAYSTATE_PLAYING);
-		}
-
-		if (i == 29) {
-			SLresult result;
-			voice* v = &poly_sampler[i];
-			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
-					SL_PLAYSTATE_PLAYING);
-		}
-
+		// バッファーのタイミングテストのため
+//		if (i == 4) {
+//			SLresult result;
+//			voice* v = &poly_sampler[i];
+//			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
+//					SL_PLAYSTATE_PLAYING);
+//		}
+//
+//		if (i == 29) {
+//			SLresult result;
+//			voice* v = &poly_sampler[i];
+//			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
+//					SL_PLAYSTATE_PLAYING);
+//		}
+//
 //		if (i == 16) {
-//			SLresult result;
-//			voice* v = &poly_sampler[i];
-//			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
-//					SL_PLAYSTATE_PLAYING);
-//		}
-//		if (i == 7) {
-//			SLresult result;
-//			voice* v = &poly_sampler[i];
-//			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
-//					SL_PLAYSTATE_PLAYING);
-//		}
-//
-//		if (i == 8) {
-//			SLresult result;
-//			voice* v = &poly_sampler[i];
-//			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
-//					SL_PLAYSTATE_PLAYING);
-//		}
-
-//
-//		if (i == 10) {
 //			SLresult result;
 //			voice* v = &poly_sampler[i];
 //			result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay,
@@ -602,16 +527,16 @@ int enqueue_one_shot(sample_def * s, float vel) {
 	voice* v = get_next_free_voice();
 //	voice* v = poly_sampler;
 
-//	if (v == NULL)
-//	{
-//		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v == NULL");
-//		return 0;
-//	}
+	if (v == NULL)
+	{
+		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v == NULL: couldn't find a free buffer");
+		return 0;
+	}
 
 
 	v->sample = s;
 	v->current_chunk = 0;
-	v->current_chunk_size = BUFFER_SIZE;
+//	v->current_chunk_size = BUFFER_SIZE;
 	v->is_playing = TRUE;
 
 	SLresult result;
@@ -619,7 +544,7 @@ int enqueue_one_shot(sample_def * s, float vel) {
 	set_voice_volume(v, vel); // 一回しか必要ない
 
 	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->current_chunk: %d", v->current_chunk);
-	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->current_chunk_size: %d", v->current_chunk_size);
+//	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->current_chunk_size: %d", v->current_chunk_size);
 	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->sample->data_size: %d", v->sample->data_size);
 	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->is_playing: %d", v->is_playing);
 
@@ -640,44 +565,67 @@ int enqueue_one_shot(sample_def * s, float vel) {
 
 }
 
+//unsigned short* get_next_data_chunk(voice* v) {
+//
+////	__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "get_next_data_chunk(voice* v) called");
+//
+//	unsigned short* b;
+//
+//	size_t remaining_size = v->sample->data_size - (v->current_chunk * BUFFER_SIZE);
+//
+//	if (remaining_size <= BUFFER_SIZE && v->is_playing) {
+//		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 1");
+////		__android_log_print(ANDROID_LOG_DEBUG, "get_next_data_chunk", "v->current_chunk: %d", v->current_chunk);
+//		__android_log_print(ANDROID_LOG_DEBUG, "get_next_data_chunk", "remaining_size: %d", remaining_size);
+//
+//		// これは問題
+//		v->current_chunk_size = remaining_size;
+//		b = v->sample->buffer_data + (v->current_chunk * BUFFER_SIZE_SHORT);
+//		// v->sample = 0; // 無音なサンプル
+//
+//		v->is_playing = FALSE;
+//
+//	} else if (remaining_size > BUFFER_SIZE && v->is_playing) {
+//
+////		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 2");
+//
+//		v->current_chunk_size = BUFFER_SIZE;
+//		b = v->sample->buffer_data + (v->current_chunk * BUFFER_SIZE_SHORT);
+//		v->current_chunk++;
+//
+//	} else if (!v->is_playing) {
+//
+////		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 3");
+//
+//		v->sample = &silence_chunk;
+//		v->current_chunk_size = BUFFER_SIZE;
+//		b = silence_chunk.buffer_data;
+//	}
+//
+//	return b;
+//
+//}
+
 unsigned short* get_next_data_chunk(voice* v) {
-
-//	__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "get_next_data_chunk(voice* v) called");
-
 	unsigned short* b;
 
-	size_t remaining_size = v->sample->data_size - (v->current_chunk * BUFFER_SIZE);
+	if (v->current_chunk == v->sample->total_chunks && v->is_playing) {
+		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 1");
 
-//	__android_log_print(ANDROID_LOG_DEBUG, "get_next_data_chunk", "remaining_size: %d", remaining_size);
-//	__android_log_print(ANDROID_LOG_DEBUG, "get_next_data_chunk", "v->sample->data_size: %d", v->sample->data_size);
-//	__android_log_print(ANDROID_LOG_DEBUG, "get_next_data_chunk", "v->current_chunk: %d", v->current_chunk);
-
-
-
-	if (remaining_size <= BUFFER_SIZE && v->is_playing) {
-//		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 1");
-
-		// これは問題
-		v->current_chunk_size = remaining_size;
-		b = v->sample->buffer_data + (v->current_chunk * (BUFFER_SIZE / 2));
-		// v->sample = 0; // 無音なサンプル
-
+		v->sample = &silence_chunk;
+		b = silence_chunk.buffer_data;
 		v->is_playing = FALSE;
 
-	} else if (remaining_size > BUFFER_SIZE && v->is_playing) {
-
+	} else if (v->current_chunk < v->sample->total_chunks && v->is_playing) {
 //		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 2");
 
-		v->current_chunk_size = BUFFER_SIZE;
-		b = v->sample->buffer_data + (v->current_chunk * (BUFFER_SIZE / 2));
+		b = v->sample->buffer_data + (v->current_chunk * BUFFER_SIZE_SHORT);
 		v->current_chunk++;
 
 	} else if (!v->is_playing) {
-
 //		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 3");
 
 		v->sample = &silence_chunk;
-		v->current_chunk_size = BUFFER_SIZE;
 		b = silence_chunk.buffer_data;
 	}
 
@@ -686,30 +634,19 @@ unsigned short* get_next_data_chunk(voice* v) {
 }
 
 
-
-
 void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "buffer_chunk_callback", "buffer_chunk_callback() called");
 
 	SLresult result;
 
-	result = (*buffer_queue)->Enqueue(buffer_queue, get_next_data_chunk((voice*)v), ((voice*)v)->current_chunk_size);
+//	result = (*buffer_queue)->Enqueue(buffer_queue, get_next_data_chunk((voice*)v), ((voice*)v)->current_chunk_size);
+	result = (*buffer_queue)->Enqueue(buffer_queue, get_next_data_chunk((voice*)v), BUFFER_SIZE);
 
 
 	assert(SL_RESULT_SUCCESS == result);
 }
-//void timing_test_callback_sil(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
-////	__android_log_write(ANDROID_LOG_DEBUG, "timing_test_callback", "timing_test_callback() called");
-//
-//	SLresult result;
-//
-//
-//		result = (*buffer_queue)->Enqueue(buffer_queue, oneshot_samples[0].buffer_data, BUFFER_SIZE);
-//		timing_test_index++;
-//
-//
-//	assert(SL_RESULT_SUCCESS == result);
-//}
+
+
 
 void timing_test_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "timing_test_callback", "timing_test_callback() called");
@@ -721,12 +658,12 @@ void timing_test_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 		result = (*buffer_queue)->Enqueue(buffer_queue, oneshot_samples[0].buffer_data, BUFFER_SIZE);
 		((voice*)v)->timing_test_index++;
 
-	} else if (((voice*)v)->timing_test_index < 64) {
+	} else if (((voice*)v)->timing_test_index < 1024) {
 
 		result = (*buffer_queue)->Enqueue(buffer_queue, silence_chunk.buffer_data, BUFFER_SIZE);
 		((voice*)v)->timing_test_index++;
 
-	} else if (((voice*)v)->timing_test_index == 64) {
+	} else if (((voice*)v)->timing_test_index == 1024) {
 
 		result = (*buffer_queue)->Enqueue(buffer_queue, silence_chunk.buffer_data, BUFFER_SIZE);
 
@@ -739,13 +676,10 @@ void timing_test_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 
 voice* get_next_free_voice() {
 
-	__android_log_write(ANDROID_LOG_DEBUG, "get_next_free_voice", "get_next_free_voice() called");
-
 	int i;
 	voice* v = NULL;
-	//size_t* most_advanced_chunk;
 
-	for (i = 0; i < VOICE_COUNT; i++) {
+	for (i = LOOPER_COUNT; i < VOICE_COUNT; i++) {
 		if (!poly_sampler[i].is_playing) {
 
 			v = poly_sampler + i;

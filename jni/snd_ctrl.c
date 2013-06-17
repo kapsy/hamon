@@ -49,6 +49,9 @@ typedef struct {
 
 }part;
 
+
+
+
 struct {
 
 	// ‚±‚ê‚Í–â‘è”­¶‚ÌŒ´ˆö‚©‚à
@@ -82,6 +85,7 @@ struct {
 
 
 part parts[TOTAL_PARTS];
+//part_buf parts[TOTAL_PARTS];
 
 static int current_rec_part = 0;
 static int tics_per_part = 2000;
@@ -216,7 +220,32 @@ void* timing_loop(void* args) {
 
 
 
-// main‚©‚çŒÄ‚Ô
+//// main‚©‚çŒÄ‚Ô
+//void record_note(float x, float y, int seg, float vel){
+//
+//	part* p = (parts + current_rec_part);
+//
+////	__android_log_print(ANDROID_LOG_DEBUG, "record_note", "current_rec_part %d",
+////			current_rec_part);
+//
+//	int tic = p->current_tic;
+//	int n = p->current_note;
+//
+//	p->note_info[n].pos_x = x;
+//	p->note_info[n].pos_y = y;
+//
+//	p->note_info[n].seg = seg;
+//	p->note_info[n].vel = vel;
+//
+//	p->note_info[n].tic = tic;
+//
+//	__android_log_print(ANDROID_LOG_DEBUG, "record_note", "current_rec_part %d, current_tic %d, current_note %d",
+//			current_rec_part,p->current_tic, p->current_note);
+//
+//	p->current_note++;
+//
+//}
+
 void record_note(float x, float y, int seg, float vel){
 
 	part* p = (parts + current_rec_part);
@@ -241,6 +270,12 @@ void record_note(float x, float y, int seg, float vel){
 	p->current_note++;
 
 }
+
+
+
+
+
+
 
 //// –ˆTICŽÀs‚µ‚È‚«‚á //
 //// tic‚ð‘S•”i‚ß‚È‚¢‚Æ‚¢‚¯‚È‚¢
