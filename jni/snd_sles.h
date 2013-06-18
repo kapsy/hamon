@@ -20,17 +20,23 @@ typedef struct {
 	SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
 	SLVolumeItf bqPlayerVolume;
 	SLBufferQueueState bqstate;
-	int is_fading;
 
 
 	size_t current_chunk;
-	//size_t current_chunk_size;
-
 	sample_def* sample;
-
 	int is_playing;
-
 	int timing_test_index;
+
+
+	// automation
+	//int is_fading;
+
+
+	int fading_out;
+	int fading_in;
+	SLmillibel sl_volume;
+
+
 } voice;
 
 void create_sl_engine();
@@ -42,11 +48,13 @@ int enqueue_seamless_loop(sample_def * samp);
 int enqueue_one_shot(sample_def * samp, float vel);
 
 
-void* loop_fade_out(void* args);
-void* loop_fade_in(void* args);
+//void* loop_fade_in(void* args);
+void fade_automation();
 
 int current_voice_fading();
 
 void shutdown_audio();
+
+int total_tic_counter;
 
 #endif /* SND_SLES_H_ */

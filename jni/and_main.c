@@ -283,15 +283,8 @@ for (index = 0; index < touch_max; index++) {
 			if (pointer_index_mask < 4) {
 
 					//play_note(find_screen_segment(AMotionEvent_getX(event, pointer_index_mask)), find_vel_value(AMotionEvent_getY(event, pointer_index_mask)));
-
 					play_rec_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
-
-
-
 				}
-
-
-
 
 						__android_log_print(ANDROID_LOG_DEBUG, "engine_handle_input",
 						"pointer_index_mask: %d", pointer_index_mask);
@@ -331,7 +324,7 @@ void play_rec_note(float x, float y) {
 	int seg = find_screen_segment(x);
 	float vel = find_vel_value(y);
 	play_note(seg, vel);
-	//record_note(x, y, seg, vel);
+	record_note(x, y, seg, vel);
 
 }
 
@@ -522,23 +515,17 @@ void android_main(struct android_app* state) {
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
 
-
-
     AAssetManager* asset_manager = state->activity->assetManager;
-
 
 	create_sl_engine();
 	load_all_assets(asset_manager);
 	init_all_voices();
 
-
-
-	play_loop();
-
-
 	// snd_ctrl‚Ì‚±‚Æ
-//	init_all_parts();
-//	init_timing_loop();
+	init_all_parts();
+
+	init_timing_loop();
+	play_loop();
 
 
 

@@ -16,7 +16,12 @@
 // #define BUFFER_SIZE 256
 
 // Galaxy SÇÃç≈í·å¿
-#define BUFFER_SIZE 128
+//#define BUFFER_SIZE 128 // 0.72562358276643990929705215419501ms
+
+
+#define BUFFER_SIZE 1024 // 5.8049886621315192743764172335601ms
+//static int tics_per_part = 1600;
+
 #define BUFFER_SIZE_SHORT (BUFFER_SIZE / 2)
 
 

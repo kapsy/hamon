@@ -33,6 +33,7 @@
 #include "snd_sles.h"
 #include "snd_asst.h"
 #include "hon_type.h"
+#include "snd_ctrl.h"
 
 
 //int PLYCNT = 10;
@@ -49,13 +50,18 @@
 
 
 
-long elapsed_buffer_tics = 0;
+//long elapsed_buffer_tics = 0;
 
 void cycle_looping_voice();
 void cycle_oneshot_voice();
 
 
+void loop_fade_out(voice* v);
+void loop_fade_in(voice* v);
+
+
 void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* voice);
+void buffer_chunk_timer_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v);
 void timing_test_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v);
 //int timing_test_index = 0;
 
@@ -73,6 +79,11 @@ static SLEngineItf engineEngine;
 // output mix interfaces
 static SLObjectItf outputMixObject = NULL;
 static SLEnvironmentalReverbItf outputMixEnvironmentalReverb = NULL;
+
+// フェードのため
+static SLVolumeItf fade_in_itf;
+static SLVolumeItf fade_out_itf;
+int initial_loop = TRUE;
 
 //typedef struct {
 //	SLObjectItf bqPlayerObject;
@@ -150,40 +161,11 @@ void create_sl_engine()
 }
 
 
-//// this callback handler is called every time a buffer finishes playing
-////only required for looping... no need to register a cb for one shot (might be though if buffers are too small).
-//void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *context) {
-//
-//	__android_log_write(ANDROID_LOG_DEBUG, "NDK_debug_tag: ",
-//			"bqPlayerCallback() called");
-//
-//	//assert(bq == bqPlayerBufferQueue);
-//	//assert(NULL == context);
-//
-//	SLresult result;
-//	//result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, bufd[0], nextSize[0]);
-//
-//
-//
-//
-//	result = (*bq)->Enqueue(bq, context->bq[0], nextSize[0]);
-//
-//	//result = (*bqPlayerBufferQueue)->GetState(bqPlayerBufferQueue, &bqstate);
-//
-///*	__android_log_print(ANDROID_LOG_DEBUG, "NDK_debug_tag: ",
-//			"bqstate.count %d", bqstate.count);*/
-//
-//	// the most likely other result is SL_RESULT_BUFFER_INSUFFICIENT,
-//	// which for this code example would indicate a programming error
-//	assert(SL_RESULT_SUCCESS == result);
-//}
-
 // this callback handler is called every time a buffer finishes playing
 //only required for looping... no need to register a cb for one shot (might be though if buffers are too small).
 void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 
-	__android_log_write(ANDROID_LOG_DEBUG, "NDK_debug_tag: ",
-			"looper_callback called");
+	__android_log_write(ANDROID_LOG_DEBUG, "looper_callback", "looper_callback() called");
 
 	//assert(bq == bqPlayerBufferQueue);
 	//assert(NULL == context);
@@ -203,9 +185,13 @@ void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 }
 
 
-void init_voice(voice* v) {
+void init_voice(voice* v, int timing_voice, int looping_voice) {
 
-	v->is_fading = FALSE;
+//	v->is_fading = FALSE;
+
+	v->fading_in = FALSE;
+	v->fading_out=FALSE;
+
 	v->is_playing = FALSE;
 	v->current_chunk = 0;
 	v->sample = NULL;
@@ -232,12 +218,10 @@ void init_voice(voice* v) {
             /*SL_IID_MUTESOLO,*/ SL_IID_VOLUME};
     const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE,
             /*SL_BOOLEAN_TRUE,*/ SL_BOOLEAN_TRUE};
-
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "const SLboolean req[3]");
 
     result = (*engineEngine)->CreateAudioPlayer(engineEngine, &v->bqPlayerObject, &audioSrc, &audioSnk, 3, ids, req);
     assert(SL_RESULT_SUCCESS == result);
-
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", " (*engineEngine)->CreateAudioPlayer");
     // realize the player
     result = (*v->bqPlayerObject)->Realize(v->bqPlayerObject, SL_BOOLEAN_FALSE);
@@ -247,30 +231,38 @@ void init_voice(voice* v) {
     // get the play interface
     result = (*v->bqPlayerObject)->GetInterface(v->bqPlayerObject, SL_IID_PLAY, &(v->bqPlayerPlay));
     assert(SL_RESULT_SUCCESS == result);
-
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "GetInterface(bqPlayerObj, SL_IID_PLAY, &(voice->bqPlayerPlay))");
 
     // get the volume interface
     result = (*v->bqPlayerObject)->GetInterface(v->bqPlayerObject, SL_IID_VOLUME, &(v->bqPlayerVolume));
     assert(SL_RESULT_SUCCESS == result);
-
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_VOLUME, &(voice->bqPlayerVolume)");
 
 	// get the buffer queue interface
     result = (*v->bqPlayerObject)->GetInterface(v->bqPlayerObject, SL_IID_BUFFERQUEUE, &(v->bqPlayerBufferQueue));
     assert(SL_RESULT_SUCCESS == result);
-
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_BUFFERQUEUE, &(voice->bqPlayerBufferQueue)");
 
-    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, buffer_chunk_callback, (void *)v);
-//    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, timing_test_callback, (void *)v);
-    assert(SL_RESULT_SUCCESS == result);
+
+
+
+	if (timing_voice) {
+	    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, buffer_chunk_timer_callback, (void *)v);
+	    assert(SL_RESULT_SUCCESS == result);
+	} else {
+		result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, buffer_chunk_callback, (void *)v);
+		assert(SL_RESULT_SUCCESS == result);
+		// result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, timing_test_callback, (void *)v);
+	}
+
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "RegisterCallback() called");
 
-    // set the player's state to playing - ここで問題が起きる
-    result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
-    assert(SL_RESULT_SUCCESS == result);
 
+	//if (!looping_voice) {
+		// set the player's state to playing - ここで問題が起きる
+		result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
+		assert(SL_RESULT_SUCCESS == result);
+	//}
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING)");
 
 	v->is_playing = FALSE;
@@ -281,7 +273,10 @@ void init_voice(voice* v) {
 
 //	result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue,	v->sample->buffer_data, v->current_chunk_size);
 
-	result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue,	v->sample->buffer_data, BUFFER_SIZE);
+	//if (!looping_voice) {
+		result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue,	v->sample->buffer_data, BUFFER_SIZE);
+//	}
+
 
 
 }
@@ -294,9 +289,19 @@ void init_all_voices() {
 	int i;
 
 	for (i = 0; i < VOICE_COUNT; i++) {
-
 		__android_log_print(ANDROID_LOG_DEBUG, "init_all_voices", "void initPolyphony() i: %d", i);
-		init_voice(&poly_sampler[i]);
+
+//		if (i < LOOPER_COUNT) {
+//			init_voice(&poly_sampler[i], FALSE, TRUE);
+//		} else
+
+		if (i == LOOPER_COUNT) {
+			init_voice(&poly_sampler[i], TRUE, FALSE);
+		} else {
+			init_voice(&poly_sampler[i], FALSE, FALSE);
+		}
+
+
 
 		// バッファーのタイミングテストのため
 //		if (i == 4) {
@@ -321,20 +326,14 @@ void init_all_voices() {
 //		}
 
 	}
+
+
 	__android_log_write(ANDROID_LOG_DEBUG, "init_all_voices", "void init_all_voices() finished");
 
 }
 
 
 
-
-
-
-// 今はフェード中なら返り値は1
-int current_voice_fading() {
-	voice* v = (poly_sampler + current_looping_voice);
-	return v->is_fading;
-}
 
 int enqueue_seamless_loop(sample_def* s) {
 
@@ -346,53 +345,72 @@ int enqueue_seamless_loop(sample_def* s) {
 	SLAndroidSimpleBufferQueueState current_queue_state ;
 	SLuint32 state;
 
-	voice* voice = (poly_sampler + current_looping_voice);
+	voice* v = (poly_sampler + current_looping_voice);
 
 	// ポインターのポインターかもなぁ
-	result = (*voice->bqPlayerBufferQueue)->GetState(voice->bqPlayerBufferQueue, &current_queue_state);
+	result = (*v->bqPlayerBufferQueue)->GetState(v->bqPlayerBufferQueue, &current_queue_state);
 
 
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "GetState() called");
+	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "current_queue_state.count: %d", current_queue_state.count);
 
-	if (current_queue_state.count > 0) {
+	if (!initial_loop) {
 
-		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(current_queue_state.count > 0)");
+		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(!initial_loop) ");
 
-		pthread_t fade_out;
-		pthread_create(&fade_out, NULL, loop_fade_out, (void*)voice);
+//		pthread_t fade_out;
+		//pthread_create(&fade_out, NULL, loop_fade_out, (void*)voice);
+
+		v->sl_volume = SLMILLIBEL_MAX;
+		v->fading_in = FALSE;
+		v->fading_out = TRUE;
+
 
 		cycle_looping_voice();
 
-		voice = (poly_sampler + current_looping_voice);
+		v = (poly_sampler + current_looping_voice);
+	} else {
+
+		// 浮動小数点型なボリューム操作機能を使うべきだ
+		v->sl_volume = SLMILLIBEL_MIN;
+		SLVolumeItf vol_itf = v->bqPlayerVolume;
+		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+		assert(SL_RESULT_SUCCESS == result);
+
+		initial_loop = FALSE;
 	}
 
-    result = (*voice->bqPlayerPlay)->SetPlayState(voice->bqPlayerPlay, SL_PLAYSTATE_STOPPED);
+    result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_STOPPED);
     assert(SL_RESULT_SUCCESS == result);
 
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_STOPPED called");
 
-	result = (*voice->bqPlayerBufferQueue)->Clear(voice->bqPlayerBufferQueue);
+	result = (*v->bqPlayerBufferQueue)->Clear(v->bqPlayerBufferQueue);
     assert(SL_RESULT_SUCCESS == result);
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "Clear() called");
 
-    result = (*voice->bqPlayerBufferQueue)->RegisterCallback(voice->bqPlayerBufferQueue, looper_callback, (void *)s);
+    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, looper_callback, (void *)s);
     assert(SL_RESULT_SUCCESS == result);
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "RegisterCallback() called");
 
 	// ここで音の大きさを0に設定して
 
-    result = (*voice->bqPlayerPlay)->SetPlayState(voice->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
+    result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
     assert(SL_RESULT_SUCCESS == result);
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_PLAYING called");
 
 	//__android_log_print(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(int)samp->data_size(): %x", samp->data_size);
 
-	result =	(*voice->bqPlayerBufferQueue)->Enqueue(voice->bqPlayerBufferQueue, s->buffer_data,  (int)s->data_size);
+	result =	(*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, s->buffer_data,  (int)s->data_size);
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "Enqueue() called");
 
 	// ここでフェードインを始めよ
-	pthread_t fade_in;
-	pthread_create(&fade_in, NULL, loop_fade_in, (void*)(poly_sampler + current_looping_voice));
+//	pthread_t fade_in;
+//	pthread_create(&fade_in, NULL, loop_fade_in, (void*)(poly_sampler + current_looping_voice));
+
+	v->sl_volume = SLMILLIBEL_MIN;
+	v->fading_in = TRUE;
+	v->fading_out = FALSE;
 
 	if (SL_RESULT_SUCCESS != result) {
 		return 0;
@@ -401,74 +419,144 @@ int enqueue_seamless_loop(sample_def* s) {
 	return 1;
 }
 
-// 一般的なTICRATEを使えばいいかもな
-void* loop_fade_out(void* looper) {
 
-	((voice*)looper)->is_fading = 1;
+int current_voice_fading() {
+	voice* v = (poly_sampler + current_looping_voice);
 
-	struct timespec ts;
+	if (v->fading_in || v->fading_out) {
 
-	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
-	SLresult result;
+		return TRUE;
+	} else {
+		return FALSE;
+	}
 
-	// ((oneshot_def*)samp)
-	SLVolumeItf fade_out_Itf = ((voice*)looper)->bqPlayerVolume;
-	//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "current_looping_voice: %d", current_looping_voice);
+}
 
-	SLmillibel out_vol = SLMILLIBEL_MAX;
+void fade_automation() {
 
-	// グローバルスレッドのほうが一番簡単
-	while (1) {
+	int i;
+	for (i = 0; i < LOOPER_COUNT; i++) {
 
-		if (NULL != fade_out_Itf) {
-			result = (*fade_out_Itf)->SetVolumeLevel(fade_out_Itf, out_vol);
-			assert(SL_RESULT_SUCCESS == result);
+		voice* v = &poly_sampler[i];
+		//__android_log_print(ANDROID_LOG_DEBUG, "fade_automation", "poly_sampler[%d], in: %d, out: %d", i, v->fading_in, v->fading_out);
+
+		if (v->fading_in) {
+			loop_fade_in(v);
 		}
-		out_vol -= 50;
-		//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "out_vol: %d", out_vol);
 
-		usleep(100000);
-		if (out_vol <= SLMILLIBEL_MIN) {
-			((voice*)looper)->is_fading = 0;
-			break;
+		if (v->fading_out) {
+			loop_fade_out(v);
 		}
 	}
-	return NULL;
+}
+
+void loop_fade_in(voice* v) {
+	//__android_log_write(ANDROID_LOG_DEBUG, "fade_automation", "loop_fade_in() called");
+
+		// これは問題？
+		SLresult result;
+		SLVolumeItf vol_itf = v->bqPlayerVolume;
+
+		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+		assert(SL_RESULT_SUCCESS == result);
+
+		v->sl_volume += 50;
+
+		if (v->sl_volume >= SLMILLIBEL_MAX) {
+			v->fading_in = FALSE;
+		}
+}
+
+void loop_fade_out(voice* v) {
+	//__android_log_write(ANDROID_LOG_DEBUG, "fade_automation", "loop_fade_out() called");
+
+		SLresult result;
+		SLVolumeItf vol_itf = v->bqPlayerVolume;
+
+		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+		assert(SL_RESULT_SUCCESS == result);
+
+		v->sl_volume -= 50;
+
+		if (v->sl_volume <= SLMILLIBEL_MIN) {
+			v->fading_out = FALSE;
+		}
 }
 
 
-void* loop_fade_in(void* looper) {
 
-	((voice*)looper)->is_fading = 1;
 
-	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
 
-		struct timespec ts;
 
-	SLresult result;
-	SLVolumeItf fade_in_Itf =  ((voice*)looper)->bqPlayerVolume;
-	__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "current_looping_voice: %d", current_looping_voice);
+//
+//// 一般的なTICRATEを使えばいいかもな
+//void* loop_fade_out(void* looper) {
+//
+//	((voice*)looper)->is_fading = 1;
+//
+//	struct timespec ts;
+//
+//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
+//	SLresult result;
+//
+//	// ((oneshot_def*)samp)
+//	SLVolumeItf fade_out_Itf = ((voice*)looper)->bqPlayerVolume;
+//	//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "current_looping_voice: %d", current_looping_voice);
+//
+//	SLmillibel out_vol = SLMILLIBEL_MAX;
+//
+//	// グローバルスレッドのほうが一番簡単
+//	while (1) {
+//
+//		if (NULL != fade_out_Itf) {
+//			result = (*fade_out_Itf)->SetVolumeLevel(fade_out_Itf, out_vol);
+//			assert(SL_RESULT_SUCCESS == result);
+//		}
+//		out_vol -= 50;
+//		//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "out_vol: %d", out_vol);
+//
+//		usleep(100000);
+//		if (out_vol <= SLMILLIBEL_MIN) {
+//			((voice*)looper)->is_fading = 0;
+//			break;
+//		}
+//	}
+//	return NULL;
+//}
 
-	SLmillibel in_vol = SLMILLIBEL_MIN;
 
-		while(1) {
-
-			if (NULL != fade_in_Itf) {
-				result = (*fade_in_Itf)->SetVolumeLevel(fade_in_Itf, in_vol);
-				assert(SL_RESULT_SUCCESS == result);
-			}
-			in_vol += 50;
-			//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "in_vol: %d", in_vol);
-
-			usleep(100000);
-			if (in_vol >= SLMILLIBEL_MAX) {
-
-				((voice*)looper)->is_fading = 0;
-				break;
-			}
-	}
-	return NULL;
-}
+//void* loop_fade_in(void* looper) {
+//
+//	((voice*)looper)->is_fading = 1;
+//
+//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
+//
+//		struct timespec ts;
+//
+//	SLresult result;
+//	SLVolumeItf fade_in_Itf =  ((voice*)looper)->bqPlayerVolume;
+//	__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "current_looping_voice: %d", current_looping_voice);
+//
+//	SLmillibel in_vol = SLMILLIBEL_MIN;
+//
+//		while(1) {
+//
+//			if (NULL != fade_in_Itf) {
+//				result = (*fade_in_Itf)->SetVolumeLevel(fade_in_Itf, in_vol);
+//				assert(SL_RESULT_SUCCESS == result);
+//			}
+//			in_vol += 50;
+//			//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "in_vol: %d", in_vol);
+//
+//			usleep(100000);
+//			if (in_vol >= SLMILLIBEL_MAX) {
+//
+//				((voice*)looper)->is_fading = 0;
+//				break;
+//			}
+//	}
+//	return NULL;
+//}
 
 
 
@@ -519,20 +607,12 @@ if (vol > 0)	vol = 0;
 // 書き直すべき
 int enqueue_one_shot(sample_def * s, float vel) {
 
-
-	// 返り値は再生中しないボイス
-
-
-
 	voice* v = get_next_free_voice();
-//	voice* v = poly_sampler;
-
 	if (v == NULL)
 	{
 		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v == NULL: couldn't find a free buffer");
 		return 0;
 	}
-
 
 	v->sample = s;
 	v->current_chunk = 0;
@@ -548,18 +628,11 @@ int enqueue_one_shot(sample_def * s, float vel) {
 	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->sample->data_size: %d", v->sample->data_size);
 	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->is_playing: %d", v->is_playing);
 
-
 	//result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, get_next_data_chunk(v), v->current_chunk_size);
-
-
 
 	if (SL_RESULT_SUCCESS != result) {
 		return 0;
 	}
-
-
-
-
 
 	return 1;
 
@@ -646,7 +719,16 @@ void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) 
 	assert(SL_RESULT_SUCCESS == result);
 }
 
+void buffer_chunk_timer_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
+//	__android_log_write(ANDROID_LOG_DEBUG, "buffer_chunk_timer_callback", "buffer_chunk_timer_callback() called");
+//total_tic_counter++;
+	tic_counter();
+	play_all_parts();
 
+	SLresult result;
+	result = (*buffer_queue)->Enqueue(buffer_queue, get_next_data_chunk((voice*)v), BUFFER_SIZE);
+	assert(SL_RESULT_SUCCESS == result);
+}
 
 void timing_test_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "timing_test_callback", "timing_test_callback() called");
