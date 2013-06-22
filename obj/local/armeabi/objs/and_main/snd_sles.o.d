@@ -51,7 +51,12 @@ obj/local/armeabi/objs/and_main/snd_sles.o: jni/snd_sles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h \
  jni/snd_sles.h jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
- jni/hon_type.h jni/snd_ctrl.h
+ jni/hon_type.h jni/snd_ctrl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/assert.h:
 
@@ -162,3 +167,13 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/sto
 jni/hon_type.h:
 
 jni/snd_ctrl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:

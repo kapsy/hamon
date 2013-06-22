@@ -45,8 +45,9 @@ sample_def looping_samples[] = {
 
 
 		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_minor_001.wav", 48, NULL, NULL}
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_minor_001.wav", 48, NULL, NULL},
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cumulonimbus_002.wav", 48, NULL, NULL},
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_002.wav", 48, NULL, NULL}
 
 };
 

@@ -19,7 +19,7 @@
 #define TOTAL_NOTES 24
 #define START_NOTE 48// MIDI番号
 
-int selected_scale = 1;
+int selected_scale = 0;
 extern sample_def oneshot_samples[];
 
 typedef struct {
@@ -40,34 +40,50 @@ typedef struct {
 // この配列の中にループしている音の情報を入るべき！
 scale_def scales[] = {
 
-		{ "test scale",
+//		{ "test scale",
+//				{
+//						48, 48, 48, 48, 48, 48, 48, 48,
+//						49, 49, 49, 49, 49, 49, 49, 49,
+//						50, 50, 50, 50, 50, 50, 50, 50
+//				},
+//				1
+//		},
+
+		{ "major",
 				{
-						48, 48, 48, 48, 48, 48, 48, 48,
-						49, 49, 49, 49, 49, 49, 49, 49,
-						50, 50, 50, 50, 50, 50, 50, 50
+						48, 48, 50, 50, 52, 53, 53, 55,
+						57, 59, 60, 62, 64, 65, 67, 69,
+						71, 72, 74, 76, 77, 79, 81, 83
+				},
+				0
+		},
+
+		{ "minor",
+				{
+						49, 49, 51, 51, 54, 54, 56, 56,
+						58, 58, 61, 61, 63, 63, 66, 66,
+						68, 68, 70, 73, 75, 78, 80, 82
 				},
 				1
 		},
 
-		{ "major scale",
+		{ "cumulonimbus",
 				{
-						48, 48, 50, 52, 53, 55, 57, 59,
-						60, 62, 64, 65, 67, 69, 71, 72,
-						74, 76, 77, 79, 81, 83, 83, 83
+						48, 48, 51, 51, 53, 53, 55, 55,
+						57, 57, 58, 58, 60, 63, 65, 67,
+						69, 70, 72, 75, 77, 79, 80, 82
 				},
 				2
 		},
 
-		{ "minor scale",
+		{ "cirrostratus",
 				{
-						49, 49, 51, 51, 54, 54, 56, 56,
-						58, 58, 61, 61, 63, 66, 68, 70,
-						73, 75, 78, 78, 80, 80, 82, 82
+						48, 48, 49, 49, 51, 51, 53, 53,
+						54, 54, 58, 58, 60, 61, 63, 65,
+						66, 70, 72, 73, 75, 77, 78, 82
 				},
 				3
-		}
-
-
+	}
 };
 
 
@@ -78,12 +94,14 @@ void play_loop() {
 }
 
 void play_note(int segment, float vel) {
-	int sample = scales[selected_scale].midimap[segment];
-	sample -= START_NOTE;
 
-	int success = enqueue_one_shot(oneshot_samples + sample, vel);
 
-	__android_log_print(ANDROID_LOG_DEBUG, "play_note", "vel: %f", vel);
+		int sample = scales[selected_scale].midimap[segment];
+		sample -= START_NOTE;
+
+		int success = enqueue_one_shot(oneshot_samples + sample, vel);
+
+		__android_log_print(ANDROID_LOG_DEBUG, "play_note", "vel: %f", vel);
 
 }
 

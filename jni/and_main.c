@@ -245,6 +245,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 			//play_note(find_screen_segment(AMotionEvent_getX(event, 0)), find_vel_value(AMotionEvent_getY(event, 0)));
 			play_rec_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
+			set_parts_active();
         engine->animating = 1;
 
 			break;
@@ -284,6 +285,8 @@ for (index = 0; index < touch_max; index++) {
 
 					//play_note(find_screen_segment(AMotionEvent_getX(event, pointer_index_mask)), find_vel_value(AMotionEvent_getY(event, pointer_index_mask)));
 					play_rec_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
+
+					set_parts_active();
 				}
 
 						__android_log_print(ANDROID_LOG_DEBUG, "engine_handle_input",
@@ -320,12 +323,12 @@ for (index = 0; index < touch_max; index++) {
 
 
 void play_rec_note(float x, float y) {
-
-	int seg = find_screen_segment(x);
-	float vel = find_vel_value(y);
-	play_note(seg, vel);
-	record_note(x, y, seg, vel);
-
+	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ðŠm”F‚·‚é‚½‚ß
+		int seg = find_screen_segment(x);
+		float vel = find_vel_value(y);
+		play_note(seg, vel);
+		record_note(x, y, seg, vel);
+	}
 }
 
 
@@ -368,9 +371,11 @@ static float find_vel_value(float pos_y) {
 
 	__android_log_print(ANDROID_LOG_DEBUG, "find_vel_value", "pos_y: %f", pos_y);
 
-	float vel = 1 - (pos_y/(float)screen_height);
+	//float vel = 1 - (pos_y/(float)screen_height);
 
+	//SLmillibel vol = (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
 
+	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // ‘‚«’¼‚·‚µ‚È‚«‚á
 	__android_log_print(ANDROID_LOG_DEBUG, "find_vel_value", "vel: %f", vel);
 
 	return vel;
@@ -456,21 +461,21 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             break;
         case APP_CMD_GAINED_FOCUS:
             // When our app gains focus, we start monitoring the accelerometer.
-            if (engine->accelerometerSensor != NULL) {
-                ASensorEventQueue_enableSensor(engine->sensorEventQueue,
-                        engine->accelerometerSensor);
-                // We'd like to get 60 events per second (in us).
-                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-                        engine->accelerometerSensor, (1000L/60)*1000);
-            }
+//            if (engine->accelerometerSensor != NULL) {
+//                ASensorEventQueue_enableSensor(engine->sensorEventQueue,
+//                        engine->accelerometerSensor);
+//                // We'd like to get 60 events per second (in us).
+//                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
+//                        engine->accelerometerSensor, (1000L/60)*1000);
+//            }
             break;
         case APP_CMD_LOST_FOCUS:
             // When our app loses focus, we stop monitoring the accelerometer.
             // This is to avoid consuming battery while not being used.
-            if (engine->accelerometerSensor != NULL) {
-                ASensorEventQueue_disableSensor(engine->sensorEventQueue,
-                        engine->accelerometerSensor);
-            }
+//            if (engine->accelerometerSensor != NULL) {
+//                ASensorEventQueue_disableSensor(engine->sensorEventQueue,
+//                        engine->accelerometerSensor);
+//            }
             // Also stop animating.
             engine->animating = 0;
             engine_draw_frame(engine);
@@ -515,22 +520,20 @@ void android_main(struct android_app* state) {
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
 
-    AAssetManager* asset_manager = state->activity->assetManager;
+
+	init_random_seed();
+	init_all_parts();
+
+	AAssetManager* asset_manager = state->activity->assetManager;
 
 	create_sl_engine();
 	load_all_assets(asset_manager);
 	init_all_voices();
 
 	// snd_ctrl‚Ì‚±‚Æ
-	init_all_parts();
 
 	init_timing_loop();
 	play_loop();
-
-
-
-
-
 
 //	struct timeval start_time;
 //	struct timeval finish_time;
@@ -538,9 +541,9 @@ void android_main(struct android_app* state) {
 //	struct timeval curr_time;
 //	struct timezone tzp;
 
-    // loop waiting for stuff to do.
+	// loop waiting for stuff to do.
 
-    while (1) {
+	while (1) {
 
 
 //		gettimeofday(&start_time, &tzp);

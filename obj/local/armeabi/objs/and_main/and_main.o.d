@@ -68,7 +68,12 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
- jni/snd_scal.h jni/snd_ctrl.h
+ jni/snd_scal.h jni/snd_ctrl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -213,3 +218,13 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSL
 jni/snd_scal.h:
 
 jni/snd_ctrl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:
