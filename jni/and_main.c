@@ -38,16 +38,16 @@ typedef void* EGLNativeDisplayType;
 #define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 
 
-static int screen_width;
-static int screen_height;
+size_t screen_width;
+size_t screen_height;
+size_t screen_height_reduced; // 既に計算した値・自動的再生のためにここで計算
 
-static int TOTAL_SEGMENTS = 24;
+//static int TOTAL_SEGMENTS = TOTAL_NOTES;
 static float touch_segment_width;
 
 
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
-
 void play_rec_note(float x, float y);
 
 
@@ -334,7 +334,7 @@ void play_rec_note(float x, float y) {
 
 static void calc_segment_width() {
 
-	touch_segment_width = (float)screen_width/(float)TOTAL_SEGMENTS;
+	touch_segment_width = (float)screen_width/(float)TOTAL_NOTES;
 	__android_log_print(ANDROID_LOG_DEBUG, "calc_segment_width", "touch_segment_width: %f", touch_segment_width);
 }
 
@@ -405,7 +405,7 @@ static void get_screen_dimensions(struct engine* engine) {
 	screen_width = (int)ANativeWindow_getWidth(engine->app->window);
 	screen_height = (int)ANativeWindow_getHeight(engine->app->window);
 
-
+	screen_height_reduced = screen_height * 0.8F;
 /*
 	if (ANativeWindow_lock(engine->app->window, &buffer, NULL) < 0) {
 	        LOGW("Unable to lock window buffer");
@@ -418,6 +418,7 @@ static void get_screen_dimensions(struct engine* engine) {
 
 	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "ANativeWindow_getWidth: %d", screen_width);
 	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "ANativeWindow_getHeight: %d", screen_height);
+	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "screen_height_reduced: %d", screen_height_reduced);
 
 
 }
@@ -430,36 +431,36 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     struct engine* engine = (struct engine*)app->userData;
     switch (cmd) {
         case APP_CMD_SAVE_STATE:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_SAVE_STATE");
+
+
             // The system has asked us to save our current state.  Do so.
             engine->app->savedState = malloc(sizeof(struct saved_state));
             *((struct saved_state*)engine->app->savedState) = engine->state;
             engine->app->savedStateSize = sizeof(struct saved_state);
             break;
         case APP_CMD_INIT_WINDOW:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_INIT_WINDOW");
             // The window is being shown, get it ready.
             if (engine->app->window != NULL) {
-
-
                 engine_init_display(engine);
                 engine_draw_frame(engine);
-
-
-
             	get_screen_dimensions(engine);
             	// touch
             	calc_segment_width();
-
-
 
            	 ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
             }
             break;
         case APP_CMD_TERM_WINDOW:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_TERM_WINDOW");
             // The window is being hidden or closed, clean it up.
+
             engine_term_display(engine);
             break;
         case APP_CMD_GAINED_FOCUS:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_GAINED_FOCUS");
             // When our app gains focus, we start monitoring the accelerometer.
 //            if (engine->accelerometerSensor != NULL) {
 //                ASensorEventQueue_enableSensor(engine->sensorEventQueue,
@@ -470,6 +471,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 //            }
             break;
         case APP_CMD_LOST_FOCUS:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_LOST_FOCUS");
             // When our app loses focus, we stop monitoring the accelerometer.
             // This is to avoid consuming battery while not being used.
 //            if (engine->accelerometerSensor != NULL) {
@@ -479,6 +481,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             // Also stop animating.
             engine->animating = 0;
             engine_draw_frame(engine);
+            shutdown_audio();
             break;
     }
 }

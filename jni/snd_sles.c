@@ -50,7 +50,7 @@
 #define VEL_SLMILLIBEL_MIN -3000
 #define VEL_SLMILLIBEL_RANGE 3000
 
-
+#define FADE_FACTOR_CHG_RATE 0.01F
 
 
 //long elapsed_buffer_tics = 0;
@@ -61,6 +61,8 @@ void cycle_oneshot_voice();
 
 void loop_fade_out(voice* v);
 void loop_fade_in(voice* v);
+
+void voice_volume_factor(voice* v);
 
 
 void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* voice);
@@ -74,6 +76,8 @@ SLmillibel float_to_slmillibel(float sender_vel, float sender_range);
 unsigned short* get_next_data_chunk(voice* voice);
 voice* get_next_free_voice();
 
+void shutdown_voice(voice* v);
+void shutdown_all_voices();
 
 // engine interfaces
 static SLObjectItf engineObject = NULL;
@@ -84,23 +88,12 @@ static SLObjectItf outputMixObject = NULL;
 static SLEnvironmentalReverbItf outputMixEnvironmentalReverb = NULL;
 
 // フェードのため
-static SLVolumeItf fade_in_itf;
-static SLVolumeItf fade_out_itf;
+//static SLVolumeItf fade_in_itf;
+//static SLVolumeItf fade_out_itf;
 int initial_loop = TRUE;
 
-//typedef struct {
-//	SLObjectItf bqPlayerObject;
-//	SLPlayItf bqPlayerPlay;
-//	SLAndroidSimpleBufferQueueItf bqPlayerBufferQueue;
-//	SLVolumeItf bqPlayerVolume;
-//	SLBufferQueueState bqstate;
-//} voice;
-//
 
-
-//static voice loop_poly[VOICE_COUNT];
 static voice poly_sampler[VOICE_COUNT];
-
 
 extern sample_def silence_chunk;
 
@@ -111,12 +104,13 @@ static const SLEnvironmentalReverbSettings reverbSettings =
 
 
 
-static int current_oneshot_voice = 4;
+static int current_oneshot_voice = 4; // FIXME LOOPER_COUNTのほうが無難かも
 static int current_looping_voice = 0;
 
-static int currently_xfading = 0;
 
 
+
+//static int currently_xfading = 0;
 // 必要の理由：ループのcallbackを登録するため
 //extern oneshot_def looping_samples[];
 
@@ -190,7 +184,8 @@ void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 
 void init_voice(voice* v, int timing_voice, int looping_voice) {
 
-//	v->is_fading = FALSE;
+	v->vol_fade_factor = 1.0F;
+	v->vol_auto_factor = 1.0F;
 
 	v->fading_in = FALSE;
 	v->fading_out=FALSE;
@@ -284,7 +279,17 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
 
 }
 
+void shutdown_voice(voice* v) {
 
+	if (v->bqPlayerObject != NULL) {
+
+		(*v->bqPlayerObject)->Destroy(v->bqPlayerObject);
+		v->bqPlayerObject = NULL;
+		v->bqPlayerPlay = NULL;
+		v->bqPlayerBufferQueue = NULL;
+		v->bqPlayerVolume = NULL;
+	}
+}
 
 // buffer queue players を作り出すため
 void init_all_voices() {
@@ -335,7 +340,15 @@ void init_all_voices() {
 
 }
 
+void shutdown_all_voices() {
 
+	int i;
+
+	for(i=0;i<VOICE_COUNT;i++) {
+		shutdown_voice(&poly_sampler[i]);
+	}
+
+}
 
 
 int enqueue_seamless_loop(sample_def* s) {
@@ -361,10 +374,10 @@ int enqueue_seamless_loop(sample_def* s) {
 
 		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(!initial_loop) ");
 
-//		pthread_t fade_out;
-		//pthread_create(&fade_out, NULL, loop_fade_out, (void*)voice);
 
-		v->sl_volume = SLMILLIBEL_MAX;
+		//v->sl_volume = SLMILLIBEL_MAX;
+		v->vol_fade_factor = 1.0F;
+
 		v->fading_in = FALSE;
 		v->fading_out = TRUE;
 
@@ -376,6 +389,8 @@ int enqueue_seamless_loop(sample_def* s) {
 
 		// 浮動小数点型なボリューム操作機能を使うべきだ
 		v->sl_volume = SLMILLIBEL_MIN;
+		v->vol_fade_factor = 0.0F;
+
 		SLVolumeItf vol_itf = v->bqPlayerVolume;
 		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
 		assert(SL_RESULT_SUCCESS == result);
@@ -408,10 +423,8 @@ int enqueue_seamless_loop(sample_def* s) {
 	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "Enqueue() called");
 
 	// ここでフェードインを始めよ
-//	pthread_t fade_in;
-//	pthread_create(&fade_in, NULL, loop_fade_in, (void*)(poly_sampler + current_looping_voice));
-
-	v->sl_volume = SLMILLIBEL_MIN;
+//	v->sl_volume = SLMILLIBEL_MIN;
+	v->vol_fade_factor = 0.0F;
 	v->fading_in = TRUE;
 	v->fading_out = FALSE;
 
@@ -435,13 +448,13 @@ int current_voice_fading() {
 
 }
 
-void fade_automation() {
+void vol_automation() {
 
 	int i;
 	for (i = 0; i < LOOPER_COUNT; i++) {
 
 		voice* v = &poly_sampler[i];
-		//__android_log_print(ANDROID_LOG_DEBUG, "fade_automation", "poly_sampler[%d], in: %d, out: %d", i, v->fading_in, v->fading_out);
+		__android_log_print(ANDROID_LOG_DEBUG, "fade_automation", "poly_sampler[%d], in: %d, out: %d", i, v->fading_in, v->fading_out);
 
 		if (v->fading_in) {
 			loop_fade_in(v);
@@ -450,40 +463,89 @@ void fade_automation() {
 		if (v->fading_out) {
 			loop_fade_out(v);
 		}
+
+		if (v->fading_in || v->fading_out) {
+			voice_volume_factor(v);
+		}
+
 	}
 }
 
+//void loop_fade_in(voice* v) {
+//	//__android_log_write(ANDROID_LOG_DEBUG, "fade_automation", "loop_fade_in() called");
+//
+//		// これは問題？
+//		SLresult result;
+//		SLVolumeItf vol_itf = v->bqPlayerVolume;
+//
+//		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+//		assert(SL_RESULT_SUCCESS == result);
+//
+//		v->sl_volume += 50;
+//
+//		if (v->sl_volume >= SLMILLIBEL_MAX) {
+//			v->fading_in = FALSE;
+//		}
+//}
+//
+//void loop_fade_out(voice* v) {
+//	//__android_log_write(ANDROID_LOG_DEBUG, "fade_automation", "loop_fade_out() called");
+//
+//		SLresult result;
+//		SLVolumeItf vol_itf = v->bqPlayerVolume;
+//
+//		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+//		assert(SL_RESULT_SUCCESS == result);
+//
+//		v->sl_volume -= 50;
+//
+//		if (v->sl_volume <= SLMILLIBEL_MIN) {
+//			v->fading_out = FALSE;
+//		}
+//}
+
+
 void loop_fade_in(voice* v) {
-	//__android_log_write(ANDROID_LOG_DEBUG, "fade_automation", "loop_fade_in() called");
+//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
 
-		// これは問題？
-		SLresult result;
-		SLVolumeItf vol_itf = v->bqPlayerVolume;
+	if (v->vol_fade_factor < 1.0F) {
+		v->vol_fade_factor += FADE_FACTOR_CHG_RATE;
+	}
 
-		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
-		assert(SL_RESULT_SUCCESS == result);
+	if (v->vol_fade_factor >= 1.0F) {
+		v->vol_fade_factor = 1.0F;
+		v->fading_in = FALSE;
+//		__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "v->vol_fade_factor: %f", v->vol_fade_factor);
+	}
 
-		v->sl_volume += 50;
-
-		if (v->sl_volume >= SLMILLIBEL_MAX) {
-			v->fading_in = FALSE;
-		}
 }
 
 void loop_fade_out(voice* v) {
-	//__android_log_write(ANDROID_LOG_DEBUG, "fade_automation", "loop_fade_out() called");
+//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_out", "loop_fade_out() called");
 
-		SLresult result;
-		SLVolumeItf vol_itf = v->bqPlayerVolume;
+	if (v->vol_fade_factor > 0.0F) {
+		v->vol_fade_factor -= FADE_FACTOR_CHG_RATE;
+	}
 
-		result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
-		assert(SL_RESULT_SUCCESS == result);
+	if (v->vol_fade_factor <= 0.0F) {
+		v->vol_fade_factor = 0.0F;
+		v->fading_out = FALSE;
+//		__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "v->vol_fade_factor: %f", v->vol_fade_factor);
+	}
 
-		v->sl_volume -= 50;
+}
 
-		if (v->sl_volume <= SLMILLIBEL_MIN) {
-			v->fading_out = FALSE;
-		}
+void voice_volume_factor(voice* v) {
+
+	v->sl_volume = (1.0F - (v->vol_fade_factor * v->vol_auto_factor)) * SLMILLIBEL_MIN;
+	__android_log_print(ANDROID_LOG_DEBUG, "voice_volume_factor", "v->vol_fade_factor: %f, v->sl_volume: %d", v->vol_fade_factor, v->sl_volume);
+
+	SLresult result;
+	SLVolumeItf vol_itf = v->bqPlayerVolume;
+
+	result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+	assert(SL_RESULT_SUCCESS == result);
+
 }
 
 
@@ -491,78 +553,16 @@ void loop_fade_out(voice* v) {
 
 
 
-//
-//// 一般的なTICRATEを使えばいいかもな
-//void* loop_fade_out(void* looper) {
-//
-//	((voice*)looper)->is_fading = 1;
-//
-//	struct timespec ts;
-//
-//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
-//	SLresult result;
-//
-//	// ((oneshot_def*)samp)
-//	SLVolumeItf fade_out_Itf = ((voice*)looper)->bqPlayerVolume;
-//	//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "current_looping_voice: %d", current_looping_voice);
-//
-//	SLmillibel out_vol = SLMILLIBEL_MAX;
-//
-//	// グローバルスレッドのほうが一番簡単
-//	while (1) {
-//
-//		if (NULL != fade_out_Itf) {
-//			result = (*fade_out_Itf)->SetVolumeLevel(fade_out_Itf, out_vol);
-//			assert(SL_RESULT_SUCCESS == result);
-//		}
-//		out_vol -= 50;
-//		//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "out_vol: %d", out_vol);
-//
-//		usleep(100000);
-//		if (out_vol <= SLMILLIBEL_MIN) {
-//			((voice*)looper)->is_fading = 0;
-//			break;
-//		}
-//	}
-//	return NULL;
-//}
-
-
-//void* loop_fade_in(void* looper) {
-//
-//	((voice*)looper)->is_fading = 1;
-//
-//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
-//
-//		struct timespec ts;
-//
-//	SLresult result;
-//	SLVolumeItf fade_in_Itf =  ((voice*)looper)->bqPlayerVolume;
-//	__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "current_looping_voice: %d", current_looping_voice);
-//
-//	SLmillibel in_vol = SLMILLIBEL_MIN;
-//
-//		while(1) {
-//
-//			if (NULL != fade_in_Itf) {
-//				result = (*fade_in_Itf)->SetVolumeLevel(fade_in_Itf, in_vol);
-//				assert(SL_RESULT_SUCCESS == result);
-//			}
-//			in_vol += 50;
-//			//__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "in_vol: %d", in_vol);
-//
-//			usleep(100000);
-//			if (in_vol >= SLMILLIBEL_MAX) {
-//
-//				((voice*)looper)->is_fading = 0;
-//				break;
-//			}
-//	}
-//	return NULL;
-//}
 
 
 
+
+
+
+
+
+
+// 一発的な音のため
 void set_voice_volume(voice* v, float vol) { //入力スべき値は0から1の間
 
 	__android_log_print(ANDROID_LOG_DEBUG, "set_voice_volume", "vol: %f", vol);
@@ -805,16 +805,8 @@ void cycle_oneshot_voice() {
 // shut down the native audio system
 void shutdown_audio()
 {
-    // destroy buffer queue audio player object, and invalidate all associated interfaces
-//    if (bqPlayerObject != NULL) {
-//        (*bqPlayerObject)->Destroy(bqPlayerObject);
-//        bqPlayerObject = NULL;
-//        bqPlayerPlay = NULL;
-//        bqPlayerBufferQueue = NULL;/*
-//        bqPlayerEffectSend = NULL;
-//        bqPlayerMuteSolo = NULL;*/
-//        bqPlayerVolume = NULL;
-//    }
+
+	shutdown_all_voices();
 
     // destroy output mix object, and invalidate all associated interfaces
     if (outputMixObject != NULL) {

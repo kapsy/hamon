@@ -37,6 +37,12 @@ typedef struct {
 	SLmillibel sl_volume;
 
 
+
+	float vol_fade_factor;
+	float vol_auto_factor;
+
+
+
 } voice;
 
 void create_sl_engine();
@@ -49,7 +55,7 @@ int enqueue_one_shot(sample_def * samp, float vel);
 
 
 //void* loop_fade_in(void* args);
-void fade_automation();
+void vol_automation();
 
 int current_voice_fading();
 

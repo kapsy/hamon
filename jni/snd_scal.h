@@ -12,6 +12,8 @@
 #ifndef SCALES_H_
 #define SCALES_H_
 
+//#define TOTAL_NOTES 24
+#define TOTAL_NOTES 24
 
 void play_note(int segment, float vel);
 void play_loop();

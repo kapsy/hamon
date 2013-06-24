@@ -21,24 +21,51 @@
 #include "and_main.h"
 
 
-#define AMMO_INCREASE_RATE 50 // 個のticsを過ごすと、AMMOが1に増やす
-#define AMMO_MAX 3
+//#define AMMO_INCREASE_RATE 50 // 個のticsを過ごすと、AMMOが1に増やす
+//#define AMMO_MAX 5
+//// この値は記録した後の再生数を数える
+//#define PART_TTL 10//15
+//#define FADE_OUT_POINT 4
+//#define FADE_OUT_FACTOR 0.9F
+//
+//#define SILENCE_BEFORE_AUTO_PLAY 150
+//#define MINIMUM_CHORD_PLAY_TIME 300
+//
+//#define TOTAL_NOTES_PER_PART 32
+//#define TOTAL_PARTS 4
+//
+//#define NS_IN_SEC 1000000000
+//
 
-#define PART_TTL 10//15
+
+#define AMMO_INCREASE_RATE 50 // 個のticsを過ごすと、AMMOが1に増やす
+#define AMMO_MAX 5
+// この値は記録した後の再生数を数える
+#define PART_TTL 9
 #define FADE_OUT_POINT 4
 #define FADE_OUT_FACTOR 0.9F
 
+// 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
+#define MINIMUM_CHORD_PLAY_TIME 1000
+#define ONESHOT_RANDOM 180 // この値が変わるといいな
+#define CHORD_CHANGE_RANDOM 2000
+
 
 
 #define TOTAL_NOTES_PER_PART 32
-#define TOTAL_PARTS 4
-
-
+#define TOTAL_PARTS 7
 
 #define NS_IN_SEC 1000000000
 
-//#define LENGTH_RND = RAND_MAX
+
+
+
+
+
+
+
+
 
 typedef struct {
 	float pos_x;
@@ -107,13 +134,19 @@ static int current_rec_part = 0;
 static size_t tics_per_part = 1500; // 3000; // 5000;
 static size_t tic_increment = 0;
 
-size_t ammo_current = 5;
-size_t ammo_max = 5;
+size_t ammo_current = AMMO_MAX;
+size_t ammo_max = AMMO_MAX;
 size_t ammo_increase_counter;
 
 // 自動的な再生
 size_t not_active_count = 0;
 int parts_active = FALSE;
+
+size_t chord_change_count = 0;
+
+extern size_t screen_width;
+extern size_t screen_height_reduced;
+
 
 void* timing_loop(void* args);
 void tic_counter();
@@ -169,7 +202,7 @@ void* timing_loop(void* args) {
 		// これだけで十分あまり性格的なタイミングが必要ないかも
 		usleep(100000); // 100ミリ秒
 
-		fade_automation();
+		vol_automation();
 		increase_ammo();
 		auto_play();
 
@@ -322,8 +355,6 @@ int get_free_part() { // もしかしてget_free_part()
 			return current_rec_part;
 		}
 	}
-
-
 	return get_oldest_part();
 
 }
@@ -335,9 +366,7 @@ int get_oldest_part() {
 
 	int i;
 	for (i = 0; i < TOTAL_PARTS; i++) {
-
 		int pc = (parts + i)->play_count;
-
 		if(pc >= most_plays) {
 			most_plays = pc;
 			part = i;
@@ -356,7 +385,6 @@ void parts_are_active() {
 	int active = FALSE;
 	int i;
 	for (i = 0; i < TOTAL_PARTS; i++) {
-
 		if ((parts + i)->is_alive && !(parts + i)->is_recording) {
 			active = TRUE;
 		}
@@ -367,43 +395,50 @@ void parts_are_active() {
 }
 
 void set_parts_active() {
-
 	parts_active = TRUE;
 	not_active_count = 0;
+	chord_change_count = 0;
 }
 
 void auto_play() {
-
-	if (!parts_active) {
+	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
 		not_active_count++;
 	}
-	if (not_active_count > SILENCE_BEFORE_AUTO_PLAY) {
+	if (not_active_count == SILENCE_BEFORE_AUTO_PLAY) {
 
-		int r = obtain_random(200);
+		int r = obtain_random(ONESHOT_RANDOM);
 		//__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(!obtain_random(50)) r %d", r);
 
 		if (r == 0) {
-			float x = (float) (obtain_random(752));
-			float y = (float) (obtain_random(480));
+
+
+
+			float x = (float) (obtain_random(screen_width));
+			float y = (float)(obtain_random(screen_height_reduced));
+
 			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "x %f y %f", x, y);
 			play_rec_note(x, y);
 		}
 
-		int s = obtain_random(2000);
-		if (s == 0) {
-		__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(obtain_random(2000)) s %d", s);
-			int success = cycle_scale();
+		if (chord_change_count < MINIMUM_CHORD_PLAY_TIME) {
+			chord_change_count++;
 		}
 
+		if (chord_change_count == MINIMUM_CHORD_PLAY_TIME) {
+			int s = obtain_random(CHORD_CHANGE_RANDOM);
 
+			if (s == 0) {
+				__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(obtain_random(2000)) s %d", s);
+				int success = cycle_scale();
+				chord_change_count = 0;
+			}
+
+		}
 	}
 
-
-
-	__android_log_print(ANDROID_LOG_DEBUG, "parts_are_active", "not_active_count %d", not_active_count);
+	__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "not_active_count %d", not_active_count);
+	__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "chord_change_count %d", chord_change_count);
 }
-
-void
 
 
 
