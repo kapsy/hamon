@@ -16,7 +16,7 @@ obj/local/armeabi/objs/and_main/snd_scal.o: jni/snd_scal.c jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/kernel.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
- jni/snd_sles.h \
+ jni/snd_sles.h jni/snd_scal.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
@@ -35,8 +35,7 @@ obj/local/armeabi/objs/and_main/snd_scal.o: jni/snd_scal.c jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/time.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h \
- jni/snd_scal.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h
 
 jni/snd_asst.h:
 
@@ -76,6 +75,8 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/sto
 
 jni/snd_sles.h:
 
+jni/snd_scal.h:
+
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h:
@@ -113,5 +114,3 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h:
-
-jni/snd_scal.h:

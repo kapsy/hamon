@@ -21,24 +21,7 @@
 #include "and_main.h"
 
 
-//#define AMMO_INCREASE_RATE 50 // 個のticsを過ごすと、AMMOが1に増やす
-//#define AMMO_MAX 5
-//// この値は記録した後の再生数を数える
-//#define PART_TTL 10//15
-//#define FADE_OUT_POINT 4
-//#define FADE_OUT_FACTOR 0.9F
-//
-//#define SILENCE_BEFORE_AUTO_PLAY 150
-//#define MINIMUM_CHORD_PLAY_TIME 300
-//
-//#define TOTAL_NOTES_PER_PART 32
-//#define TOTAL_PARTS 4
-//
-//#define NS_IN_SEC 1000000000
-//
-
-
-#define AMMO_INCREASE_RATE 50 // 個のticsを過ごすと、AMMOが1に増やす
+#define AMMO_INCREASE_RATE 5//50 // 個のticsを過ごすと、AMMOが1に増やす
 #define AMMO_MAX 5
 // この値は記録した後の再生数を数える
 #define PART_TTL 9
@@ -47,9 +30,14 @@
 
 // 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
-#define MINIMUM_CHORD_PLAY_TIME 1000
-#define ONESHOT_RANDOM 180 // この値が変わるといいな
-#define CHORD_CHANGE_RANDOM 2000
+
+#define ONE_SHOT_RND 180 // この値が変わるといいな
+
+#define MIN_CHORD_TIME 1000
+#define CHORD_CHANGE_RND 2000
+
+#define MIN_REST_TIME 4000
+#define AUTO_PLAY_REST_RND 4000
 
 
 
@@ -57,13 +45,6 @@
 #define TOTAL_PARTS 7
 
 #define NS_IN_SEC 1000000000
-
-
-
-
-
-
-
 
 
 
@@ -130,9 +111,15 @@ struct {
 
 part parts[TOTAL_PARTS];
 
+pthread_t control_loop;
+
+pthread_attr_t thread_attr;
+
+static int control_loop_running = TRUE;
+
 static int current_rec_part = 0;
 static size_t tics_per_part = 1500; // 3000; // 5000;
-static size_t tic_increment = 0;
+//static size_t tic_increment = 0;
 
 size_t ammo_current = AMMO_MAX;
 size_t ammo_max = AMMO_MAX;
@@ -144,22 +131,47 @@ int parts_active = FALSE;
 
 size_t chord_change_count = 0;
 
+
+
+size_t one_shot_count = 0;
+size_t rest_count = 0;
+size_t chord_count = 0;
+
+size_t one_shot_interval = 0;
+size_t rest_interval = 0;
+size_t chord_interval = 0;
+
+//size_t general_tic_count = 0;
+//size_t delay_tic_start = 0;
+
+//static int fading_out_exit = FALSE;
+//static size_t exit_fade_counter = 0;
+
 extern size_t screen_width;
 extern size_t screen_height_reduced;
 
 
+extern SLpermille segment_pan_map[TOTAL_NOTES];
+
+
 void* timing_loop(void* args);
-void tic_counter();
+void part_tic_counter();
 void init_part(part* p, int rec);
 void reset_all_notes(part* part);
 void play_all_parts();
-void add_tic_increment(int inc);
+//void add_tic_increment(int inc);
 void increase_ammo();
-int cycle_rec_part();
+//int cycle_rec_part();
 void count_part_ttl(part* p);
 void factor_part_vel(part* p, float factor);
 void parts_are_active();
 void auto_play();
+
+
+
+
+//void shutdown_audio_delay();
+//void general_tic_counter();
 
 void init_random_seed() {
     srand((unsigned)time( NULL ));
@@ -174,19 +186,49 @@ int obtain_random(int modulus) {
     return (rand() % modulus);
 };
 
-void init_timing_loop() {
+void init_control_loop() {
 
-	pthread_t fade_in;
-	pthread_create(&fade_in, NULL, timing_loop, (void*)NULL);
+
+//	  pthread_attr_init(&thread_attr);
+//	  pthread_attr_setdetachstate(&thread_attr , PTHREAD_CREATE_DETACHED);
+
+//	pthread_create(&control_loop, &thread_attr, timing_loop, (void*)NULL);
+
+
+
+	pthread_create(&control_loop, NULL, timing_loop, (void*)NULL);
+
+
+
+	//init_auto_vals(); // FIXME
+}
+
+void join_control_loop() {
+
+	control_loop_running = FALSE;
+
+
+	pthread_join(control_loop, NULL);
+	pthread_exit(NULL);
 
 }
 
+void init_auto_vals() {
+	one_shot_interval = obtain_random(ONE_SHOT_RND);
+	rest_interval = MIN_REST_TIME + obtain_random(AUTO_PLAY_REST_RND);
+	chord_interval = MIN_CHORD_TIME + obtain_random(CHORD_CHANGE_RND);
 
+	__android_log_print(ANDROID_LOG_DEBUG, "init_auto_vals", "one_shot_interval %d", one_shot_interval);
+	__android_log_print(ANDROID_LOG_DEBUG, "init_auto_vals", "rest_interval %d", rest_interval);
+	__android_log_print(ANDROID_LOG_DEBUG, "init_auto_vals", "chord_interval %d", chord_interval);
+
+}
 
 // コリラのほうが性格的に正しい
 void* timing_loop(void* args) {
 
-	while (1) {
+	while (control_loop_running) {
+//		__android_log_write(ANDROID_LOG_DEBUG, "timing_loop", "while (1)");
 //		clock_gettime(CLOCK_MONOTONIC, &timing.start_time_s);
 //		// 処理
 //
@@ -201,10 +243,12 @@ void* timing_loop(void* args) {
 
 		// これだけで十分あまり性格的なタイミングが必要ないかも
 		usleep(100000); // 100ミリ秒
-
+//		general_tic_counter();
 		vol_automation();
 		increase_ammo();
 		auto_play();
+
+//		shutdown_audio_delay();
 
 //		gettimeofday(&timing.curr_time, &timing.tzp);
 //		__android_log_print(ANDROID_LOG_DEBUG, "sound_control_lroop", "gettimeofday: %d %d sleep_time: %d %d",
@@ -214,10 +258,32 @@ void* timing_loop(void* args) {
 //		__android_log_print(ANDROID_LOG_DEBUG, "timing_loop", "gettimeofday: %d %d",
 //				timing.curr_time.tv_sec, timing.curr_time.tv_usec);
 
+		//if (!control_loop_running) break;
+
+
 	}
 	return NULL;
 
 }
+
+//void general_tic_counter() {
+//
+//	general_tic_count++;
+//
+//
+//}
+//
+//
+//void delay_func(size_t delay_tics, void* func) {
+//
+//	delay_tic_start = general_tic_count;
+//
+//	if ( == delay_tics) {
+//		func();
+//	}
+//
+//}
+
 
 void increase_ammo() {
 	if (ammo_increase_counter < AMMO_INCREASE_RATE && ammo_current < ammo_max) {
@@ -287,7 +353,7 @@ void record_note(float x, float y, int seg, float vel){
 
 // 毎TIC実行しなきゃ //
 // ticを全部進めないといけない
-void tic_counter() {
+void part_tic_counter() {
 
 	int i;
 	for (i = 0; i < TOTAL_PARTS; i++) {
@@ -400,48 +466,100 @@ void set_parts_active() {
 	chord_change_count = 0;
 }
 
+//void auto_play() {
+//	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
+//		not_active_count++;
+//		__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "not_active_count %d", not_active_count);
+//	}
+//	if (not_active_count == SILENCE_BEFORE_AUTO_PLAY) {
+//
+//		int r = obtain_random(ONESHOT_RANDOM);
+//		//__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(!obtain_random(50)) r %d", r);
+//
+//		if (r == 0) {
+//
+//
+//
+//			float x = (float) (obtain_random(screen_width));
+//			float y = (float)(obtain_random(screen_height_reduced));
+//
+//			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "x %f y %f", x, y);
+//			play_rec_note(x, y);
+//		}
+//
+//		int rest = obtain_random(AUTO_PLAY_REST_RND);
+//		if(rest==0){
+//			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(rest==0) %d", rest);
+//			parts_active = TRUE; // FIXME ??大丈夫かな
+//			not_active_count = 0;
+//		}
+//
+//
+//		if (chord_change_count < MINIMUM_CHORD_PLAY_TIME) {
+//			chord_change_count++;
+//			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "chord_change_count %d", chord_change_count);
+//		}
+//
+//		if (chord_change_count == MINIMUM_CHORD_PLAY_TIME) {
+//			int s = obtain_random(CHORD_CHANGE_RND);
+//
+//			if (s == 0) {
+//				__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(obtain_random(2000)) s %d", s);
+//				int success = cycle_scale();
+//				chord_change_count = 0;
+//			}
+//
+//		}
+//	}
+//
+//}
+
+
 void auto_play() {
 	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
 		not_active_count++;
+		__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "not_active_count %d", not_active_count);
 	}
 	if (not_active_count == SILENCE_BEFORE_AUTO_PLAY) {
 
-		int r = obtain_random(ONESHOT_RANDOM);
-		//__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(!obtain_random(50)) r %d", r);
-
-		if (r == 0) {
-
-
+		if (one_shot_count == one_shot_interval) {
 
 			float x = (float) (obtain_random(screen_width));
 			float y = (float)(obtain_random(screen_height_reduced));
 
 			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "x %f y %f", x, y);
 			play_rec_note(x, y);
+
+			one_shot_count = 0;
+			one_shot_interval = 5+obtain_random(500);
+			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "one_shot_interval %d", one_shot_interval);
 		}
 
-		if (chord_change_count < MINIMUM_CHORD_PLAY_TIME) {
-			chord_change_count++;
+
+		if (rest_count == rest_interval) { // FIXME
+
+			parts_active = TRUE; // FIXME これ問題の原因かも>>>???
+			not_active_count = 0;
+
+			rest_count =0;
+			rest_interval = MIN_REST_TIME + obtain_random(AUTO_PLAY_REST_RND);
+			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "rest_interval %d", rest_interval);
 		}
 
-		if (chord_change_count == MINIMUM_CHORD_PLAY_TIME) {
-			int s = obtain_random(CHORD_CHANGE_RANDOM);
 
-			if (s == 0) {
-				__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(obtain_random(2000)) s %d", s);
-				int success = cycle_scale();
-				chord_change_count = 0;
-			}
-
+		if (chord_count == chord_interval) {
+			int success = cycle_scale();
+			chord_count = 0;
+			chord_interval = MIN_CHORD_TIME + obtain_random(3000);
+			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "chord_interval %d", chord_interval);
 		}
+
+		one_shot_count++;
+		rest_count++;
+		chord_count++;
 	}
 
-	__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "not_active_count %d", not_active_count);
-	__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "chord_change_count %d", chord_change_count);
 }
-
-
-
 
 
 // 初期化するためだけ
@@ -502,9 +620,9 @@ void reset_all_notes(part* p) {
 }
 
 // パートの長さを異なる
-void add_tic_increment(int inc) {
-	tic_increment += inc;
-}
+//void add_tic_increment(int inc) {
+//	tic_increment += inc;
+//}
 
 
 void play_all_parts() {
@@ -527,7 +645,9 @@ void play_all_parts() {
 
 				if (n->tic == p->current_tic) {
 
-					play_note(n->seg, n->vel);
+//					play_note(n->seg, n->vel);
+					enqueue_one_shot(get_scale_sample(n->seg), float_to_slmillibel(n->vel, 1.0F), get_seg_permille(n->seg));
+
 				 	__android_log_print(ANDROID_LOG_DEBUG, "play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
 					//draw_note(note->pos_x, note->pos_y);
 
@@ -575,6 +695,14 @@ void factor_part_vel(part* p, float factor) {
 
 
 
+//void shutdown_audio_delay() {
+//	if (fading_out_exit) {
+//		exit_fade_counter++;
+//		if (exit_fade_counter == 12) {
+//			shutdown_audio();
+//		}
+//	}
+//}
 
 
 //static int current_ammo;

@@ -22,7 +22,7 @@ LOCAL_SRC_FILES += snd_scal.c
 LOCAL_SRC_FILES += snd_sles.c
 LOCAL_SRC_FILES += snd_asst.c
 LOCAL_SRC_FILES += snd_ctrl.c
-LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM
+LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM -lGLESv2
 # for native audio
 LOCAL_LDLIBS    += -lOpenSLES
 # for native asset manager

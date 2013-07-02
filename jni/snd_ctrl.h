@@ -16,12 +16,14 @@
 #include <time.h>
 
 
-void init_timing_loop();
+void init_control_loop();
+void join_control_loop();
+
 void record_note(float x, float y, int seg, float vel);
 void init_all_parts();
 
 
-void tic_counter();
+void part_tic_counter();
 void play_all_parts();
 
 int decrease_ammo();
@@ -31,5 +33,8 @@ void init_random_seed();
 
 void set_parts_active();
 
+//void shutdown_audio_delay();
+
+void init_auto_vals();
 
 #endif /* SND_CTRL_H_ */

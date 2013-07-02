@@ -51,7 +51,7 @@ obj/local/armeabi/objs/and_main/snd_sles.o: jni/snd_sles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h \
  jni/snd_sles.h jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
- jni/hon_type.h jni/snd_ctrl.h \
+ jni/snd_scal.h jni/hon_type.h jni/snd_ctrl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
@@ -163,6 +163,8 @@ jni/snd_sles.h:
 jni/snd_asst.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h:
+
+jni/snd_scal.h:
 
 jni/hon_type.h:
 

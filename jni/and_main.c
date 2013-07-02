@@ -202,47 +202,40 @@ static void engine_term_display(struct engine* engine) {
  */
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
     struct engine* engine = (struct engine*)app->userData;
-/*    if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-        engine->state.x = AMotionEvent_getX(event, 0);
-        engine->state.y = AMotionEvent_getY(event, 0);
-
-
-    	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_input", "AINPUT_EVENT_TYPE_MOTION");
-
-        return 1;
-    }*/
 
 
 
 
 
 
-//	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY) {
-//
-//		int32_t key = AKeyEvent_getKeyCode(event);
-//
-//
-//
-//
-//	}
+	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_KEY) {
+
+		int32_t key = AKeyEvent_getKeyCode(event);
+		int32_t key_action = AKeyEvent_getAction(event);
+
+		if (key == AKEYCODE_BACK) {
+
+			__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_input", "AKEYCODE_BACK");
+
+			if (key_action == AKEY_EVENT_ACTION_UP) {
+				__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_input", "AKEY_EVENT_ACTION_UP");
+
+				//                ANativeActivity_finish(state->activity);
+			}
+		}
+	}
 
 
     int index = 0;
     int touch_max = 5;
 
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-
-
 		int p;
 		int action = AKeyEvent_getAction(event);
-
 		switch (action & AMOTION_EVENT_ACTION_MASK) {
-
 		case AMOTION_EVENT_ACTION_DOWN:
-
 			__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_input",
 					"AMOTION_EVENT_ACTION_DOWN");
-
 			//play_note(find_screen_segment(AMotionEvent_getX(event, 0)), find_vel_value(AMotionEvent_getY(event, 0)));
 			play_rec_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
 			set_parts_active();
@@ -254,9 +247,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_input",
 					"AMOTION_EVENT_ACTION_POINTER_DOWN");
 
-
-
-
 		    /* Bits in the action code that represent a pointer index, used with
 		     * AMOTION_EVENT_ACTION_POINTER_DOWN and AMOTION_EVENT_ACTION_POINTER_UP.  Shifting
 		     * down by AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT provides the actual pointer
@@ -267,14 +257,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			//AMotionEvent_getPointerCount(event);
 
 
-
-
-			/*
-
-for (index = 0; index < touch_max; index++) {
-	if (engine->)
-}
-*/
 
 			// マルチタッチバグを解決するため、こうやれば一番いい。
 			size_t pointer_index_mask = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
@@ -305,11 +287,6 @@ for (index = 0; index < touch_max; index++) {
 //
 //			__android_log_print(ANDROID_LOG_DEBUG, "engine_handle_input",
 //						"pointer_index: %d", pointer_index);
-
-
-
-
-
 			break;
 
 		}
@@ -326,7 +303,9 @@ void play_rec_note(float x, float y) {
 	if (decrease_ammo()) { // AMMOの量を確認するため
 		int seg = find_screen_segment(x);
 		float vel = find_vel_value(y);
-		play_note(seg, vel);
+		//play_note(seg, vel);
+		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
+
 		record_note(x, y, seg, vel);
 	}
 }
@@ -481,8 +460,30 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             // Also stop animating.
             engine->animating = 0;
             engine_draw_frame(engine);
-            shutdown_audio();
+//            quick_fade_on_exit();
+//            shutdown_audio();
+//            all_voices_fade_out_exit();
+            pause_all_voices();
+
+
+    		usleep(1000000); // 100ミリ秒
+    		shutdown_audio();
+    		join_control_loop();
+
+            engine->app->destroyRequested = 1; // RvA
+            //
+
             break;
+
+//        case AINPUT_EVENT_TYPE_KEY:
+//        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "AINPUT_EVENT_TYPE_KEY");
+//        	break;
+        case APP_CMD_STOP:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_STOP");
+        	break;
+        case APP_CMD_DESTROY:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_DESTROY");
+        	break;
     }
 }
 
@@ -493,6 +494,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
  */
 void android_main(struct android_app* state) {
     struct engine engine;
+
 
     // Make sure glue isn't stripped.
     app_dummy();
@@ -532,11 +534,12 @@ void android_main(struct android_app* state) {
 	create_sl_engine();
 	load_all_assets(asset_manager);
 	init_all_voices();
+	init_auto_vals();
 
 	// snd_ctrlのこと
 
-	init_timing_loop();
-	play_loop();
+	init_control_loop();
+	start_loop();
 
 //	struct timeval start_time;
 //	struct timeval finish_time;
@@ -583,7 +586,11 @@ void android_main(struct android_app* state) {
 
             // Check if we are exiting.
             if (state->destroyRequested != 0) {
+
+
+            	__android_log_write(ANDROID_LOG_DEBUG, "android_main", "(state->destroyRequested != 0)");
                 engine_term_display(&engine);
+//                ANativeActivity_finish(state->activity);
                 return;
             }
         }

@@ -137,21 +137,33 @@ scale_def scales[] = {
 
 // Ç±ÇÃä÷êîÇÕïKóvÇ»Ç¢Ç©Ç‡
 // èâä˙âªÇÇ∑ÇÈÇΩÇﬂÇæÇØÇÃä÷êî
-void play_loop() {
+void start_loop() {
 	int success = enqueue_seamless_loop(looping_samples + selected_scale);
 }
 
-void play_note(int segment, float vel) {
+//void play_note(int segment, float vel) {
+//
+//
+//		int sample = scales[selected_scale].midimap[segment];
+//		sample -= START_NOTE;
+//
+//		int success = enqueue_one_shot(oneshot_samples + sample, vel, segment);
+//
+//		__android_log_print(ANDROID_LOG_DEBUG, "play_note", "vel: %f", vel);
+//
+//}
 
+sample_def* get_scale_sample(int seg) {
 
-		int sample = scales[selected_scale].midimap[segment];
-		sample -= START_NOTE;
+	int sample = scales[selected_scale].midimap[seg];
+	sample -= START_NOTE;
 
-		int success = enqueue_one_shot(oneshot_samples + sample, vel);
-
-		__android_log_print(ANDROID_LOG_DEBUG, "play_note", "vel: %f", vel);
+	return (oneshot_samples + sample);
 
 }
+
+
+
 
 int cycle_scale() {
 

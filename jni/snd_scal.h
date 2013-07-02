@@ -15,8 +15,15 @@
 //#define TOTAL_NOTES 24
 #define TOTAL_NOTES 24
 
-void play_note(int segment, float vel);
-void play_loop();
+#include "snd_asst.h"
+
+//void play_note(int segment, float vel);
+
+sample_def* get_scale_sample(int seg);
+
+
+
+void start_loop();
 int cycle_scale();
 
 #endif /* SCALES_H_ */

@@ -7,6 +7,7 @@
 #define SND_SLES_H_
 
 #include "snd_asst.h"
+#include "snd_scal.h"
 
 
 // for native audio
@@ -21,37 +22,38 @@ typedef struct {
 	SLVolumeItf bqPlayerVolume;
 	SLBufferQueueState bqstate;
 
-
 	size_t current_chunk;
 	sample_def* sample;
 	int is_playing;
 	int timing_test_index;
 
-
 	// automation
 	//int is_fading;
 
-
-	int fading_out;
-	int fading_in;
 	SLmillibel sl_volume;
 
-
+	int fading_in;
+	int fading_out;
 
 	float vol_fade_factor;
 	float vol_auto_factor;
-
-
 
 } voice;
 
 void create_sl_engine();
 void init_all_voices();
 
-void set_voice_volume(voice* voice, float vol);
 
 int enqueue_seamless_loop(sample_def * samp);
-int enqueue_one_shot(sample_def * samp, float vel);
+//int enqueue_one_shot(sample_def * samp, float vel);
+int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan);
+
+
+
+SLmillibel float_to_slmillibel(float sender_vel, float sender_range);
+SLpermille get_seg_permille(size_t seg);
+
+//init_seg_pan_map();
 
 
 //void* loop_fade_in(void* args);
@@ -59,7 +61,13 @@ void vol_automation();
 
 int current_voice_fading();
 
-void shutdown_audio();
+//void all_voices_fade_out_exit();
+//void quick_fade_on_exit();
+//void shutdown_audio();
+
+void pause_all_voices();
+
+
 
 int total_tic_counter;
 
