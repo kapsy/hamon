@@ -8,6 +8,7 @@
 #ifndef HON_TYPE_H_
 #define HON_TYPE_H_
 
+#include <android/log.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -23,6 +24,15 @@
 //static int tics_per_part = 1600;
 
 #define BUFFER_SIZE_SHORT (BUFFER_SIZE / 2)
+
+//#define  LOG_TAG    "libgl2jni"
+//#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+//#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+//#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
+//#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
+
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,__VA_ARGS__)
+#define LOGDw(...) __android_log_write(ANDROID_LOG_DEBUG,__VA_ARGS__)
 
 
 #endif /* HON_TYPE_H_ */

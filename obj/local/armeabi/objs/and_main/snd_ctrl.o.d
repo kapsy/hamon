@@ -55,7 +55,35 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
- jni/hon_type.h jni/and_main.h
+ jni/hon_type.h jni/and_main.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/errno.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/errno.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/errno.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno-base.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/sensor.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/looper.h \
+ C:/Android/android-ndk-r8d/sources/android/native_app_glue/android_native_app_glue.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/poll.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/poll.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/poll.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/configuration.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_activity.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -174,3 +202,59 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSL
 jni/hon_type.h:
 
 jni/and_main.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/errno.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/errno.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/errno.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno-base.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/sensor.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/looper.h:
+
+C:/Android/android-ndk-r8d/sources/android/native_app_glue/android_native_app_glue.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/poll.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/poll.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/poll.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/configuration.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_activity.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:

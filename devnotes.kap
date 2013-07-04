@@ -215,19 +215,12 @@ X時々何も再生しないで！(not_active_count = 0;)
 きょうの目標：
 Xパン機能・無作為で消えさんスべき？タッチしたところから？
 Xパンが欲しければ、サンプルで録音して方がいいのかも
-OpenGL入門を早く終末してやれ！
 
-無音問題・ノートを鳴らす機能を無効すると、必ず、if (rest_count == rest_interval) {
-
+X無音問題・ノートを鳴らす機能を無効すると、必ず、if (rest_count == rest_interval) {
 
 
-ファイルシステム??
-
-スレッドを週末しなきゃ
-値全部初期化しなきゃ。
-Got　through the native code and check for any static variables, and make
-sure you add code to initialize them to a valid value when the app
-starts.
+2013年7月2日
+XOpenGL入門を早く終末してやれ！
 
 
 
@@ -235,6 +228,14 @@ starts.
 ＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
 ＋　　やるべきリスト　(優先順位)　＋
 ＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
+
+ファイルシステム??
+
+スレッドを終末しなきゃ
+値全部初期化しなきゃ。
+Got　through the native code and check for any static variables, and make
+sure you add code to initialize them to a valid value when the app
+starts.
 
 
 

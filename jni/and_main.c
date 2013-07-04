@@ -5,203 +5,259 @@
  *      Author: Michael
  */
 
-//BEGIN_INCLUDE(all)
-#include <jni.h>
-#include <errno.h>
+////BEGIN_INCLUDE(all)
+//#include <jni.h>
+//#include <errno.h>
+//
+//
+////#include <EGL/egl.h>
+////#include <GLES/gl.h>
+////
+////#include <GLES2/gl2.h>
+////#include <GLES2/gl2ext.h>
+//
+//
+//#include <android/sensor.h>
+//#include <android/log.h>
+//#include <android_native_app_glue.h>
+//
+//// kapsy
+//#include <android/asset_manager.h>
+//#include <android/storage_manager.h>
+//#include <android/window.h>
+//
+//
+//#include <math.h>
+//#include <time.h>
+//
+//
+//#include "snd_sles.h"
+//#include "snd_scal.h"
+//#include "snd_asst.h"
+//#include "snd_ctrl.h"
+#include "gfx_gles.h"
+//#include "and_main.h"
+//#include "hon_type.h"
+
+
+#include "and_main.h"
+
 
 typedef void* EGLNativeDisplayType;
-
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-
-#include <android/sensor.h>
-#include <android/log.h>
-#include <android_native_app_glue.h>
-
-// kapsy
-#include <android/asset_manager.h>
-#include <android/storage_manager.h>
-#include <android/window.h>
-
-
-#include <math.h>
-#include <time.h>
-
-
-#include "snd_sles.h"
-#include "snd_scal.h"
-#include "snd_asst.h"
-#include "snd_ctrl.h"
-
-
-#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
-#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
-
-
 size_t screen_width;
 size_t screen_height;
 size_t screen_height_reduced; // 既に計算した値・自動的再生のためにここで計算
 
-//static int TOTAL_SEGMENTS = TOTAL_NOTES;
+
+
+engine engine;
+
+
 static float touch_segment_width;
+
+int gfx_initialized = FALSE;
 
 
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
 void play_rec_note(float x, float y);
 
-
-
-
-
-
 /**
  * Our saved state data.
  */
-struct saved_state {
-    float angle;
-    int32_t x;
-    int32_t y;
-};
+//struct saved_state {
+//    float angle;
+//    int32_t x;
+//    int32_t y;
+//};
 
 /**
  * Shared state for our app.
  */
-struct engine {
-    struct android_app* app;
-
-    ASensorManager* sensorManager;
-    const ASensor* accelerometerSensor;
-    ASensorEventQueue* sensorEventQueue;
-
-    int animating;
-    EGLDisplay display;
-    EGLSurface surface;
-    EGLContext context;
-    int32_t width;
-    int32_t height;
-    struct saved_state state;
-};
-
-/**
- * Initialize an EGL context for the current display.
- */
-static int engine_init_display(struct engine* engine) {
-    // initialize OpenGL ES and EGL
-
-    /*
-     * Here specify the attributes of the desired configuration.
-     * Below, we select an EGLConfig with at least 8 bits per color
-     * component compatible with on-screen windows
-     */
-    const EGLint attribs[] = {
-            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-            EGL_BLUE_SIZE, 8,
-            EGL_GREEN_SIZE, 8,
-            EGL_RED_SIZE, 8,
-            EGL_NONE
-    };
-    EGLint w, h, dummy, format;
-    EGLint numConfigs;
-    EGLConfig config;
-    EGLSurface surface;
-    EGLContext context;
-
-    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-
-    eglInitialize(display, 0, 0);
-
-    /* Here, the application chooses the configuration it desires. In this
-     * sample, we have a very simplified selection process, where we pick
-     * the first EGLConfig that matches our criteria */
-    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
-
-    /* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
-     * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
-     * As soon as we picked a EGLConfig, we can safely reconfigure the
-     * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
-    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-
-    ANativeWindow_setBuffersGeometry(engine->app->window, 0, 0, format);
-
-    surface = eglCreateWindowSurface(display, config, engine->app->window, NULL);
-    context = eglCreateContext(display, config, NULL, NULL);
-
-    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        LOGW("Unable to eglMakeCurrent");
-        return -1;
-    }
-
-    eglQuerySurface(display, surface, EGL_WIDTH, &w);
-    eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+//struct engine {
+//    struct android_app* app;
+//
+//    ASensorManager* sensorManager;
+//    const ASensor* accelerometerSensor;
+//    ASensorEventQueue* sensorEventQueue;
+//
+//    int animating;
+//    EGLDisplay display;
+//    EGLSurface surface;
+//    EGLContext context;
+//    int32_t width;
+//    int32_t height;
+//    struct saved_state state;
+//};
 
 
- 	__android_log_print(ANDROID_LOG_DEBUG, "engine_init_display", "h: %d", h);
-
-
-    engine->display = display;
-    engine->context = context;
-    engine->surface = surface;
-    engine->width = w;
-    engine->height = h;
-    engine->state.angle = 0;
-
-    // Initialize GL state.
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-    glEnable(GL_CULL_FACE);
-    glShadeModel(GL_SMOOTH);
-    glDisable(GL_DEPTH_TEST);
-
-    return 0;
-}
-
-/**
- * Just the current frame in the display.
- */
-static void engine_draw_frame(struct engine* engine) {
-    if (engine->display == NULL) {
-        // No display.
-        return;
-    }
-
-    // Just fill the screen with a color.
-    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle, ((float)engine->state.y)/engine->height, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    eglSwapBuffers(engine->display, engine->surface);
+//
+//void get_engine() {
+//
+//
+//
+//	struct engine* engine = (struct engine*)app->userData;
+//}
+//
 
 
 
 
 
 
-}
 
-/**
- * Tear down the EGL context currently associated with the display.
- */
-static void engine_term_display(struct engine* engine) {
-    if (engine->display != EGL_NO_DISPLAY) {
-        eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if (engine->context != EGL_NO_CONTEXT) {
-            eglDestroyContext(engine->display, engine->context);
-        }
-        if (engine->surface != EGL_NO_SURFACE) {
-            eglDestroySurface(engine->display, engine->surface);
-        }
-        eglTerminate(engine->display);
-    }
-    engine->animating = 0;
-    engine->display = EGL_NO_DISPLAY;
-    engine->context = EGL_NO_CONTEXT;
-    engine->surface = EGL_NO_SURFACE;
-}
+
+
+
+
+///**
+// * Initialize an EGL context for the current display.
+// */
+//static int engine_init_display(struct engine* engine) {
+//    // initialize OpenGL ES and EGL
+//
+//    /*
+//     * Here specify the attributes of the desired configuration.
+//     * Below, we select an EGLConfig with at least 8 bits per color
+//     * component compatible with on-screen windows
+//     */
+////    const EGLint attribs[] = {
+////            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+////            EGL_BLUE_SIZE, 8,
+////            EGL_GREEN_SIZE, 8,
+////            EGL_RED_SIZE, 8,
+////            EGL_NONE
+////    };
+//    const EGLint attribs[] = {
+//    		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+//            EGL_BLUE_SIZE, 8,
+//            EGL_GREEN_SIZE, 8,
+//            EGL_RED_SIZE, 8,
+//            EGL_NONE
+//    };
+//    EGLint w, h, dummy, format;
+//    EGLint numConfigs;
+//    EGLConfig config;
+//    EGLSurface surface;
+//    EGLContext context;
+//
+//    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+//
+//    eglInitialize(display, 0, 0);
+//
+//    /* Here, the application chooses the configuration it desires. In this
+//     * sample, we have a very simplified selection process, where we pick
+//     * the first EGLConfig that matches our criteria */
+//    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
+//
+//
+//
+//
+//    /* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
+//     * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
+//     * As soon as we picked a EGLConfig, we can safely reconfigure the
+//     * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
+//    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
+//
+//    ANativeWindow_setBuffersGeometry(engine->app->window, 0, 0, format);
+//
+//    surface = eglCreateWindowSurface(display, config, engine->app->window, NULL);
+//
+//
+//
+//	static const EGLint contextAttribs[] = {
+//	   EGL_CONTEXT_CLIENT_VERSION,	2,
+//	   EGL_NONE
+//	};
+//
+//	context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
+//	eglMakeCurrent(display, surface, surface, context);
+//
+//
+//
+////    context = eglCreateContext(display, config, NULL, NULL);
+//
+//    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
+//        LOGW("Unable to eglMakeCurrent");
+//        return -1;
+//    }
+//
+//    eglQuerySurface(display, surface, EGL_WIDTH, &w);
+//    eglQuerySurface(display, surface, EGL_HEIGHT, &h);
+//
+//
+//
+//
+// 	__android_log_print(ANDROID_LOG_DEBUG, "engine_init_display", "h: %d", h);
+//
+//
+//    engine->display = display;
+//    engine->context = context;
+//    engine->surface = surface;
+//    engine->width = w;
+//    engine->height = h;
+//    engine->state.angle = 0;
+//
+//    // Initialize GL state.
+//    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+//    glEnable(GL_CULL_FACE);
+//    glShadeModel(GL_SMOOTH);
+//    glDisable(GL_DEPTH_TEST);
+//
+////    int sucess = setupGraphics(w, h);
+//
+//
+//    return 0;
+//}
+
+///**
+// * Just the current frame in the display.
+// */
+//static void engine_draw_frame(struct engine* e) {
+////    if (engine->display == NULL) {
+////        // No display.
+////        return;
+////    }
+////
+////    // Just fill the screen with a color.
+////    glClearColor(((float)engine->state.x)/engine->width, engine->state.angle, ((float)engine->state.y)/engine->height, 1);
+////    glClear(GL_COLOR_BUFFER_BIT);
+////    eglSwapBuffers(engine->display, engine->surface);
+//
+//
+//	gles_draw(e);
+//
+//
+//
+//}
+
+
+// gfx_init.cに移動した
+///**
+// * Tear down the EGL context currently associated with the display.
+// */
+//static void engine_term_display(struct engine* engine) {
+//    if (engine->display != EGL_NO_DISPLAY) {
+//        eglMakeCurrent(engine->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+//        if (engine->context != EGL_NO_CONTEXT) {
+//            eglDestroyContext(engine->display, engine->context);
+//        }
+//        if (engine->surface != EGL_NO_SURFACE) {
+//            eglDestroySurface(engine->display, engine->surface);
+//        }
+//        eglTerminate(engine->display);
+//    }
+//    engine->animating = 0;
+//    engine->display = EGL_NO_DISPLAY;
+//    engine->context = EGL_NO_CONTEXT;
+//    engine->surface = EGL_NO_SURFACE;
+//}
 
 /**
  * Process the next input event.
  */
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
-    struct engine* engine = (struct engine*)app->userData;
+	struct engine* engine = (struct engine*)app->userData;
 
 
 
@@ -241,6 +297,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			set_parts_active();
         engine->animating = 1;
 
+        LOGD("LOGD_engine_handle_input", "action, %d", action);
+
 			break;
 
 		case AMOTION_EVENT_ACTION_POINTER_DOWN:
@@ -269,6 +327,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 					play_rec_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
 
 					set_parts_active();
+
+
 				}
 
 						__android_log_print(ANDROID_LOG_DEBUG, "engine_handle_input",
@@ -403,6 +463,10 @@ static void get_screen_dimensions(struct engine* engine) {
 }
 
 
+static void engine_init()
+
+
+
 /**
  * Process the next main command.
  */
@@ -418,25 +482,54 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
             *((struct saved_state*)engine->app->savedState) = engine->state;
             engine->app->savedStateSize = sizeof(struct saved_state);
             break;
+
         case APP_CMD_INIT_WINDOW:
         	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_INIT_WINDOW");
             // The window is being shown, get it ready.
-            if (engine->app->window != NULL) {
-                engine_init_display(engine);
-                engine_draw_frame(engine);
-            	get_screen_dimensions(engine);
-            	// touch
-            	calc_segment_width();
+			if (engine->app->window != NULL) {
 
-           	 ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
+	//                engine_init_display(engine);
+	//                engine_draw_frame(engine);
 
-            }
+	//            	gles_init(engine);
+	//            	gles_draw(engine);
+
+
+				if (!gfx_initialized) {
+					int suc = pi_SurfaceCreate(engine);
+					suc = init_cmds();
+					//pi_draw();
+
+
+//			        pi_draw(engine);
+
+					get_screen_dimensions(engine);
+					// touch
+					calc_segment_width();
+
+
+
+					ANativeActivity_setWindowFlags(app->activity,
+							AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
+					gfx_initialized = TRUE;
+				}
+
+			}
             break;
+        case APP_CMD_START:
+        	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_START");
+
+
+
+
+
+        	break;
         case APP_CMD_TERM_WINDOW:
         	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_TERM_WINDOW");
             // The window is being hidden or closed, clean it up.
 
-            engine_term_display(engine);
+//        	gles_term_display(engine); // FIXME
+
             break;
         case APP_CMD_GAINED_FOCUS:
         	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_GAINED_FOCUS");
@@ -459,7 +552,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 //            }
             // Also stop animating.
             engine->animating = 0;
-            engine_draw_frame(engine);
+//            engine_draw_frame(engine);
 //            quick_fade_on_exit();
 //            shutdown_audio();
 //            all_voices_fade_out_exit();
@@ -505,26 +598,42 @@ void android_main(struct android_app* state) {
     state->onInputEvent = engine_handle_input;
     engine.app = state;
 
-    // Prepare to monitor accelerometer
-    engine.sensorManager = ASensorManager_getInstance();
-    engine.accelerometerSensor = ASensorManager_getDefaultSensor(engine.sensorManager,
-            ASENSOR_TYPE_ACCELEROMETER);
-    engine.sensorEventQueue = ASensorManager_createEventQueue(engine.sensorManager,
-            state->looper, LOOPER_ID_USER, NULL, NULL);
+
+//    // Prepare to monitor accelerometer
+//    engine.sensorManager = ASensorManager_getInstance();
+//    engine.accelerometerSensor = ASensorManager_getDefaultSensor(engine.sensorManager,
+//            ASENSOR_TYPE_ACCELEROMETER);
+//    engine.sensorEventQueue = ASensorManager_createEventQueue(engine.sensorManager,
+//            state->looper, LOOPER_ID_USER, NULL, NULL);
 
     if (state->savedState != NULL) {
         // We are starting with a previous saved state; restore from it.
         engine.state = *(struct saved_state*)state->savedState;
     }
 
-	// audio stuff
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ＝＝＝＝＝＝＝＝＝オーディオ処理＝＝＝＝＝＝＝＝＝
+
 	  ANativeActivity* nativeActivity = state->activity;
 //	  internal_path = nativeActivity->externalDataPath;
 //
 //
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
-
 
 	init_random_seed();
 	init_all_parts();
@@ -547,15 +656,16 @@ void android_main(struct android_app* state) {
 //	struct timeval curr_time;
 //	struct timezone tzp;
 
+
+
+
+
 	// loop waiting for stuff to do.
 
 	while (1) {
 
 
 //		gettimeofday(&start_time, &tzp);
-
-
-
         // Read all pending events.
         int ident;
         int events;
@@ -564,48 +674,53 @@ void android_main(struct android_app* state) {
         // If not animating, we will block forever waiting for events.
         // If animating, we loop until all events are read, then continue
         // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events,
-                (void**)&source)) >= 0) {
+        while ((ident=ALooper_pollAll(engine.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0) {
 
             // Process this event.
             if (source != NULL) {
                 source->process(state, source);
             }
 
-            // If a sensor has data, process it now.
-            if (ident == LOOPER_ID_USER) {
-                if (engine.accelerometerSensor != NULL) {
-                    ASensorEvent event;
-                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue, &event, 1) > 0) {
-/*                        LOGI("accelerometer: x=%f y=%f z=%f",
-                                event.acceleration.x, event.acceleration.y,
-                                event.acceleration.z);*/
-                    }
-                }
-            }
+//            // If a sensor has data, process it now.
+//            if (ident == LOOPER_ID_USER) {
+//                if (engine.accelerometerSensor != NULL) {
+//                    ASensorEvent event;
+//                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue, &event, 1) > 0) {
+///*                        LOGI("accelerometer: x=%f y=%f z=%f",
+//                                event.acceleration.x, event.acceleration.y,
+//                                event.acceleration.z);*/
+//                    }
+//                }
+//            }
 
             // Check if we are exiting.
             if (state->destroyRequested != 0) {
-
-
             	__android_log_write(ANDROID_LOG_DEBUG, "android_main", "(state->destroyRequested != 0)");
-                engine_term_display(&engine);
-//                ANativeActivity_finish(state->activity);
+//                gles_term_display(&engine);
                 return;
             }
         }
 
-        if (engine.animating) {
-            // Done with events; draw next animation frame.
-            engine.state.angle += .01f;
-            if (engine.state.angle > 1) {
-                engine.state.angle = 0;
-            }
+//        if (engine.animating) {
+////            // Done with events; draw next animation frame.
+////            engine.state.angle += .01f;
+////            if (engine.state.angle > 1) {
+////                engine.state.angle = 0;
+////            }
+////
+////            // Drawing is throttled to the screen update rate, so there
+////            // is no need to do timing here.
+////            gles_draw(&engine);
+//
+//
+//
+//        }
 
-            // Drawing is throttled to the screen update rate, so there
-            // is no need to do timing here.
-            engine_draw_frame(&engine);
-        }
+
+
+        pi_draw(&engine);
+
+
 
 
 //		gettimeofday(&finish_time, &tzp);
@@ -618,8 +733,6 @@ void android_main(struct android_app* state) {
 
 
 
-    }
+	}
 }
 //END_INCLUDE(all)
-
-
