@@ -71,8 +71,8 @@
 //} ScreenSettings;
 
 
-EGLBoolean pi_SurfaceCreate(struct engine *e);
-void pi_draw(struct engine *e);
+EGLBoolean pi_SurfaceCreate(engine *e);
+void pi_draw(engine *e);
 
 int init_cmds();
 

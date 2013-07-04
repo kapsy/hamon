@@ -17,11 +17,9 @@
 #include "and_main.h"
 #include "gfx_gles.h"
 
-//#define LOG_TAG ("gles2ndtest")
-//#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__))
-//#define LOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__))
-//#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN,  LOG_TAG, __VA_ARGS__))
-//#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__))
+//extern engine* main_engine;
+
+
 
 //GLuint loadShader(GLenum shaderType, const char* pSource);
 //GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
@@ -165,7 +163,7 @@ unsigned int frames = 0;
 //
 //}
 
-EGLBoolean pi_SurfaceCreate(struct engine* sc)
+EGLBoolean pi_SurfaceCreate(engine* sc)
 {
 
 	LOGD("pi_SurfaceCreate", "pi_SurfaceCreate() called");
@@ -203,6 +201,9 @@ EGLBoolean pi_SurfaceCreate(struct engine* sc)
 //  e->surface = eglCreateWindowSurface(e->display, config, e->nativeWin, NULL);
 	sc->surface = eglCreateWindowSurface(sc->display, config, sc->app->window, NULL);
   if (sc->surface == EGL_NO_SURFACE) return EGL_FALSE;
+
+
+
 
   sc->context = eglCreateContext(sc->display, config, EGL_NO_CONTEXT, context);
   if (sc->context == EGL_NO_CONTEXT) return EGL_FALSE;
@@ -443,59 +444,68 @@ void pi_create_buffer()
 ////	}
 //
 //}
-void pi_draw(struct engine* sc) {
+void pi_draw(engine* sc) {
+
+
+
 
 	LOGD("pi_draw", "pi_draw() called");
-//	while (frames < 3000) {
+//	while (frames < 600) {
 
+
+//		LOGD("pi_draw", "sc: %d", sc);
+//		LOGD("pi_draw", "&sc->display): %d", &sc->display);
+//		LOGD("pi_draw", "&sc->surface): %d", &sc->surface);
+//		LOGD("pi_draw", "sc->surface): %d", sc->width);
+//		LOGD("pi_draw", "sc->surface): %d", sc->height);
 
 
 		glViewport(0, 0, sc->width, sc->height);
-		LOGD("pi_draw", "glViewport() called");
+//		LOGD("pi_draw", "glViewport() called");
 		glClear(GL_COLOR_BUFFER_BIT);
-		LOGD("pi_draw", "glClear() called");
+//		LOGD("pi_draw", "glClear() called");
 		glUniform1f(g_sp.uFrame, (float) (frames % 240) / 150.0 - 0.8);
-		LOGD("pi_draw", "glUniform1f() called");
+//		LOGD("pi_draw", "glUniform1f() called");
 
 
 
 
 		// 使用するシェーダを指定
 		glUseProgram(g_program);
-		LOGD("pi_draw", "glUseProgram() called");
+//		LOGD("pi_draw", "glUseProgram() called");
 		// 有効にするバッファオブジェクトを指定
 		glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-		LOGD("pi_draw", "glBindBuffer() called");
+//		LOGD("pi_draw", "glBindBuffer() called");
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
-		LOGD("pi_draw", "glBindBuffer() called");
+//		LOGD("pi_draw", "glBindBuffer() called");
 		// シェーダのアトリビュート変数をアクセス可能にする
 		glEnableVertexAttribArray(g_sp.aPosition);
-		LOGD("pi_draw", "glEnableVertexAttribArray() called");
+//		LOGD("pi_draw", "glEnableVertexAttribArray() called");
 		glEnableVertexAttribArray(g_sp.aTex);
-		LOGD("pi_draw", "glEnableVertexAttribArray() called");
+//		LOGD("pi_draw", "glEnableVertexAttribArray() called");
 
 
 		// 頂点情報のサイズ、オフセットを指定
 		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, 20, (void*) 0);
-		LOGD("pi_draw", "glVertexAttribPointer() called");
+//		LOGD("pi_draw", "glVertexAttribPointer() called");
 		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
-		LOGD("pi_draw", "glVertexAttribPointer() called");
+//		LOGD("pi_draw", "glVertexAttribPointer() called");
 
 
 
 
 
 		glEnableVertexAttribArray(0);
-		LOGD("pi_draw", "glEnableVertexAttribArray() called");
+//		LOGD("pi_draw", "glEnableVertexAttribArray() called");
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-		LOGD("pi_draw", "glDrawElements() called");
+//		LOGD("pi_draw", "glDrawElements() called");
 
 
 
 
 		eglSwapBuffers(sc->display, sc->surface);
-		LOGD("pi_draw", "eglSwapBuffers() called");
-//		frames++;
+//		LOGD("pi_draw", "eglSwapBuffers() called");
+		frames++;
 //	}
 
 
