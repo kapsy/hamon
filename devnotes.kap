@@ -230,11 +230,70 @@ xやった！できました。OpenGL ES２
 
 これからやるべき：
 
-本の方法に戻す：
-ScreenSettingsとengine別々
-init()の順番を徹底的に調べる
+X元の方法に戻す：
+XScreenSettingsとengine別々
+Xinit()の順番を徹底的に調べる
 違和感なくの書き方・調べて。
 
+apad:
+07-05 18:39:27.622: D/call_order(11974): android_main e.app = state
+07-05 18:39:27.622: D/call_order(11974): while started
+07-05 18:39:27.622: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.622: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.662: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.692: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.702: D/call_order(11974): APP_CMD_INIT_WINDOW
+07-05 18:39:27.702: D/call_order(11974): (e->app->window != NULL && !gfx_initialized))
+07-05 18:39:27.822: D/call_order(11974): (!gfx_initialized)
+07-05 18:39:32.722: D/call_order(11974): init_sles_components() finished
+07-05 18:39:32.722: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:32.722: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:32.772: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:32.782: D/call_order(11974): APP_CMD_INIT_WINDOW
+
+
+07-05 18:47:30.199: D/call_order(1823): android_main e.app = state
+07-05 18:47:30.199: D/call_order(1823): while started
+07-05 18:47:30.199: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.199: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.250: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.273: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.277: D/call_order(1823): APP_CMD_INIT_WINDOW
+07-05 18:47:30.277: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.277: D/call_order(1823): (e->app->window != NULL && !gfx_initialized))
+07-05 18:47:30.898: D/call_order(1823): (!gfx_initialized)
+07-05 18:47:47.753: D/call_order(1823): init_sles_components() finished
+07-05 18:47:47.773: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:47.777: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:47.777: D/call_order(1823): APP_CMD_INIT_WINDOW
+
+07-05 20:01:27.369: E/(15494): void __egl_platform_dequeue_buffer(egl_surface*):1080 [EGL-ERROR] failed to dequeue buffer from native window (0x1ee3ca0); err = -19, buf = 0x0
+
+hontouniiioto:
+07-05 21:45:32.086: D/engine_handle_cmd(20740): APP_CMD_START
+07-05 21:45:32.156: D/engine_handle_cmd(20740): APP_CMD_INIT_WINDOW
+07-05 21:45:32.256: D/engine_handle_cmd(20740): APP_CMD_GAINED_FOCUS
+07-05 21:45:32.286: D/engine_handle_cmd(20740): APP_CMD_TERM_WINDOW
+07-05 21:45:32.296: D/engine_handle_cmd(20740): APP_CMD_INIT_WINDOW
+
+hontouniiioto: (ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);)
+07-05 21:51:24.576: D/engine_handle_cmd(21153): APP_CMD_START
+07-05 21:51:24.896: D/engine_handle_cmd(21153): APP_CMD_INIT_WINDOW
+07-05 21:51:24.896: D/engine_handle_cmd(21153): APP_CMD_GAINED_FOCUS
+
+native-activity(sample)
+07-05 21:52:33.186: I/native-activity(21246): APP_CMD_START
+07-05 21:52:33.216: I/native-activity(21246): APP_CMD_INIT_WINDOW
+07-05 21:52:33.336: I/native-activity(21246): APP_CMD_GAINED_FOCUS
+
+Xこのコマンド：
+ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
+XをAPP_CMD_INIT_WINDOWからAPP_CMD_STARTに移動した
+
+そうして：
+07-05 22:03:34.875: D/engine_handle_cmd(22178): APP_CMD_START
+07-05 22:03:34.975: D/engine_handle_cmd(22178): APP_CMD_INIT_WINDOW
+07-05 22:03:40.445: D/engine_handle_cmd(22178): APP_CMD_GAINED_FOCUS
 
 
 

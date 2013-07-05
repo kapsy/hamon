@@ -7,49 +7,35 @@
 
 // OpenGL ES 2.0 code
 #include <jni.h>
-//#include <EGL/egl.h>
-//#include <GLES/gl.h>
-//#include <GLES2/gl2.h>
 
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <android/log.h>
-//#include <android_native_app_glue.h>
+#include <android_native_app_glue.h>
+#include "hon_type.h"
+
 
 #include "and_main.h"
 #include "gfx_gles.h"
 
-//extern engine* main_engine;
 
 
 
-//GLuint loadShader(GLenum shaderType, const char* pSource);
-//GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
-
-//struct engine {
-//	android_app* app;
-//	EGLDisplay display;
-//	EGLSurface surface;
-//};
-
-//extern engine;
 
 
-
-//typedef struct {
-//
-//	    struct android_app* app;
-//
-//
-//	        int animating;
-//  EGLNativeWindowType  nativeWin;
-//  EGLDisplay  display;
-//  EGLContext  context;
-//  EGLSurface  surface;
-//  EGLint      majorVersion;
-//  EGLint      minorVersion;
-//  int         width;
-//  int         height;
-//} ScreenSettings;
-
+typedef struct {
+	EGLNativeWindowType nativeWin;
+	EGLDisplay display;
+	EGLContext context;
+	EGLSurface surface;
+	EGLint majorVersion;
+	EGLint minorVersion;
+	int width;
+	int height;
+} ScreenSettings;
 
 
 void pi_create_buffer();
@@ -95,7 +81,7 @@ unsigned short iObj[] = {
 };
 
 ShaderParams    g_sp;
-//ScreenSettings  g_sc;
+ScreenSettings  g_sc;
 
 GLuint g_vbo;
 GLuint g_ibo;
@@ -116,58 +102,16 @@ unsigned int frames = 0;
 
 
 
-//int gles_init(struct engine* e) {
-//
-//	const EGLint attribs[] = {
-//			EGL_BLUE_SIZE, 8,
-//			EGL_GREEN_SIZE, 8,
-//			EGL_RED_SIZE, 8,
-//			EGL_RENDERABLE_TYPE,
-//			EGL_OPENGL_ES2_BIT,
-//			EGL_NONE };
-//	const EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
-//
-//	EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-//	eglInitialize(display, 0, 0);
-//
-//	EGLConfig config;
-//	EGLint numConfigs;
-//	eglChooseConfig(display, attribs, &config, 1, &numConfigs);
-//
-//	EGLint format;
-//	eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-//	ANativeWindow_setBuffersGeometry(e->app->window, 0, 0, format);
-//
-//	EGLSurface surface = eglCreateWindowSurface(display, config, e->app->window, NULL);
-//
-//	EGLContext context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
-//
-//	if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-//		return -1;
-//	}
-//
-//	EGLint w, h;
-//	eglQuerySurface(display, surface, EGL_WIDTH, &w);
-//	eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-//
-//	e->display = display;
-//	e->surface = surface;
-//
-//    e->surface = surface;
-//    e->width = w;
-//    e->height = h;
-//    e->state.angle = 0;
-//
-//	glViewport(0, 0, w, h);
-//	return 0;
-//
-//}
 
-EGLBoolean pi_SurfaceCreate(engine* sc)
+EGLBoolean pi_SurfaceCreate(ANativeWindow* nw)
 {
 
 	LOGD("pi_SurfaceCreate", "pi_SurfaceCreate() called");
 // ScreenSettings *sc = &g_sc;
+
+    memset(&g_sc, 0, sizeof(ScreenSettings));
+//    LOGD("pi_SurfaceCreate", "memset");
+
 
   EGLint attrib[] = {
     EGL_RED_SIZE,       8,
@@ -183,85 +127,46 @@ EGLBoolean pi_SurfaceCreate(engine* sc)
   EGLint numConfigs;
   EGLConfig config;
 
-  sc->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-  if (sc->display == EGL_NO_DISPLAY) return EGL_FALSE;
+  g_sc.display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+  if (g_sc.display == EGL_NO_DISPLAY) return EGL_FALSE;
 
-  if (!eglInitialize(sc->display, &sc->majorVersion, &sc->minorVersion))
+  if (!eglInitialize(g_sc.display, &g_sc.majorVersion, &g_sc.minorVersion))
     return EGL_FALSE;
 
-  if (!eglChooseConfig(sc->display, attrib, &config, 1, &numConfigs))
+  if (!eglChooseConfig(g_sc.display, attrib, &config, 1, &numConfigs))
     return EGL_FALSE;
 
 
 	EGLint format;
-	eglGetConfigAttrib(sc->display, config, EGL_NATIVE_VISUAL_ID, &format);
-	ANativeWindow_setBuffersGeometry(sc->app->window, 0, 0, format);
+	eglGetConfigAttrib(g_sc.display, config, EGL_NATIVE_VISUAL_ID, &format);
+	ANativeWindow_setBuffersGeometry(nw, 0, 0, format);
 
 
-//  e->surface = eglCreateWindowSurface(e->display, config, e->nativeWin, NULL);
-	sc->surface = eglCreateWindowSurface(sc->display, config, sc->app->window, NULL);
-  if (sc->surface == EGL_NO_SURFACE) return EGL_FALSE;
+	g_sc.surface = eglCreateWindowSurface(g_sc.display, config, nw, NULL);
+  if (g_sc.surface == EGL_NO_SURFACE) return EGL_FALSE;
 
 
+  g_sc.context = eglCreateContext(g_sc.display, config, EGL_NO_CONTEXT, context);
+  if (g_sc.context == EGL_NO_CONTEXT) return EGL_FALSE;
 
-
-  sc->context = eglCreateContext(sc->display, config, EGL_NO_CONTEXT, context);
-  if (sc->context == EGL_NO_CONTEXT) return EGL_FALSE;
-
-  if (!eglMakeCurrent(sc->display, sc->surface, sc->surface, sc->context))
+  if (!eglMakeCurrent(g_sc.display, g_sc.surface, g_sc.surface, g_sc.context))
       return EGL_FALSE;
 
   	EGLint w, h;
-  	eglQuerySurface(sc->display, sc->surface, EGL_WIDTH, &w);
-  	eglQuerySurface(sc->display, sc->surface, EGL_HEIGHT, &h);
+  	eglQuerySurface(g_sc.display, g_sc.surface, EGL_WIDTH, &w);
+  	eglQuerySurface(g_sc.display, g_sc.surface, EGL_HEIGHT, &h);
 
-  	sc->width = w;
-  	sc->height = h;
+  	g_sc.width = w;
+  	g_sc.height = h;
 
-  	LOGD("pi_SurfaceCreate", "sc->width: %d", sc->width);
-  	LOGD("pi_SurfaceCreate", "sc->height: %d", sc->height);
+  	LOGD("pi_SurfaceCreate", "g_sc.width: %d", g_sc.width);
+  	LOGD("pi_SurfaceCreate", "g_sc.height: %d", g_sc.height);
 
   return EGL_TRUE;
 }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//GLuint loadShader(GLenum shaderType, const char* pSource) {
-//	GLuint shader = glCreateShader(shaderType);
-//	glShaderSource(shader, 1, &pSource, NULL);
-//	glCompileShader(shader);
-//	GLint compiled;
-//	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-//	return shader;
-//}
-//
-//GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
-//	GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
-//	GLuint pixelShader = loadShader(GL_FRAGMENT_SHADER, pFragmentSource);
-//	GLuint program = glCreateProgram();
-//	glAttachShader(program, vertexShader);
-//	glAttachShader(program, pixelShader);
-//	glLinkProgram(program);
-//	GLint linkStatus = GL_FALSE;
-//	glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-//	return program;
-//}
 
 GLuint LoadShader(GLenum type, const char *shaderSource)
 {
@@ -340,7 +245,6 @@ int InitShaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 
 void pi_create_buffer()
 {
-	LOGD("pi_create_buffer", "pi_create_buffer() called");
   // VBOの生成
   glGenBuffers(1, &g_vbo);
   glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
@@ -352,104 +256,17 @@ void pi_create_buffer()
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
   // データの転送
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj), iObj, GL_STATIC_DRAW);
+	LOGD("pi_create_buffer", "pi_create_buffer() finished");
 }
 
 
 
+void pi_draw() {
 
 
 
 
-
-
-
-
-
-
-
-
-//
-//// 描画
-//void gles_draw(struct engine* e) {
-//	GLuint gProgram = createProgram(gVertexShader, gFragmentShader);
-//	GLuint gvPositionHandle = glGetAttribLocation(gProgram, "vPosition");
-//
-//	const GLfloat vertices[] = { 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
-//
-//	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-//	glClear(GL_COLOR_BUFFER_BIT);
-//	glUseProgram(gProgram);
-//	glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-//	glEnableVertexAttribArray(gvPositionHandle);
-//	glDrawArrays(GL_TRIANGLES, 0, 3);
-//
-//	eglSwapBuffers(e->display, e->surface);
-//}
-
-// 描画
-
-//void pi_draw() {
-//
 //	LOGD("pi_draw", "pi_draw() called");
-////	while (frames < 3000) {
-//
-//
-//
-//		glViewport(0, 0, g_sc.width, g_sc.height);
-//		LOGD("pi_draw", "glViewport() called");
-//		glClear(GL_COLOR_BUFFER_BIT);
-//		LOGD("pi_draw", "glClear() called");
-//		glUniform1f(g_sp.uFrame, (float) (frames % 240) / 150.0 - 0.8);
-//		LOGD("pi_draw", "glUniform1f() called");
-//
-//
-//
-//
-//		// 使用するシェーダを指定
-//		glUseProgram(g_program);
-//		LOGD("pi_draw", "glUseProgram() called");
-//		// 有効にするバッファオブジェクトを指定
-//		glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-//		LOGD("pi_draw", "glBindBuffer() called");
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
-//		LOGD("pi_draw", "glBindBuffer() called");
-//		// シェーダのアトリビュート変数をアクセス可能にする
-//		glEnableVertexAttribArray(g_sp.aPosition);
-//		LOGD("pi_draw", "glEnableVertexAttribArray() called");
-//		glEnableVertexAttribArray(g_sp.aTex);
-//		LOGD("pi_draw", "glEnableVertexAttribArray() called");
-//
-//
-//		// 頂点情報のサイズ、オフセットを指定
-//		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, 20, (void*) 0);
-//		LOGD("pi_draw", "glVertexAttribPointer() called");
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
-//		LOGD("pi_draw", "glVertexAttribPointer() called");
-//
-//
-//
-//
-//
-//		glEnableVertexAttribArray(0);
-//		LOGD("pi_draw", "glEnableVertexAttribArray() called");
-//		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-//		LOGD("pi_draw", "glDrawElements() called");
-//
-//
-//
-//
-//		eglSwapBuffers(g_sc.display, g_sc.surface);
-//		LOGD("pi_draw", "eglSwapBuffers() called");
-//		frames++;
-////	}
-//
-//}
-void pi_draw(engine* sc) {
-
-
-
-
-	LOGD("pi_draw", "pi_draw() called");
 //	while (frames < 600) {
 
 
@@ -460,7 +277,7 @@ void pi_draw(engine* sc) {
 //		LOGD("pi_draw", "sc->surface): %d", sc->height);
 
 
-		glViewport(0, 0, sc->width, sc->height);
+		glViewport(0, 0, g_sc.width, g_sc.height);
 //		LOGD("pi_draw", "glViewport() called");
 		glClear(GL_COLOR_BUFFER_BIT);
 //		LOGD("pi_draw", "glClear() called");
@@ -503,7 +320,7 @@ void pi_draw(engine* sc) {
 
 
 
-		eglSwapBuffers(sc->display, sc->surface);
+		eglSwapBuffers(g_sc.display, g_sc.surface);
 //		LOGD("pi_draw", "eglSwapBuffers() called");
 		frames++;
 //	}
@@ -534,7 +351,7 @@ void pi_draw(engine* sc) {
 //    e->surface = EGL_NO_SURFACE;
 //}
 
-int init_cmds() { // FIXME
+int init_cmds(int* animating) { // FIXME
 
 	LOGD("init_cmds", "init_cmds() called");
 
@@ -552,13 +369,11 @@ int init_cmds() { // FIXME
 
 	  glClearColor(0.0f, 0.3f, 0.0f, 0.5f);
 
+//	  *animating = TRUE;
+
+		LOGD("init_cmds", "init_cmds() finished");
 	  return TRUE;
 }
-//int test() {
-//
-//	return 1;
-//}
-
 
 //int main ( int argc, char *argv[] )
 //{

@@ -5,42 +5,61 @@
  *      Author: Michael
  */
 
-////BEGIN_INCLUDE(all)
-//#include <jni.h>
-//#include <errno.h>
+//BEGIN_INCLUDE(all)
+#include <jni.h>
+#include <errno.h>
+
+
+//#include <EGL/egl.h>
+//#include <GLES/gl.h>
 //
-//
-////#include <EGL/egl.h>
-////#include <GLES/gl.h>
-////
-////#include <GLES2/gl2.h>
-////#include <GLES2/gl2ext.h>
-//
-//
-//#include <android/sensor.h>
-//#include <android/log.h>
-//#include <android_native_app_glue.h>
-//
-//// kapsy
-//#include <android/asset_manager.h>
-//#include <android/storage_manager.h>
-//#include <android/window.h>
-//
-//
-//#include <math.h>
-//#include <time.h>
-//
-//
-//#include "snd_sles.h"
-//#include "snd_scal.h"
-//#include "snd_asst.h"
-//#include "snd_ctrl.h"
+//#include <GLES2/gl2.h>
+//#include <GLES2/gl2ext.h>
+
+
+#include <android/sensor.h>
+#include <android/log.h>
+#include <android_native_app_glue.h>
+
+// kapsy
+#include <android/asset_manager.h>
+#include <android/storage_manager.h>
+#include <android/window.h>
+
+#include <math.h>
+#include <time.h>
+
+#include "snd_sles.h"
+#include "snd_scal.h"
+#include "snd_asst.h"
+#include "snd_ctrl.h"
 #include "gfx_gles.h"
-//#include "and_main.h"
-//#include "hon_type.h"
-
-
 #include "and_main.h"
+#include "hon_type.h"
+
+
+
+
+
+
+
+struct saved_state {
+    float angle;
+    size_t x;
+    size_t y;
+};
+
+
+typedef struct{
+
+    struct android_app* app;
+    int animating;
+    struct saved_state state;
+
+}engine;
+
+
+
 
 
 typedef void* EGLNativeDisplayType;
@@ -48,13 +67,9 @@ size_t screen_width;
 size_t screen_height;
 size_t screen_height_reduced; // 既に計算した値・自動的再生のためにここで計算
 
-engine main_engine;
-
-//engine* main_engine;
 
 
 static float touch_segment_width;
-
 int gfx_initialized = FALSE;
 
 
@@ -91,124 +106,8 @@ void play_rec_note(float x, float y);
 //};
 
 
-//
-//void get_engine() {
-//
-//
-//
-//	struct engine* engine = (struct engine*)app->userData;
-//}
-//
 
 
-
-
-
-
-
-
-
-
-
-///**
-// * Initialize an EGL context for the current display.
-// */
-//static int engine_init_display(struct engine* engine) {
-//    // initialize OpenGL ES and EGL
-//
-//    /*
-//     * Here specify the attributes of the desired configuration.
-//     * Below, we select an EGLConfig with at least 8 bits per color
-//     * component compatible with on-screen windows
-//     */
-////    const EGLint attribs[] = {
-////            EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-////            EGL_BLUE_SIZE, 8,
-////            EGL_GREEN_SIZE, 8,
-////            EGL_RED_SIZE, 8,
-////            EGL_NONE
-////    };
-//    const EGLint attribs[] = {
-//    		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-//            EGL_BLUE_SIZE, 8,
-//            EGL_GREEN_SIZE, 8,
-//            EGL_RED_SIZE, 8,
-//            EGL_NONE
-//    };
-//    EGLint w, h, dummy, format;
-//    EGLint numConfigs;
-//    EGLConfig config;
-//    EGLSurface surface;
-//    EGLContext context;
-//
-//    EGLDisplay display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-//
-//    eglInitialize(display, 0, 0);
-//
-//    /* Here, the application chooses the configuration it desires. In this
-//     * sample, we have a very simplified selection process, where we pick
-//     * the first EGLConfig that matches our criteria */
-//    eglChooseConfig(display, attribs, &config, 1, &numConfigs);
-//
-//
-//
-//
-//    /* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
-//     * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
-//     * As soon as we picked a EGLConfig, we can safely reconfigure the
-//     * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
-//    eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &format);
-//
-//    ANativeWindow_setBuffersGeometry(engine->app->window, 0, 0, format);
-//
-//    surface = eglCreateWindowSurface(display, config, engine->app->window, NULL);
-//
-//
-//
-//	static const EGLint contextAttribs[] = {
-//	   EGL_CONTEXT_CLIENT_VERSION,	2,
-//	   EGL_NONE
-//	};
-//
-//	context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
-//	eglMakeCurrent(display, surface, surface, context);
-//
-//
-//
-////    context = eglCreateContext(display, config, NULL, NULL);
-//
-//    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-//        LOGW("Unable to eglMakeCurrent");
-//        return -1;
-//    }
-//
-//    eglQuerySurface(display, surface, EGL_WIDTH, &w);
-//    eglQuerySurface(display, surface, EGL_HEIGHT, &h);
-//
-//
-//
-//
-// 	__android_log_print(ANDROID_LOG_DEBUG, "engine_init_display", "h: %d", h);
-//
-//
-//    engine->display = display;
-//    engine->context = context;
-//    engine->surface = surface;
-//    engine->width = w;
-//    engine->height = h;
-//    engine->state.angle = 0;
-//
-//    // Initialize GL state.
-//    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-//    glEnable(GL_CULL_FACE);
-//    glShadeModel(GL_SMOOTH);
-//    glDisable(GL_DEPTH_TEST);
-//
-////    int sucess = setupGraphics(w, h);
-//
-//
-//    return 0;
-//}
 
 ///**
 // * Just the current frame in the display.
@@ -257,10 +156,7 @@ void play_rec_note(float x, float y);
  * Process the next input event.
  */
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
-//	struct engine* engine = (struct engine*)app->userData;
-
-
-
+	engine* e = (engine*)app->userData;
 
 
 
@@ -295,7 +191,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			//play_note(find_screen_segment(AMotionEvent_getX(event, 0)), find_vel_value(AMotionEvent_getY(event, 0)));
 			play_rec_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
 			set_parts_active();
-			main_engine.animating = 1;
+			e->animating = 1;
 
         LOGD("LOGD_engine_handle_input", "action, %d", action);
 
@@ -423,13 +319,8 @@ static float find_vel_value(float pos_y) {
 
 
 
-
+// この関数は必要ない
 static void get_screen_dimensions(engine* engine) {
-
-//	ANativeWindow_Buffer buffer;
-//
-//	int w, h;
-
 
 	// 縦置きの向き (APad)
 	//	06-04 15:47:33.845: D/get_screen_dimensions(13014): ANativeWindow_getWidth: 480
@@ -459,32 +350,31 @@ static void get_screen_dimensions(engine* engine) {
 	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "ANativeWindow_getHeight: %d", screen_height);
 	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "screen_height_reduced: %d", screen_height_reduced);
 
-
 }
 
 
-static void engine_init(struct android_app* app) {
-	//	struct engine* engine = (struct engine*)app->userData;
-
-
-	//(engine*)app->userData = &main_engine;
-	app->userData = &main_engine;
-main_engine.app = app;
-
-main_engine.animating = 0;
-	main_engine.display = NULL;
-	main_engine.surface = NULL;
-	main_engine.context = NULL;
-	main_engine.majorVersion = 0;
-
-	main_engine.minorVersion = 0;
-
-	main_engine.width = 0;
-	main_engine.height = 0;
-
-
-
-}
+//static void engine_init(struct android_app* app) {
+//	//	struct engine* engine = (struct engine*)app->userData;
+//
+//
+//	//(engine*)app->userData = &main_engine;
+//	app->userData = &main_engine;
+//main_engine.app = app;
+//
+//main_engine.animating = 0;
+//	main_engine.display = NULL;
+//	main_engine.surface = NULL;
+//	main_engine.context = NULL;
+//	main_engine.majorVersion = 0;
+//
+//	main_engine.minorVersion = 0;
+//
+//	main_engine.width = 0;
+//	main_engine.height = 0;
+//
+//
+//
+//}
 
 
 /*void android_main(android_app* state) {
@@ -522,20 +412,11 @@ main_engine.animating = 0;
 
 
 
-
-
-
-
-
-
-
-
-
 /**
  * Process the next main command.
  */
 static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
-//    struct engine* engine = (struct engine*)app->userData;
+    engine* e = (engine*)app->userData;
 
 
 
@@ -545,47 +426,55 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
             // The system has asked us to save our current state.  Do so.
-        	main_engine.app->savedState = malloc(sizeof(struct saved_state));
-            *((struct saved_state*)main_engine.app->savedState) = main_engine.state;
-            main_engine.app->savedStateSize = sizeof(struct saved_state);
+        	e->app->savedState = malloc(sizeof(struct saved_state));
+            *((struct saved_state*)e->app->savedState) = e->state;
+            e->app->savedStateSize = sizeof(struct saved_state);
             break;
 
         case APP_CMD_INIT_WINDOW:
         	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_INIT_WINDOW");
             // The window is being shown, get it ready.
-			if (main_engine.app->window != NULL) {
-
-									LOGD("call_order", "APP_CMD_INIT_WINDOW");
-	//                engine_init_display(engine);
-	//                engine_draw_frame(engine);
-
-	//            	gles_init(engine);
-	//            	gles_draw(engine);
 
 
-//				if (!gfx_initialized) {
-//
-//					int suc = pi_SurfaceCreate(&main_engine);
-//					suc = init_cmds();
-//					//pi_draw();
-//
-//					LOGD("call_order", "APP_CMD_INIT_WINDOW");
-//			        pi_draw(&main_engine);
-//
-//					get_screen_dimensions(&main_engine);
-//					// touch
-//					calc_segment_width();
-//
-//
-//
-					ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
-//					gfx_initialized = TRUE;
+
+			if (e->app->window != NULL) {
+
+				LOGD("call_order", "APP_CMD_INIT_WINDOW");
+
+				int suc = pi_SurfaceCreate(e->app->window);
+				LOGD("call_order", "pi_SurfaceCreate, suc: %d", suc);
+				suc = init_cmds(&e->animating);
+				LOGD("call_order", "init_cmds, suc: %d", suc);
+
+				get_screen_dimensions(e);
+				calc_segment_width();
+
+					e->animating = TRUE;
+
+					init_sles_components(app);
+
+
+//				ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
+
+
+
+//				if (gfx_initialized) {
+//					e->animating = TRUE;
+//						init_sles_components(app);
 //				}
-
+//
+//
+//				gfx_initialized = TRUE;
 			}
+
+
             break;
         case APP_CMD_START:
         	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_START");
+
+
+
+			ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
 
 
 
@@ -609,6 +498,9 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 //                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
 //                        engine->accelerometerSensor, (1000L/60)*1000);
 //            }
+
+
+//        	e->animating = TRUE;
             break;
         case APP_CMD_LOST_FOCUS:
         	__android_log_write(ANDROID_LOG_DEBUG, "engine_handle_cmd", "APP_CMD_LOST_FOCUS");
@@ -619,7 +511,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 //                        engine->accelerometerSensor);
 //            }
             // Also stop animating.
-        	main_engine.animating = 0;
+        	e->animating = 0;
 //            engine_draw_frame(engine);
 //            quick_fade_on_exit();
 //            shutdown_audio();
@@ -631,7 +523,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     		shutdown_audio();
     		join_control_loop();
 
-    		main_engine.app->destroyRequested = 1; // RvA
+    		e->app->destroyRequested = 1; // RvA
             //
 
             break;
@@ -648,73 +540,10 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     }
 }
 
-/**
- * This is the main entry point of a native application that is using
- * android_native_app_glue.  It runs in its own thread, with its own
- * event loop for receiving input events and doing other things.
- */
-void android_main(struct android_app* state) {
-//    struct engine engine;
-
-    LOGD("android_main", "android_main");
-
-    // Make sure glue isn't stripped.
-    app_dummy();
-    LOGD("android_main", "app_dummy");
-
-
-
-    memset(&main_engine, 0, sizeof(engine));
-    LOGD("android_main", "memset");
-
-
-	engine_init(state);
-    LOGD("android_main", "engine_init");
-
-
-    state->userData = &main_engine;
-    LOGD("android_main", "userData");
-    state->onAppCmd = engine_handle_cmd;
-    LOGD("android_main", "onAppCmd");
-    state->onInputEvent = engine_handle_input;
-    LOGD("android_main", "onInputEvent");
-    main_engine.app = state;
-
-    LOGD("android_main", "app = state");
-
-//    // Prepare to monitor accelerometer
-//    engine.sensorManager = ASensorManager_getInstance();
-//    engine.accelerometerSensor = ASensorManager_getDefaultSensor(engine.sensorManager,
-//            ASENSOR_TYPE_ACCELEROMETER);
-//    engine.sensorEventQueue = ASensorManager_createEventQueue(engine.sensorManager,
-//            state->looper, LOOPER_ID_USER, NULL, NULL);
-
-
-
-
-    if (state->savedState != NULL) {
-        // We are starting with a previous saved state; restore from it.
-    	main_engine.state = *(struct saved_state*)state->savedState;
-    }
-
-
-    LOGD("android_main", "(state->savedState != NULL) ");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void init_sles_components(struct android_app* state) {
     // ＝＝＝＝＝＝＝＝＝オーディオ処理＝＝＝＝＝＝＝＝＝
 
+	AAssetManager* asset_manager = state->activity->assetManager;
 	  ANativeActivity* nativeActivity = state->activity;
 //	  internal_path = nativeActivity->externalDataPath;
 //
@@ -725,7 +554,6 @@ void android_main(struct android_app* state) {
 	init_random_seed();
 	init_all_parts();
 
-	AAssetManager* asset_manager = state->activity->assetManager;
 
 	create_sl_engine();
 	load_all_assets(asset_manager);
@@ -736,123 +564,283 @@ void android_main(struct android_app* state) {
 
 	init_control_loop();
 	start_loop();
+	LOGD("call_order", "init_sles_components() finished");
+}
 
-//	struct timeval start_time;
-//	struct timeval finish_time;
-//	struct timeval diff_time;
-//	struct timeval curr_time;
-//	struct timezone tzp;
+///**
+// * This is the main entry point of a native application that is using
+// * android_native_app_glue.  It runs in its own thread, with its own
+// * event loop for receiving input events and doing other things.
+// */
+//void android_main(struct android_app* state) {
+//    engine e;
+//
+//    LOGD("android_main", "android_main");
+//
+//    // Make sure glue isn't stripped.
+//    app_dummy();
+//    memset(&e, 0, sizeof(engine));
+//    state->userData = &e;
+//    state->onAppCmd = engine_handle_cmd;
+//    state->onInputEvent = engine_handle_input;
+//    e.app = state;
+//	LOGD("call_order", "android_main e.app = state");
+//
+//
+//    if (state->savedState != NULL) {
+//        // We are starting with a previous saved state; restore from it.
+//    	e.state = *(struct saved_state*)state->savedState;
+//    }
+//    LOGD("android_main", "(state->savedState != NULL)");
+//
+//
+//
+////    // ＝＝＝＝＝＝＝＝＝オーディオ処理＝＝＝＝＝＝＝＝＝
+////
+////	  ANativeActivity* nativeActivity = state->activity;
+//////	  internal_path = nativeActivity->externalDataPath;
+//////
+//////
+//////		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
+//////		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
+////
+////	init_random_seed();
+////	init_all_parts();
+////
+////	AAssetManager* asset_manager = state->activity->assetManager;
+////
+////	create_sl_engine();
+////	load_all_assets(asset_manager);
+////	init_all_voices();
+////	init_auto_vals();
+////
+////	// snd_ctrlのこと
+////
+////	init_control_loop();
+////	start_loop();
+////	LOGD("call_order", "start_loop() called");
+//
+////	struct timeval start_time;
+////	struct timeval finish_time;
+////	struct timeval diff_time;
+////	struct timeval curr_time;
+////	struct timezone tzp;
+//
+//
+//int i = 0;
+//
+//	// loop waiting for stuff to do.
+//
+//	while (1) {
+//		if (i<1){ LOGD("call_order", "while started"); i++;}
+//
+//
+////		gettimeofday(&start_time, &tzp);
+//        // Read all pending events.
+//        int ident;
+//        int events;
+//        struct android_poll_source* source;
+//
+//        // If not animating, we will block forever waiting for events.
+//        // If animating, we loop until all events are read, then continue
+//        // to draw the next frame of animation.
+////        while ((ident=ALooper_pollAll(e.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0) {
+//            while ((ident=ALooper_pollAll(0, NULL, &events, (void**)&source)) >= 0) {
+//        	LOGD("call_order", "while ((ident=ALooper_pollAll...");
+//            // Process this event.
+//            if (source != NULL) {
+//                source->process(state, source);
+//            }
+//
+////            // If a sensor has data, process it now.
+////            if (ident == LOOPER_ID_USER) {
+////                if (engine.accelerometerSensor != NULL) {
+////                    ASensorEvent event;
+////                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue, &event, 1) > 0) {
+/////*                        LOGI("accelerometer: x=%f y=%f z=%f",
+////                                event.acceleration.x, event.acceleration.y,
+////                                event.acceleration.z);*/
+////                    }
+////                }
+////            }
+//
+//            // Check if we are exiting.
+//            if (state->destroyRequested != 0) {
+//            	__android_log_write(ANDROID_LOG_DEBUG, "android_main", "(state->destroyRequested != 0)");
+////                gles_term_display(&engine);
+//                return;
+//            }
+//        }
+//
+//
+//
+//
+//        if (!gfx_initialized) {
+//
+//        	int suc = pi_SurfaceCreate(e.app->window);
+//        	suc = init_cmds();
+//
+//        	LOGD("call_order", "(!gfx_initialized)");
+//        	get_screen_dimensions(&e);
+//        	calc_segment_width();
+//        	init_sles_components(state);
+//
+//        	gfx_initialized = TRUE;
+//        }
+//
+//
+//
+//
+//
+//        if (e.animating) {
+////            // Done with events; draw next animation frame.
+////            engine.state.angle += .01f;
+////            if (engine.state.angle > 1) {
+////                engine.state.angle = 0;
+////            }
+////
+////            // Drawing is throttled to the screen update rate, so there
+////            // is no need to do timing here.
+//
+//
+//        		pi_draw();
+//        }
+//
+//		LOGD("call_order", "while running");
+//
+//
+//
+//
+//
+////		gettimeofday(&finish_time, &tzp);
+////		timersub(&finish_time, &start_time, &diff_time);
+////
+////
+////		gettimeofday(&curr_time, &tzp);
+////		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "gettimeofday: %d %d diff_time: %d %d",
+////				curr_time.tv_sec, curr_time.tv_usec, diff_time.tv_sec, diff_time.tv_usec);
+//
+//
+//
+//	}
+//}
+//END_INCLUDE(all)
+
+
+void android_main(struct android_app* state) {
 
 
 
-int i = 0;
-
-	// loop waiting for stuff to do.
 
 
+    engine e;
+
+    LOGD("android_main", "android_main");
+
+    // Make sure glue isn't stripped.
+    app_dummy();
+    memset(&e, 0, sizeof(engine));
+    state->userData = &e;
+    state->onAppCmd = engine_handle_cmd;
+    state->onInputEvent = engine_handle_input;
+    e.app = state;
+	LOGD("call_order", "android_main e.app = state");
 
 
 
 
 
 
+//	app_dummy();
+//
+//	engine e;
+//	state->userData = &e;
+//	state->onAppCmd = [](android_app* app, int32_t cmd) {
+//		auto e = static_cast<engine*>(app->userData);
+//		switch (cmd) {
+//			case APP_CMD_INIT_WINDOW:
+//				init(e);
+//				draw(e);
+//				break;
+//		}
+//	};
+//	e.app = state;
+	int i = 0;
 
-
-
+	int animating = FALSE;
 
 	while (1) {
-		if (i<1){ LOGD("call_order", "while started"); i++;}
+
+		if (i < 1) { LOGD("call_order", "while started"); i++; }
+
+		int ident, events;
+		struct android_poll_source* source;
+		while ((ident = ALooper_pollAll(0, NULL, &events, (void**) &source)) >= 0) {
+			LOGD("call_order", "while ((ident=ALooper_pollAll...");
+			if (source != NULL) {
+				source->process(state, source);
+			}
+
+			if (state->destroyRequested != 0) {
+				return;
+			}
+		}
 
 
 
-
-
-//		gettimeofday(&start_time, &tzp);
-        // Read all pending events.
-        int ident;
-        int events;
-        struct android_poll_source* source;
-
-        // If not animating, we will block forever waiting for events.
-        // If animating, we loop until all events are read, then continue
-        // to draw the next frame of animation.
-        while ((ident=ALooper_pollAll(main_engine.animating ? 0 : -1, NULL, &events, (void**)&source)) >= 0) {
-
-            // Process this event.
-            if (source != NULL) {
-                source->process(state, source);
-            }
-
-//            // If a sensor has data, process it now.
-//            if (ident == LOOPER_ID_USER) {
-//                if (engine.accelerometerSensor != NULL) {
-//                    ASensorEvent event;
-//                    while (ASensorEventQueue_getEvents(engine.sensorEventQueue, &event, 1) > 0) {
-///*                        LOGI("accelerometer: x=%f y=%f z=%f",
-//                                event.acceleration.x, event.acceleration.y,
-//                                event.acceleration.z);*/
-//                    }
-//                }
-//            }
-
-            // Check if we are exiting.
-            if (state->destroyRequested != 0) {
-            	__android_log_write(ANDROID_LOG_DEBUG, "android_main", "(state->destroyRequested != 0)");
-//                gles_term_display(&engine);
-                return;
-            }
-        }
-
-
-
-
-        if (!gfx_initialized) {
-
-        	int suc = pi_SurfaceCreate(&main_engine);
-        	suc = init_cmds();
-
-        	LOGD("call_order", "(!gfx_initialized)");
-        //    pi_draw(&main_engine);
-
-        	get_screen_dimensions(&main_engine);
-        	calc_segment_width();
-
-        	gfx_initialized = TRUE;
-        }
-
-
-        if (main_engine.animating) {
-//            // Done with events; draw next animation frame.
-//            engine.state.angle += .01f;
-//            if (engine.state.angle > 1) {
-//                engine.state.angle = 0;
-//            }
+//		if (e.app->window != NULL && !gfx_initialized) {
 //
-//            // Drawing is throttled to the screen update rate, so there
-//            // is no need to do timing here.
-//            gles_draw(&engine);
-
-
-        		pi_draw(&main_engine);
-        }
-
-		LOGD("call_order", "while running");
-
-//if (i<1){ pi_draw(&main_engine); i++;}
-
-
-
-
-//		gettimeofday(&finish_time, &tzp);
-//		timersub(&finish_time, &start_time, &diff_time);
+//			LOGD("call_order", "(e->app->window != NULL && !gfx_initialized))");
 //
+//			int suc = pi_SurfaceCreate(e.app->window);
+//			suc = init_cmds();
 //
-//		gettimeofday(&curr_time, &tzp);
-//		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "gettimeofday: %d %d diff_time: %d %d",
-//				curr_time.tv_sec, curr_time.tv_usec, diff_time.tv_sec, diff_time.tv_usec);
+//			LOGD("call_order", "(!gfx_initialized)");
+//			get_screen_dimensions(&e);
+//			calc_segment_width();
+//
+//			//animating = TRUE;
+//
+//			init_sles_components(state);
+//
+//			gfx_initialized = TRUE;
+//		}
+
+//		if (e.app->window != NULL && animating) {
+//			pi_draw();
+//
+//		}
+
+		if (e.animating) {
+			pi_draw();
+		}
 
 
+
+
+
+//    	LOGD("call_order", "while (1)");
 
 	}
 }
-//END_INCLUDE(all)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
