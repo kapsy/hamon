@@ -233,7 +233,6 @@ x‚â‚Á‚½I‚Å‚«‚Ü‚µ‚½BOpenGL ES‚Q
 XŒ³‚Ì•û–@‚É–ß‚·F
 XScreenSettings‚Æengine•ÊX
 Xinit()‚Ì‡”Ô‚ð“O’ê“I‚É’²‚×‚é
-ˆá˜aŠ´‚È‚­‚Ì‘‚«•ûE’²‚×‚ÄB
 
 apad:
 07-05 18:39:27.622: D/call_order(11974): android_main e.app = state
@@ -295,7 +294,245 @@ X‚ðAPP_CMD_INIT_WINDOW‚©‚çAPP_CMD_START‚ÉˆÚ“®‚µ‚½
 07-05 22:03:34.975: D/engine_handle_cmd(22178): APP_CMD_INIT_WINDOW
 07-05 22:03:40.445: D/engine_handle_cmd(22178): APP_CMD_GAINED_FOCUS
 
+2013”N7ŒŽ6“ú
+xƒR[ƒh‘|œ
 
+
+
+
+
+
+07-07 12:20:38.383: I/pi_draw(24404): delta_time: 0 12682
+07-07 12:20:38.403: I/pi_draw(24404): delta_time: 0 20895
+07-07 12:20:38.413: I/pi_draw(24404): delta_time: 0 10667
+07-07 12:20:38.433: I/pi_draw(24404): delta_time: 0 13258
+07-07 12:20:38.453: I/pi_draw(24404): delta_time: 0 21405
+07-07 12:20:38.473: I/pi_draw(24404): delta_time: 0 18593
+07-07 12:20:38.483: I/pi_draw(24404): delta_time: 0 10773
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 20099
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 5409
+07-07 12:20:38.523: I/pi_draw(24404): delta_time: 0 14301
+07-07 12:20:38.543: I/pi_draw(24404): delta_time: 0 18369
+07-07 12:20:38.553: I/pi_draw(24404): delta_time: 0 9403
+07-07 12:20:38.563: I/pi_draw(24404): delta_time: 0 13387
+07-07 12:20:38.583: I/pi_draw(24404): delta_time: 0 19050
+07-07 12:20:38.593: I/pi_draw(24404): delta_time: 0 11196
+07-07 12:20:38.603: I/pi_draw(24404): delta_time: 0 14056
+07-07 12:20:38.623: I/pi_draw(24404): delta_time: 0 16267
+07-07 12:20:38.643: I/pi_draw(24404): delta_time: 0 17043
+07-07 12:20:38.653: I/pi_draw(24404): delta_time: 0 12077
+07-07 12:20:38.673: I/pi_draw(24404): delta_time: 0 24995
+07-07 12:20:38.693: I/pi_draw(24404): delta_time: 0 17285
+07-07 12:20:38.723: I/pi_draw(24404): delta_time: 0 29876
+07-07 12:20:38.733: I/pi_draw(24404): delta_time: 0 11995
+07-07 12:20:38.763: I/pi_draw(24404): delta_time: 0 30144
+07-07 12:20:38.783: I/pi_draw(24404): delta_time: 0 15056
+07-07 12:20:38.793: I/pi_draw(24404): delta_time: 0 15393
+07-07 12:20:38.813: I/pi_draw(24404): delta_time: 0 17410
+07-07 12:20:38.843: I/pi_draw(24404): delta_time: 0 28109
+07-07 12:20:38.853: I/pi_draw(24404): delta_time: 0 8568
+07-07 12:20:38.863: I/pi_draw(24404): delta_time: 0 7577
+07-07 12:20:38.883: I/pi_draw(24404): delta_time: 0 25298
+07-07 12:20:38.903: I/pi_draw(24404): delta_time: 0 19028
+07-07 12:20:38.923: I/pi_draw(24404): delta_time: 0 22194
+07-07 12:20:38.933: I/pi_draw(24404): delta_time: 0 10336
+07-07 12:20:38.943: I/pi_draw(24404): delta_time: 0 11625
+07-07 12:20:38.973: I/pi_draw(24404): delta_time: 0 25339
+07-07 12:20:38.993: I/pi_draw(24404): delta_time: 0 18462
+07-07 12:20:39.013: I/pi_draw(24404): delta_time: 0 26393
+07-07 12:20:39.033: I/pi_draw(24404): delta_time: 0 13327
+07-07 12:20:39.043: I/pi_draw(24404): delta_time: 0 14842
+07-07 12:20:39.073: I/pi_draw(24404): delta_time: 0 29188
+07-07 12:20:39.093: I/pi_draw(24404): delta_time: 0 14850
+
+
+
+
+
+‰¹º‚È‚¢
+07-07 12:20:38.383: I/pi_draw(24404): delta_time: 0 12682
+07-07 12:20:38.403: I/pi_draw(24404): delta_time: 0 20895
+07-07 12:20:38.413: I/pi_draw(24404): delta_time: 0 10667
+07-07 12:20:38.433: I/pi_draw(24404): delta_time: 0 13258
+07-07 12:20:38.453: I/pi_draw(24404): delta_time: 0 21405
+07-07 12:20:38.473: I/pi_draw(24404): delta_time: 0 18593
+07-07 12:20:38.483: I/pi_draw(24404): delta_time: 0 10773
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 20099
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 5409
+07-07 12:20:38.523: I/pi_draw(24404): delta_time: 0 14301
+07-07 12:20:38.543: I/pi_draw(24404): delta_time: 0 18369
+07-07 12:20:38.553: I/pi_draw(24404): delta_time: 0 9403
+07-07 12:20:38.563: I/pi_draw(24404): delta_time: 0 13387
+07-07 12:20:38.583: I/pi_draw(24404): delta_time: 0 19050
+07-07 12:20:38.593: I/pi_draw(24404): delta_time: 0 11196
+07-07 12:20:38.603: I/pi_draw(24404): delta_time: 0 14056
+07-07 12:20:38.623: I/pi_draw(24404): delta_time: 0 16267
+07-07 12:20:38.643: I/pi_draw(24404): delta_time: 0 17043
+07-07 12:20:38.653: I/pi_draw(24404): delta_time: 0 12077
+07-07 12:20:38.673: I/pi_draw(24404): delta_time: 0 24995
+07-07 12:20:38.693: I/pi_draw(24404): delta_time: 0 17285
+07-07 12:20:38.723: I/pi_draw(24404): delta_time: 0 29876
+07-07 12:20:38.733: I/pi_draw(24404): delta_time: 0 11995
+07-07 12:20:38.763: I/pi_draw(24404): delta_time: 0 30144
+07-07 12:20:38.783: I/pi_draw(24404): delta_time: 0 15056
+07-07 12:20:38.793: I/pi_draw(24404): delta_time: 0 15393
+07-07 12:20:38.813: I/pi_draw(24404): delta_time: 0 17410
+07-07 12:20:38.843: I/pi_draw(24404): delta_time: 0 28109
+07-07 12:20:38.853: I/pi_draw(24404): delta_time: 0 8568
+07-07 12:20:38.863: I/pi_draw(24404): delta_time: 0 7577
+07-07 12:20:38.883: I/pi_draw(24404): delta_time: 0 25298
+07-07 12:20:38.903: I/pi_draw(24404): delta_time: 0 19028
+07-07 12:20:38.923: I/pi_draw(24404): delta_time: 0 22194
+07-07 12:20:38.933: I/pi_draw(24404): delta_time: 0 10336
+07-07 12:20:38.943: I/pi_draw(24404): delta_time: 0 11625
+07-07 12:20:38.973: I/pi_draw(24404): delta_time: 0 25339
+07-07 12:20:38.993: I/pi_draw(24404): delta_time: 0 18462
+07-07 12:20:39.013: I/pi_draw(24404): delta_time: 0 26393
+07-07 12:20:39.033: I/pi_draw(24404): delta_time: 0 13327
+07-07 12:20:39.043: I/pi_draw(24404): delta_time: 0 14842
+07-07 12:20:39.073: I/pi_draw(24404): delta_time: 0 29188
+07-07 12:20:39.093: I/pi_draw(24404): delta_time: 0 14850
+
+
+
+
+
+The renderer produces time and the simulation consumes it in discrete dt sized chunks.
+
+    double t = 0.0;
+    const double dt = 0.01;
+
+    double currentTime = hires_time_in_seconds();
+    double accumulator = 0.0;
+
+    while ( !quit )
+    {
+         double newTime = hires_time_in_seconds();
+         double frameTime = newTime - currentTime;
+         currentTime = newTime;
+
+         accumulator += frameTime;
+
+         while ( accumulator >= dt )
+         {
+              integrate( state, t, dt );
+              accumulator -= dt;
+              t += dt;
+         }
+
+         render(state);
+    }
+
+//======================
+
+    double t = 0.0;
+    const double dt = 0.01;
+
+    double currentTime = hires_time_in_seconds();
+    double accumulator = 0.0;
+
+    State previous;
+    State current;
+
+    while ( !quit )
+    {
+         double newTime = time();
+         double frameTime = newTime - currentTime;
+         if ( frameTime > 0.25 )
+              frameTime = 0.25;	  // note: max frame time to avoid spiral of death
+         currentTime = newTime;
+
+         accumulator += frameTime;
+
+         while ( accumulator >= dt )
+         {
+              previousState = currentState;
+              integrate( currentState, t, dt );
+              t += dt;
+              accumulator -= dt;
+         }
+
+         const double alpha = accumulator / dt;
+
+         State state = currentState*alpha + previousState * ( 1.0 - alpha );
+
+         render( state );
+    }
+
+
+
+
+
+
+
+
+
+
+Constant Game Speed independent of Variable FPS
+Implementation
+Would it be possible to improve the above solution even further to run faster on slow hardware, and be visually more atractive on faster hardware? Well, lucky for us, this is possible. The game state itself doesnft need to be updated 60 times per second. Player input, AI and the updating of the game state have enough with 25 frames per second. So letfs try to call the update_game() 25 times per second, no more, no less. The rendering, on the other hand, needs to be as fast as the hardware can handle. But a slow frame rate shouldnft interfere with the updating of the game. The way to achieve this is by using the following game loop:
+
+    const int TICKS_PER_SECOND = 25;
+    const int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+    const int MAX_FRAMESKIP = 5;
+
+    DWORD next_game_tick = GetTickCount();
+    int loops;
+    float interpolation;
+
+    bool game_is_running = true;
+    while( game_is_running ) {
+
+        loops = 0;
+        while( GetTickCount() > next_game_tick && loops < MAX_FRAMESKIP) {
+            update_game();
+
+            next_game_tick += SKIP_TICKS;
+            loops++;
+        }
+
+        interpolation = float( GetTickCount() + SKIP_TICKS - next_game_tick )
+                        / float( SKIP_TICKS );
+        display_game( interpolation );
+    }
+
+Both of these are valid approaches. 
+The key is to draw the current state whenever onDrawFrame is called, 
+and to update state as infrequently as possible.
+
+
+
+
+2013”N7ŒŽ8“ú
+Xˆá˜aŠ´‚È‚­‚Ì‘‚«•ûE’²‚×‚ÄB
+
+
+2013”N7ŒŽ‚X“ú
+‚Ü‚¸‚Íƒ}ƒ‹ƒ`ƒXƒŒƒbƒh‹LŽ–‚ð“Ç‚ñ‚Å‚ÝE¡‚Ì‚Ü‚Ü‚Å‚¢‚¢‚Ì‚©‚à
+‚µ‚©‚µ‰Á‘¬“x‚·‚é‚½‚ß‚ÉŒÅ’è“I‚ÈŽžŠÔ‘Ñ‚ª•K—v‚Ì‚©‚à
+TICKS_PER_SECOND = 10;@‚Á‚Ä•û–@‚ðŽg—p‚µ‚È‚¢‚Æ
+fixed_time_step‹@”\
+
+2013”N7ŒŽ10“ú
+x¡‚Í‚à‚¤Œˆ‚ß‚½Bƒ}ƒ‹ƒ`ƒXƒŒƒbƒh‚Í‘Ê–Ú‚¾B‚±‚ê‚©‚ço—ˆ‚ê‚Î‚Ð‚Æ‚Â‚ÌƒXƒŒƒbƒh‚Ö(ˆ—ƒ‹[ƒv‚È‚Ç)‚»‚ê‚©‚ç‘¬“xŒüã‚Ö
+
+2013”N7ŒŽ11“ú
+Galaxy
+07-11 11:17:03.121: D/init_cmds(28268): GL_VENDOR: Imagination Technologies
+07-11 11:17:03.121: D/init_cmds(28268): GL_RENDERER: PowerVR SGX 540
+07-11 11:17:03.121: D/init_cmds(28268): GL_VERSION: OpenGL ES 2.0 build 1.8.GOOGLENEXUS.ED945322@2112805
+
+iPod 4G
+OpenGL ES 2.0 IMGSGX535-73.16.1
+
+Apad
+07-11 11:22:19.474: D/init_cmds(2548): GL_VENDOR: ARM
+07-11 11:22:19.474: D/init_cmds(2548): GL_RENDERER: Mali-400 MP
+07-11 11:22:19.474: D/init_cmds(2548): GL_VERSION: OpenGL ES 2.0
+
+XŽlŠpŒ`‚ð‘‚­
+
+ƒ^ƒbƒ`‘€ì‚É‚æ‚Á‚Ä‰~Œ`‚ð•`‚­‚Á‚Ä‚±‚Æ
 
 {{{{{{{{{{{{{{{
 {@@‚â‚é‚×‚«ƒŠƒXƒg@(—Dæ‡ˆÊ)@{

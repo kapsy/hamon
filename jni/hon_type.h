@@ -9,6 +9,7 @@
 #define HON_TYPE_H_
 
 #include <android/log.h>
+#include <time.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -21,6 +22,7 @@
 
 
 #define BUFFER_SIZE 1024 // 5.8049886621315192743764172335601ms
+//#define BUFFER_SIZE 2048
 //static int tics_per_part = 1600;
 
 #define BUFFER_SIZE_SHORT (BUFFER_SIZE / 2)
@@ -31,8 +33,13 @@
 //#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "native-activity", __VA_ARGS__))
 //#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "native-activity", __VA_ARGS__))
 
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,__VA_ARGS__)
-#define LOGDw(...) __android_log_write(ANDROID_LOG_DEBUG,__VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, __VA_ARGS__)
+#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO, __VA_ARGS__)
 
+#define LOGDw(...) __android_log_write(ANDROID_LOG_DEBUG, __VA_ARGS__)
+
+
+#define SEC_IN_NS 1000000000
+#define SEC_IN_US 1000000
 
 #endif /* HON_TYPE_H_ */

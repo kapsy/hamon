@@ -8,13 +8,12 @@
 #ifndef GFX_INIT_H_
 #define GFX_INIT_H_
 
-
 #include <EGL/egl.h>
 
 EGLBoolean pi_SurfaceCreate(ANativeWindow* nw);
 void pi_draw();
-//int init_cmds();
-
-int init_cmds(int* animating);
+int init_cmds();
+void calc_frame_delta_time();
+void calc_frame_rate();
 
 #endif /* GFX_INIT_H_ */

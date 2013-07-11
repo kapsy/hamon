@@ -28,7 +28,7 @@
 
 
 // kapsys includes
-#include <android/log.h>;
+//#include <android/log.h>;
 
 #include "snd_sles.h"
 #include "snd_asst.h"
@@ -39,6 +39,7 @@
 
 //int PLYCNT = 10;
 // voice count
+//#define VOICE_COUNT 10 //フレームレートに影響を与える
 #define VOICE_COUNT 30
 #define LOOPER_COUNT 2
 
@@ -228,6 +229,17 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
     SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1,
         SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
         SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
+
+
+//    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_22_05,
+//        SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
+//        SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
+
+    // フレームレートにあまり影響を与えないのかも
+//    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_11_025,
+//        SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
+//        SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
+
 
 	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "SLDataFormat_PCM format_pcm ");
     SLDataSource audioSrc = {&loc_bufq, &format_pcm};
@@ -751,7 +763,7 @@ unsigned short* get_next_data_chunk(voice* v) {
 
 void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "buffer_chunk_callback", "buffer_chunk_callback() called");
-
+//usleep(200000);
 	SLresult result;
 
 //	result = (*buffer_queue)->Enqueue(buffer_queue, get_next_data_chunk((voice*)v), ((voice*)v)->current_chunk_size);
