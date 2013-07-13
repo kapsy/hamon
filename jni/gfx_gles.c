@@ -27,6 +27,34 @@
 
 #define DELTA_AVG_COUNT 6
 
+#define TOUCH_SHAPES_MAX 40
+#define TOUCH_SHAPES_TTL 200.0F
+
+
+typedef struct {
+
+	int is_alive;
+	GLfloat pos_x;
+	GLfloat pos_y;
+GLfloat alpha;
+	float ttl;
+
+
+} touch_shape;
+
+//typedef struct {
+//
+//} rgba;
+
+touch_shape touch_shapes[TOUCH_SHAPES_MAX];
+unsigned int touch_shape_draw_order[TOUCH_SHAPES_MAX];
+size_t current_touch_shape = 0;
+
+
+void init_touch_shapes();
+//touch_shape* cycle_touch_shapes();
+void draw_touch_shapes();
+void step_touch_shape_draw_order();
 
 typedef struct {
 	EGLNativeWindowType nativeWin;
@@ -43,24 +71,29 @@ typedef struct {
 void pi_create_buffer();
 
 const char vShaderSrc[] =
-  "attribute vec3  aPosition;\n"
-  "attribute vec2  aTex;     \n"
-  "varying   vec2  vTex;\n"
-  "uniform   float uFrame;\n"
-  "void main()        \n"
-  "{                  \n"
-  "  vTex = aTex;     \n"
-  "  gl_Position = vec4(aPosition.x - uFrame, aPosition.y + uFrame, 0, 1);\n"
-  "}                  \n";
+		"attribute 	vec3		aPosition;	\n"
+		"attribute 	vec2		aTex;     	\n"
+		"varying   	vec2  	vTex;			\n"
+		"uniform	float 		uFrame;		\n"
+		"uniform	float 		posX;			\n"
+		"uniform	float		posY;			\n"
+		"void main()							\n"
+		"	{                  						\n"
+		"		vTex = aTex;     				\n"
+//		"		vTex = vec2(0.0, 0.0);		\n"
+//		"		gl_Position = vec4(aPosition.x - uFrame, aPosition.y + uFrame, 0, 1);		\n"
+		"		gl_Position = vec4(aPosition.x + posX, aPosition.y + posY, 0, 1);		\n"
+		"	}                  						\n";
 
 const char fShaderSrc[] =
-  "precision mediump float;\n"\
-  "varying   vec2  vTex;\n"
-  "uniform float uBlue;\n"
-  "void main()        \n"
-  "{                  \n"
-  "  gl_FragColor = vec4(vTex.y, vTex.x, uBlue, 1.0);\n"
-  "}                  \n";
+		"precision	mediump float;		\n"
+		"varying		vec2  	vTex;			\n"
+		"uniform 	float 		uBlue;		\n"
+		"uniform	float 		alpha;			\n"
+		"void main()        					\n"
+		"	{                  						\n"
+		"  		gl_FragColor = vec4(vTex.y, vTex.x, uBlue, alpha);	\n"
+		"	}   	               						\n";
 
 
 //const char fShaderSrcBlue[] =
@@ -74,10 +107,13 @@ const char fShaderSrc[] =
 
 
 typedef struct {
-  GLint   aPosition;
-  GLint   aTex;
-  GLint   uFrame;
-  GLint 	uBlue;
+  GLint  		aPosition;
+  GLint  		aTex;
+  GLint  		uFrame;
+  GLint		posX;
+  GLint 		posY;
+  GLint 		uBlue;
+  GLint		alpha;
 } ShaderParams;
 
 typedef struct {
@@ -101,17 +137,25 @@ unsigned short iObj[] = {
 
 
 		// 四角形
+//VertexType vObj_sq[] = { // VertexBufferObjectを使用スべきか？
+//
+//  {.x = -0.25f, 	.y =   0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
+//  {.x = 0.25f, 		.y =   0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
+//  {.x = 0.25f, 		.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+//  {.x = -0.25f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+//};
 VertexType vObj_sq[] = { // VertexBufferObjectを使用スべきか？
 
-  {.x = -0.25f, 	.y =   0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-  {.x = 0.25f, 		.y =   0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-  {.x = 0.25f, 		.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-  {.x = -0.25f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+  {.x = -0.125f, 	.y =   0.25f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
+  {.x = 0.125f, 		.y =   0.25f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
+  {.x = 0.125f, 		.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+  {.x = -0.125f, 	.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
 };
-
 unsigned short iObj_sq[] = {
-  0, 1, 2,
-  0, 2, 3
+//  0, 1, 2, 3
+//  0, 1, 3, 2
+  0, 3, 1, 2
+//  0, 2, 3
 };
 
 
@@ -125,71 +169,24 @@ GLuint g_ibo;
 GLuint g_vbo_2;
 GLuint g_ibo_2;
 
-
 GLuint g_program;
 GLuint g_program_purp;
 
 unsigned int frames = 0;
-
-
-//    struct timeval start_time;
-//    struct timeval finish_time;
-//    struct timeval delta_time;
-//    struct timezone tzp;
-//
-//
-//    struct timeval curr_time;
-//    struct timeval next_time;
-
-
     float posx = -1.0F;
 
+struct timezone tzp;
+struct timeval get_time;
+
+unsigned long curr_time = 0;
+unsigned long new_time = 0;
+
+unsigned long frame_delta = 0;
+int frame_delta_avg[DELTA_AVG_COUNT];
+size_t frame_delta_cycle = 0;
 
 
 
-
-
-
-	struct timezone tzp;
-	struct timeval get_time;
-
-	unsigned long curr_time = 0;
-	unsigned long new_time = 0;
-
-
-
-	unsigned long frame_delta = 0;
-
-//	unsigned long delta_total;
-//	size_t delta_avg_count = 0;
-
-
-
-
-
-
-
-	int frame_delta_avg[DELTA_AVG_COUNT];
-
-	size_t frame_delta_cycle = 0;
-
-
-
-
-
-
-
-
-
-//const char gVertexShader[] = "attribute vec4 vPosition;\n"
-//		"void main() {\n"
-//		"  gl_Position = vPosition;\n"
-//		"}\n";
-//
-//const char gFragmentShader[] = "precision mediump float;\n"
-//		"void main() {\n"
-//		"  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"
-//		"}\n";
 
 EGLBoolean pi_SurfaceCreate(ANativeWindow* nw) {
 
@@ -265,6 +262,9 @@ int init_cmds() { // FIXME
 
 	frames = 0;
 	frame_delta_avg_init();
+
+	init_touch_shapes();
+
 	int res;
 
 	res = InitShaders(&g_program, vShaderSrc, fShaderSrc);
@@ -280,10 +280,18 @@ int init_cmds() { // FIXME
 	g_sp.aTex = glGetAttribLocation(g_program, "aTex");
 	g_sp.uFrame = glGetUniformLocation(g_program, "uFrame");
 
+	g_sp.posX = glGetUniformLocation(g_program, "posX");
+	g_sp.posY = glGetUniformLocation(g_program, "posY");
+
 
 
 	g_sp.uBlue = glGetUniformLocation(g_program, "uBlue");
+	g_sp.alpha = glGetUniformLocation(g_program, "alpha");
 
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
 	glClearColor(0.0f, 0.3f, 0.0f, 0.5f);
 
@@ -500,12 +508,15 @@ void pi_draw() {
 //		glViewport(0, 0, g_sc.width, g_sc.height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		glUniform1f(g_sp.alpha, 0.8);
 
 //		glUniform1f(g_sp.uFrame, (float) (frames % 240) / 150.0 - 0.8);
 
 		glUniform1f(g_sp.uFrame,posx);
 		glUniform1f(g_sp.uBlue, 1.0);
 
+		glUniform1f(g_sp.posX, 0.5);
+		glUniform1f(g_sp.posY, 0.5);
 
 
 		// 使用するシェーダを指定
@@ -527,23 +538,24 @@ void pi_draw() {
 
 
 
-
+		glUniform1f(g_sp.posX, -0.5);
+		glUniform1f(g_sp.posY, -0.5);
 		glUniform1f(g_sp.uFrame,posx*2.0F);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
 
 
+		glUniform1f(g_sp.posX, posx);
+		glUniform1f(g_sp.posY, -0.5);
 		glUniform1f(g_sp.uFrame,posx*3.0F);
-
-
-
 		glUniform1f(g_sp.uBlue, 0.0);
-
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
 
 
 		// 四角形
+		glUniform1f(g_sp.posX, posx*2.0);
+		glUniform1f(g_sp.posY, -0.5);
 		glUniform1f(g_sp.uBlue, 0.3);
 		glUniform1f(g_sp.uFrame,posx*4.0F);
 
@@ -558,15 +570,25 @@ void pi_draw() {
 
 		glEnableVertexAttribArray(0);
 
-		glDrawElements(GL_TRIANGLE_STRIP, 6, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
 
-
+		glUniform1f(g_sp.posX, posx*1.5);
+		glUniform1f(g_sp.posY, -0.25);
 		glUniform1f(g_sp.uFrame,posx*5.0F);
 		glUniform1f(g_sp.uBlue, 0.7);
 //		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-		glDrawElements(GL_TRIANGLE_STRIP, 6, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
+
+
+
+
+
+
+
+
+		draw_touch_shapes();
 
 
 
@@ -604,5 +626,68 @@ void pi_draw() {
 //    e->surface = EGL_NO_SURFACE;
 //}
 
+void init_touch_shapes() {
+
+	int i;
+	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
+		touch_shapes[i].is_alive = FALSE;
+
+		touch_shape_draw_order[i] = i;
+	}
+}
+
+void step_touch_shape_draw_order() {
+
+	int i;
+	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
+
+			if (touch_shape_draw_order[i] < TOUCH_SHAPES_MAX)
+				touch_shape_draw_order[i]++;
+			if (touch_shape_draw_order[i] == TOUCH_SHAPES_MAX)
+				touch_shape_draw_order[i] = 0;
+		}
+}
 
 
+void activate_touch_shape(float x, float y) {
+	LOGI("activate_touch_shape", "x: %f", x);
+	LOGI("activate_touch_shape", "y: %f", y);
+
+//	touch_shape* ts = cycle_touch_shapes();
+	step_touch_shape_draw_order();
+	touch_shape* ts = touch_shapes + (touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
+
+	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
+	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
+//	LOGI("activate_touch_shape", "x: %f ts->pos_x: %f", x, ts->pos_x);
+//	LOGI("activate_touch_shape", "y: %f ts->pos_y: %f", y, ts->pos_y);
+
+	ts->alpha = 1.0;
+	ts->ttl = TOUCH_SHAPES_TTL;
+
+	ts->is_alive = TRUE;
+
+
+}
+
+void draw_touch_shapes() {
+	int i;
+	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
+
+		touch_shape* ts = touch_shapes + (touch_shape_draw_order[i]);
+
+		if (ts->is_alive) {
+
+			glUniform1f(g_sp.posX, ts->pos_x);
+			glUniform1f(g_sp.posY, ts->pos_y);
+
+//			glUniform1f(g_sp.uBlue, 0.7);
+
+			ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+
+			glUniform1f(g_sp.alpha, ts->alpha);
+			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+
+		}
+	}
+}

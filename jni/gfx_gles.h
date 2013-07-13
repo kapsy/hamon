@@ -15,5 +15,6 @@ void pi_draw();
 int init_cmds();
 void calc_frame_delta_time();
 void calc_frame_rate();
+void activate_touch_shape(float x, float y);
 
 #endif /* GFX_INIT_H_ */

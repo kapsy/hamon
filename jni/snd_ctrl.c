@@ -19,6 +19,7 @@
 #include "snd_scal.h"
 #include "hon_type.h"
 #include "and_main.h"
+#include "gfx_gles.h"
 
 
 #define AMMO_INCREASE_RATE 5//50 // 個のticsを過ごすと、AMMOが1に増やす
@@ -322,6 +323,8 @@ int decrease_ammo() { // タッチするときの処理・AMMOを減るため
 
 // mainから呼ぶ
 void record_note(float x, float y, int seg, float vel){
+//	LOGI("record_note", "x: %f", x);
+//	LOGI("record_note", "y: %f", y);
 
 
 
@@ -336,13 +339,15 @@ void record_note(float x, float y, int seg, float vel){
 
 	p->note_info[n].pos_x = x;
 	p->note_info[n].pos_y = y;
+	LOGI("record_note", "p->note_info[n].pos_x: %f", p->note_info[n].pos_x );
+	LOGI("record_note", "p->note_info[n].pos_y: %f", p->note_info[n].pos_y);
 
 	p->note_info[n].seg = seg;
 	p->note_info[n].vel = vel;
 
 	p->note_info[n].tic = tic;
 
-	__android_log_print(ANDROID_LOG_DEBUG, "record_note", "current_rec_part %d, current_tic %d, current_note %d",
+	LOGD("record_note", "current_rec_part %d, current_tic %d, current_note %d",
 			current_rec_part,p->current_tic, p->current_note);
 
 	p->current_note++;
@@ -528,7 +533,7 @@ void auto_play() {
 			float y = (float)(obtain_random(screen_height_reduced));
 
 			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "x %f y %f", x, y);
-			play_rec_note(x, y);
+			trigger_note(x, y);
 
 			one_shot_count = 0;
 			one_shot_interval = 5+obtain_random(500);
@@ -645,14 +650,19 @@ void play_all_parts() {
 
 				if (n->tic == p->current_tic) {
 
-//					play_note(n->seg, n->vel);
+					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
+
 					enqueue_one_shot(get_scale_sample(n->seg), float_to_slmillibel(n->vel, 1.0F), get_seg_permille(n->seg));
 
-				 	__android_log_print(ANDROID_LOG_DEBUG, "play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
-					//draw_note(note->pos_x, note->pos_y);
+//				 	__android_log_print(ANDROID_LOG_DEBUG, "play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
 
-				 	//n->vel = n->vel*0.95F;
-//				 	__android_log_print(ANDROID_LOG_DEBUG, "play_all_parts", "n->vel: %f", n->vel);
+					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
+
+
+					activate_touch_shape(n->pos_x, n->pos_y);
+					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
+
+
 
 				}
 			}

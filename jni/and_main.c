@@ -58,7 +58,7 @@ int gfx_initialized = FALSE;
 
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
-void play_rec_note(float x, float y);
+
 
 
 // gfx_init.c‚ÉˆÚ“®‚µ‚½
@@ -111,18 +111,25 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     int index = 0;
     int touch_max = 5;
 
+
+
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 		int p;
 		int action = AKeyEvent_getAction(event);
 		switch (action & AMOTION_EVENT_ACTION_MASK) {
 		case AMOTION_EVENT_ACTION_DOWN:
 			LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_DOWN");
-			//play_note(find_screen_segment(AMotionEvent_getX(event, 0)), find_vel_value(AMotionEvent_getY(event, 0)));
-			play_rec_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
+//			float x = AMotionEvent_getX(event, 0);
+//			float y = AMotionEvent_getY(event, 0);
+
+			trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
 			set_parts_active();
+
+//			activate_touch_shape(x, y);
+
 			e->animating = 1;
 
-        LOGD("LOGD_engine_handle_input", "action, %d", action);
+			LOGD("LOGD_engine_handle_input", "action, %d", action);
 
 			break;
 
@@ -147,8 +154,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 			if (pointer_index_mask < 4) {
 
-				//play_note(find_screen_segment(AMotionEvent_getX(event, pointer_index_mask)), find_vel_value(AMotionEvent_getY(event, pointer_index_mask)));
-				play_rec_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
+				trigger_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
 				set_parts_active();
 			}
 
@@ -167,14 +173,16 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 }
 
 
-void play_rec_note(float x, float y) {
+void trigger_note(float x, float y) {
+	activate_touch_shape(x, y);
+
 	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ðŠm”F‚·‚é‚½‚ß
 		int seg = find_screen_segment(x);
 		float vel = find_vel_value(y);
 		//play_note(seg, vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
-
 		record_note(x, y, seg, vel);
+
 	}
 }
 
@@ -257,6 +265,13 @@ static void get_screen_dimensions(engine* e) {
 }
 
 
+
+
+
+
+
+
+
 /**
  * Process the next main command.
  */
@@ -297,7 +312,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				e->animating = TRUE;
 
-//				init_sles_components(app);
+				init_sles_components(app);
 			}
 
             break;

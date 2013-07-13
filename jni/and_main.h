@@ -9,7 +9,7 @@
 #define AND_MAIN_H_
 
 
-void play_rec_note(float x, float y);
+void trigger_note(float x, float y);
 
 
 
