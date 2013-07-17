@@ -61,7 +61,12 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/capability.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -192,3 +197,13 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/capability.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:

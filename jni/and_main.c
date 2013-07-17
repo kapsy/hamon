@@ -312,7 +312,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				e->animating = TRUE;
 
-				init_sles_components(app);
+//				init_sles_components(app);
 			}
 
             break;

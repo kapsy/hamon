@@ -650,19 +650,13 @@ void play_all_parts() {
 
 				if (n->tic == p->current_tic) {
 
-					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
-
 					enqueue_one_shot(get_scale_sample(n->seg), float_to_slmillibel(n->vel, 1.0F), get_seg_permille(n->seg));
 
-//				 	__android_log_print(ANDROID_LOG_DEBUG, "play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
-
-					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
-
+//				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d",
+//						total_tic_counter, i, n->tic, p->current_tic);
 
 					activate_touch_shape(n->pos_x, n->pos_y);
 					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
-
-
 
 				}
 			}
