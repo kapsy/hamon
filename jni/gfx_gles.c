@@ -32,20 +32,33 @@
 
 #define DELTA_AVG_COUNT 6
 
-#define TOUCH_SHAPES_MAX 40
-#define TOUCH_SHAPES_TTL 200.0F
+//#define TOUCH_SHAPES_MAX 40//0000
+#define TOUCH_SHAPES_MAX 24
+//#define TOUCH_SHAPES_TTL 200.0F //必要ないよ。アルファでやるなら十分
 
 #define PI 3.14159265358979
 #define CIRCLE_SEGMENTS 24
+
+
+
+
 
 typedef struct {
 
 	int is_alive;
 	GLfloat pos_x;
 	GLfloat pos_y;
-GLfloat alpha;
-GLfloat scale;
-	float ttl;
+
+	GLfloat rgb[3];
+
+	GLfloat alpha;
+
+	GLfloat scale;
+
+
+
+
+//	float ttl;
 
 
 } touch_shape;
@@ -53,6 +66,10 @@ GLfloat scale;
 //typedef struct {
 //
 //} rgba;
+
+
+// 取り敢えず
+touch_shape* touch_shape_list[TOUCH_SHAPES_MAX];
 
 touch_shape touch_shapes[TOUCH_SHAPES_MAX];
 unsigned int touch_shape_draw_order[TOUCH_SHAPES_MAX];
@@ -102,15 +119,19 @@ const char vShaderSrc[] =
 const char fShaderSrc[] =
 		"precision	mediump float;		\n"
 		"varying		vec2  	vTex;			\n"
-		"uniform 	float		u_red;		\n"
-		"uniform 	float		u_grn;		\n"
-		"uniform 	float		u_blu;			\n"
+		"uniform 	float		ured;		\n"
+		"uniform 	float		ugrn;		\n"
+		"uniform 	float		ublu;			\n"
 //		"uniform 	float 		uBlue;		\n"
 		"uniform	float 		alpha;			\n"
 		"void main()        					\n"
 		"	{                  						\n"
-		"  		gl_FragColor = vec4(vTex.y * u_red, vTex.x * u_grn, u_blu, alpha);	\n"
+//		"  		gl_FragColor = vec4(vTex.y * u_red, vTex.x * u_grn, u_blu, alpha);	\n"
 //		"  		gl_FragColor = vec4(vTex.y, vTex.x, u_blu, alpha);	\n"
+
+//		"  		gl_FragColor = vec4(ured, ugrn, ublu, alpha);	\n"
+		"  		gl_FragColor = vec4(vTex.y * ured, vTex.x * ugrn, ublu, alpha);	\n"
+
 		"	}   	               						\n";
 
 
@@ -144,13 +165,11 @@ typedef struct {
   GLint		posX;
   GLint 		posY;
 
-  GLint		u_red;
-  GLint		u_grn;
-  GLint		u_blu;
+  GLint rgb[3];
 
-//  GLint 		uBlue;
   GLint		alpha;
   GLint		scale;
+
 } ShaderParams;
 
 typedef struct {
@@ -200,6 +219,10 @@ unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
 
 
+
+
+
+
 ShaderParams    g_sp;
 ScreenSettings  g_sc;
 
@@ -215,6 +238,25 @@ GLuint sc_ibo;
 
 GLuint g_program;
 GLuint g_program_purp;
+
+typedef struct {
+	float r, g, b;
+} rgb;
+
+rgb part_colors[] = {
+	{0.597993F, 1.000000F, 0.658208F},
+	{0.249421F, 0.896186F, 1.000000F},
+	{1.000000F, 0.035373F, 0.319272F},
+	{0.329373F, 0.094343F, 1.000000F},
+	{0.879933F, 0.123191F, 1.000000F},
+	{0.404804F, 0.984234F, 1.000000F},
+	{0.465192F, 0.537905F, 1.000000F},
+	{1.000000F, 0.186882F, 0.480862F}
+};
+
+//size_t current_part_color = 0; // 必要なのか？
+
+
 
 unsigned int frames = 0;
     float posx = -1.0F;
@@ -341,9 +383,9 @@ int init_cmds() { // FIXME
 
 
 
-	g_sp.u_red = glGetUniformLocation(g_program, "u_red");
-	g_sp.u_grn = glGetUniformLocation(g_program, "u_grn");
-	g_sp.u_blu = glGetUniformLocation(g_program, "u_blu");
+	g_sp.rgb[0] = glGetUniformLocation(g_program, "ured");
+	g_sp.rgb[1]  = glGetUniformLocation(g_program, "ugrn");
+	g_sp.rgb[2]  = glGetUniformLocation(g_program, "ublu");
 
 
 
@@ -607,10 +649,11 @@ void pi_draw() {
 		glUniform1f(g_sp.uFrame,posx);
 
 
+//glUniform3f()
+		glUniform1f(g_sp.rgb[0], 1.0);
+		glUniform1f(g_sp.rgb[1], 1.0);
+		glUniform1f(g_sp.rgb[2], 1.0);
 
-		glUniform1f(g_sp.u_red, 1.0);
-		glUniform1f(g_sp.u_grn, 1.0);
-		glUniform1f(g_sp.u_blu, 1.0);
 		glUseProgram(g_program);
 
 
@@ -727,13 +770,17 @@ void pi_draw() {
 //		  glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
 
-			glUniform1f(g_sp.u_red, 1.0);
-			glUniform1f(g_sp.u_grn, 1.0);
-			glUniform1f(g_sp.u_blu, 1.0);
+//			glUniform1f(g_sp.u_red, 1.0);
+//			glUniform1f(g_sp.u_grn, 1.0);
+//			glUniform1f(g_sp.u_blu, 1.0);
 
 
 		draw_touch_shapes();
 
+
+
+
+//		usleep(100000);
 
 
 		eglSwapBuffers(g_sc.display, g_sc.surface);
@@ -785,67 +832,102 @@ void step_touch_shape_draw_order() {
 				touch_shape_draw_order[i]++;
 			if (touch_shape_draw_order[i] == TOUCH_SHAPES_MAX)
 				touch_shape_draw_order[i] = 0;
-		}
+
+			LOGI("step_touch_shape_draw_order", "touch_shape_draw_order[%d]: %d", i, touch_shape_draw_order[i]);
+
+	}
+
+
 }
 
 
-void activate_touch_shape(float x, float y) {
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void activate_touch_shape(float x, float y, size_t col) {
 
 
+
+	pthread_mutex_lock(&mutex);
 	step_touch_shape_draw_order();
 	touch_shape* ts = touch_shapes + (touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
-	LOGI("activate_touch_shape", "touch_shape_draw_order[TOUCH_SHAPES_MAX -1] %d",
-			touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
+//	LOGI("activate_touch_shape", "touch_shape_draw_order[TOUCH_SHAPES_MAX -1] %d",
+//			touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
+
+
+
 
 	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
 	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
 //	LOGI("activate_touch_shape", "x: %f ts->pos_x: %f", x, ts->pos_x);
 //	LOGI("activate_touch_shape", "y: %f ts->pos_y: %f", y, ts->pos_y);
 
+
+
+	ts->rgb[0] = part_colors[col].r;
+	ts->rgb[1] = part_colors[col].g;
+	ts->rgb[2] = part_colors[col].b;
+
+
+//	LOGI("activate_touch_shape", "ts->rgb[0] %f ts->rgb[1] %f ts->rgb[2] %f", ts->rgb[0], ts->rgb[1], ts->rgb[2]);
+
 	ts->alpha = 1.0;
 	ts->scale = 1.0;
-	ts->ttl = TOUCH_SHAPES_TTL;
+//	ts->ttl = TOUCH_SHAPES_TTL;
 
 	ts->is_alive = TRUE;
+	pthread_mutex_unlock(&mutex);
 
 
 }
 
+
+
+
 void draw_touch_shapes() {
 	int i;
+
+			pthread_mutex_lock(&mutex);
 	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
 
 		touch_shape* ts = touch_shapes + (touch_shape_draw_order[i]);
 
+//		touch_shape* ts = touch_shapes + i;
+
 		if (ts->is_alive) {
+
 
 			glUniform1f(g_sp.posX, ts->pos_x);
 			glUniform1f(g_sp.posY, ts->pos_y);
 
-//			glUniform1f(g_sp.uBlue, 0.7);
+			glUniform1f(g_sp.rgb[0], ts->rgb[0]);
+			glUniform1f(g_sp.rgb[1], ts->rgb[1]);
+			glUniform1f(g_sp.rgb[2], ts->rgb[2]);
+
 
 			ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
 			ts->scale += (float)frame_delta * 0.000000205F;
 
-			ts->ttl -=  (float)frame_delta * 0.00004F;
-//			LOGI("draw_touch_shapes", "ts->ttl %f", ts->ttl);
-
-			if (ts->ttl <= 0) {
+			if (ts->alpha <= 0) {
 				ts->is_alive = FALSE;
 			}
 
-//			ts->alpha -= 16000 *  0.000000205F;//(float)(SEC_IN_US/25);
-//			ts->scale += 16000 * 0.000000205F;
+
+//			ts->ttl -=  (float)frame_delta * 0.00004F;
+//
+//			if (ts->ttl <= 0) {
+//				ts->is_alive = FALSE;
+//			}
+
 			glUniform1f(g_sp.alpha, ts->alpha);
 			glUniform1f(g_sp.scale, ts->scale);
 
 
-
-//			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
-
 			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
+
 		}
 	}
+	pthread_mutex_unlock(&mutex);
 }
 
 
@@ -966,4 +1048,12 @@ void calc_circle_vertex() {
 
 
 }
+
+
+//
+//size_t cycle_part_color() {
+//
+//	if ()
+//
+//}
 

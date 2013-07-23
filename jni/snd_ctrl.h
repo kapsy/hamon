@@ -16,6 +16,7 @@
 #include <time.h>
 
 
+
 void init_control_loop();
 void join_control_loop();
 
@@ -36,5 +37,8 @@ void set_parts_active();
 //void shutdown_audio_delay();
 
 void init_auto_vals();
+//float* get_part_rgb();
+size_t current_part_color();
+
 
 #endif /* SND_CTRL_H_ */

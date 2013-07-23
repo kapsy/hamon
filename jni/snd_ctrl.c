@@ -78,11 +78,21 @@ typedef struct {
 	int is_alive;
 
 
+//	float red;
+//	float grn;
+//	float blu;
+
+//	float part_rgb[3];
+
+	size_t color;
+
+
 //	int been_used; // この～パートは当時に使用してる
 
 
 
 }part;
+
 
 
 struct {
@@ -154,6 +164,10 @@ extern size_t screen_height_reduced;
 
 extern SLpermille segment_pan_map[TOTAL_NOTES];
 
+//float curent_part_rgb[3];
+
+size_t current_part_col = 0;
+
 
 void* timing_loop(void* args);
 void part_tic_counter();
@@ -168,7 +182,11 @@ void factor_part_vel(part* p, float factor);
 void parts_are_active();
 void auto_play();
 
+void init_part_colors(part* p);
+size_t next_color();
 
+//void set_part_colors(part* p);
+//void normalize_part_colors(part* p);
 
 
 //void shutdown_audio_delay();
@@ -267,23 +285,6 @@ void* timing_loop(void* args) {
 
 }
 
-//void general_tic_counter() {
-//
-//	general_tic_count++;
-//
-//
-//}
-//
-//
-//void delay_func(size_t delay_tics, void* func) {
-//
-//	delay_tic_start = general_tic_count;
-//
-//	if ( == delay_tics) {
-//		func();
-//	}
-//
-//}
 
 
 void increase_ammo() {
@@ -319,7 +320,7 @@ int decrease_ammo() { // タッチするときの処理・AMMOを減るため
 //	}
 //	return FALSE;
 //}
-
+//extern current_part_color;
 
 // mainから呼ぶ
 void record_note(float x, float y, int seg, float vel){
@@ -339,22 +340,27 @@ void record_note(float x, float y, int seg, float vel){
 
 	p->note_info[n].pos_x = x;
 	p->note_info[n].pos_y = y;
-	LOGI("record_note", "p->note_info[n].pos_x: %f", p->note_info[n].pos_x );
-	LOGI("record_note", "p->note_info[n].pos_y: %f", p->note_info[n].pos_y);
+//	LOGI("record_note", "p->note_info[n].pos_x: %f", p->note_info[n].pos_x );
+//	LOGI("record_note", "p->note_info[n].pos_y: %f", p->note_info[n].pos_y);
 
 	p->note_info[n].seg = seg;
 	p->note_info[n].vel = vel;
 
 	p->note_info[n].tic = tic;
 
-	LOGD("record_note", "current_rec_part %d, current_tic %d, current_note %d",
-			current_rec_part,p->current_tic, p->current_note);
+	LOGD("record_note", "current_part_color %d", current_part_color	);
+	LOGD("record_note", "current_rec_part %d, current_tic %d, current_note %d, color %d",
+			current_rec_part,p->current_tic, p->current_note, p->color);
 
 	p->current_note++;
 
 }
 
+size_t current_part_color() {
 
+	return (parts + current_rec_part)->color;
+
+}
 
 // 毎TIC実行しなきゃ //
 // ticを全部進めないといけない
@@ -370,19 +376,15 @@ void part_tic_counter() {
 
 								p->is_recording = FALSE;
 								p->current_tic = 0;
-	//							current_rec_part++;
-	//							init_part(parts + current_rec_part, TRUE);
-	//							init_part(parts + cycle_rec_part(), TRUE);
 
-								//__android_log_print(ANDROID_LOG_DEBUG, "tic_counter", "p->current_tic:  %d, p->total_tics: %d i: %d", p->current_tic, p->total_tics, i);
-								// init_part(parts + cycle_rec_part(), TRUE);
 
+								LOGI("part_tic_counter", "(p->current_tic >= p->total_tics && p->is_recording)");
 								init_part(parts + get_free_part(), TRUE);
 
 			} else if (p->current_tic >= p->total_tics && !p->is_recording && p->is_alive) {
 
 
-				__android_log_print(ANDROID_LOG_DEBUG, "tic_counter", "p->current_tic:  %d, p->total_tics: %d i: %d", p->current_tic, p->total_tics, i);
+//				__android_log_print(ANDROID_LOG_DEBUG, "tic_counter", "p->current_tic:  %d, p->total_tics: %d i: %d", p->current_tic, p->total_tics, i);
 								count_part_ttl(p);
 								p->current_tic = 0;
 
@@ -422,7 +424,7 @@ int get_free_part() { // もしかしてget_free_part()
 
 		if ((parts + i)->is_alive == FALSE) {
 			current_rec_part = i;
-			__android_log_print(ANDROID_LOG_DEBUG, "get_free_part", "current_rec_part %d", i);
+			LOGI("get_free_part", "current_rec_part %d", i);
 			return current_rec_part;
 		}
 	}
@@ -445,7 +447,7 @@ int get_oldest_part() {
 	}
 
 	current_rec_part = part;
-	__android_log_print(ANDROID_LOG_DEBUG, "get_free_part", "get_oldest_part %d", current_rec_part);
+	LOGI("get_free_part", "get_oldest_part %d", current_rec_part);
 	return current_rec_part;
 
 }
@@ -461,7 +463,7 @@ void parts_are_active() {
 		}
 	}
 
-	__android_log_print(ANDROID_LOG_DEBUG, "parts_are_active", "active %d", active);
+	LOGI("parts_are_active", "active %d", active);
 	parts_active = active;
 }
 
@@ -471,53 +473,6 @@ void set_parts_active() {
 	chord_change_count = 0;
 }
 
-//void auto_play() {
-//	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
-//		not_active_count++;
-//		__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "not_active_count %d", not_active_count);
-//	}
-//	if (not_active_count == SILENCE_BEFORE_AUTO_PLAY) {
-//
-//		int r = obtain_random(ONESHOT_RANDOM);
-//		//__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(!obtain_random(50)) r %d", r);
-//
-//		if (r == 0) {
-//
-//
-//
-//			float x = (float) (obtain_random(screen_width));
-//			float y = (float)(obtain_random(screen_height_reduced));
-//
-//			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "x %f y %f", x, y);
-//			play_rec_note(x, y);
-//		}
-//
-//		int rest = obtain_random(AUTO_PLAY_REST_RND);
-//		if(rest==0){
-//			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(rest==0) %d", rest);
-//			parts_active = TRUE; // FIXME ??大丈夫かな
-//			not_active_count = 0;
-//		}
-//
-//
-//		if (chord_change_count < MINIMUM_CHORD_PLAY_TIME) {
-//			chord_change_count++;
-//			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "chord_change_count %d", chord_change_count);
-//		}
-//
-//		if (chord_change_count == MINIMUM_CHORD_PLAY_TIME) {
-//			int s = obtain_random(CHORD_CHANGE_RND);
-//
-//			if (s == 0) {
-//				__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "(obtain_random(2000)) s %d", s);
-//				int success = cycle_scale();
-//				chord_change_count = 0;
-//			}
-//
-//		}
-//	}
-//
-//}
 
 
 void auto_play() {
@@ -578,13 +533,10 @@ void init_all_parts() {
 	for (i = 0; i < total_parts; i++) {
 		part* p = (parts + i);
 
-		if (i == 0)
-			init_part(p, TRUE);
-		else
-			init_part(p, FALSE);
+		if (i == 0) init_part(p, TRUE);
+		else init_part(p, FALSE);
 
-//		p->total_tics = tics_per_part + tic_increment;
-//		add_tic_increment(8);
+		init_part_colors(p);
 	}
 }
 
@@ -602,9 +554,65 @@ void init_part(part* p, int rec) {
 
 	__android_log_print(ANDROID_LOG_DEBUG, "init_part", "p->total_tics  %d", p->total_tics);
 
+
 	reset_all_notes(p);
 
 }
+
+void init_part_colors(part* p) {
+
+p->color = next_color();
+
+}
+
+size_t next_color() {
+
+	size_t col = current_part_col;
+
+	if (current_part_col < TOTAL_PART_COLORS) {
+		current_part_col++;
+	}
+	if(current_part_col == TOTAL_PART_COLORS) {
+		current_part_col = 0;
+	}
+	return col;
+
+}
+
+//void set_part_colors(part* p) {
+//
+//	int i;
+//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
+//		p->part_rgb[i] = (float)rand()/RAND_MAX;
+//		LOGI("set_part_color", "%f", i, p->part_rgb[i]);
+//	}
+//
+//}
+//
+//void normalize_part_colors(part* p) {
+//	float largest = 0.0;
+//	float ratio;
+//
+//	int i;
+//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
+//		if(p->part_rgb[i] > largest) largest = p->part_rgb[i];
+//	}
+//
+//	ratio = 1.0/largest;
+//
+//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
+//		p->part_rgb[i] = (p->part_rgb[i]*ratio);
+//
+//
+////		LOGI("normalize_part_colors", "p->part_rgb[%d] %f", i, p->part_rgb[i]);
+//	}
+//	LOGI("normalize_part_colors", "%fF, %fF, %fF", p->part_rgb[0], p->part_rgb[1], p->part_rgb[2]);
+//}
+
+//float* get_part_rgb() { // 必要ないのかも
+//	return parts[current_rec_part].part_rgb;
+//}
+
 
 void reset_all_notes(part* p) {
 
@@ -655,7 +663,7 @@ void play_all_parts() {
 //				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d",
 //						total_tic_counter, i, n->tic, p->current_tic);
 
-					activate_touch_shape(n->pos_x, n->pos_y);
+					activate_touch_shape(n->pos_x, n->pos_y, p->color);
 					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
 
 				}

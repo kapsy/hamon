@@ -41,6 +41,7 @@
 // voice count
 //#define VOICE_COUNT 10 //フレームレートに影響を与える
 #define VOICE_COUNT 30
+//#define VOICE_COUNT 20
 #define LOOPER_COUNT 2
 
 #define SLMILLIBEL_MIN -4000
@@ -773,10 +774,14 @@ void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) 
 	assert(SL_RESULT_SUCCESS == result);
 }
 
+//extern pthread_mutex_t mutex;
+
 void buffer_chunk_timer_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "buffer_chunk_timer_callback", "buffer_chunk_timer_callback() called");
 //total_tic_counter++;
 	part_tic_counter();
+
+
 	play_all_parts();
 
 	SLresult result;

@@ -174,7 +174,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 
 void trigger_note(float x, float y) {
-	activate_touch_shape(x, y);
+	activate_touch_shape(x, y, current_part_color());
 
 	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ðŠm”F‚·‚é‚½‚ß
 		int seg = find_screen_segment(x);
@@ -312,7 +312,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				e->animating = TRUE;
 
-//				init_sles_components(app);
+				init_sles_components(app);
 			}
 
             break;
