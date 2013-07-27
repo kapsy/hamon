@@ -174,16 +174,18 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 
 void trigger_note(float x, float y) {
-	activate_touch_shape(x, y, current_part_color());
 
 	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ðŠm”F‚·‚é‚½‚ß
 		int seg = find_screen_segment(x);
 		float vel = find_vel_value(y);
 		//play_note(seg, vel);
+
+	activate_touch_shape(x, y, current_part_color(), &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
 
 	}
+
 }
 
 

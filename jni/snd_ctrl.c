@@ -663,7 +663,7 @@ void play_all_parts() {
 //				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d",
 //						total_tic_counter, i, n->tic, p->current_tic);
 
-					activate_touch_shape(n->pos_x, n->pos_y, p->color);
+					activate_touch_shape(n->pos_x, n->pos_y, p->color, &n->vel);
 					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
 
 				}

@@ -46,6 +46,9 @@
 typedef struct {
 
 	int is_alive;
+
+	int fading_in;
+
 	GLfloat pos_x;
 	GLfloat pos_y;
 
@@ -381,18 +384,9 @@ int init_cmds() { // FIXME
 	g_sp.posX = glGetUniformLocation(g_program, "posX");
 	g_sp.posY = glGetUniformLocation(g_program, "posY");
 
-
-
 	g_sp.rgb[0] = glGetUniformLocation(g_program, "ured");
 	g_sp.rgb[1]  = glGetUniformLocation(g_program, "ugrn");
 	g_sp.rgb[2]  = glGetUniformLocation(g_program, "ublu");
-
-
-
-//	g_sp.uBlue = glGetUniformLocation(g_program, "uBlue");
-
-
-
 
 	g_sp.alpha = glGetUniformLocation(g_program, "alpha");
 	g_sp.scale = glGetUniformLocation(g_program, "scale");
@@ -844,7 +838,7 @@ void step_touch_shape_draw_order() {
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void activate_touch_shape(float x, float y, size_t col) {
+void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 
 
@@ -871,10 +865,15 @@ void activate_touch_shape(float x, float y, size_t col) {
 
 //	LOGI("activate_touch_shape", "ts->rgb[0] %f ts->rgb[1] %f ts->rgb[2] %f", ts->rgb[0], ts->rgb[1], ts->rgb[2]);
 
-	ts->alpha = 1.0;
-	ts->scale = 1.0;
+//	ts->alpha = 1.0;
+//	ts->scale = 1.0;
+//	ts->alpha = *vel * *vel; // TODO
+	ts->alpha = 0.0F; // TODO
+	ts->scale = *vel * *vel; // TODO Šù‚ÉŒvŽZ‚·‚ê‚Î‚¢‚¢‚Ì‚©‚à
+
 //	ts->ttl = TOUCH_SHAPES_TTL;
 
+	ts->fading_in = TRUE;
 	ts->is_alive = TRUE;
 	pthread_mutex_unlock(&mutex);
 
@@ -904,13 +903,29 @@ void draw_touch_shapes() {
 			glUniform1f(g_sp.rgb[1], ts->rgb[1]);
 			glUniform1f(g_sp.rgb[2], ts->rgb[2]);
 
+//
+//			ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+//			ts->scale += (float)frame_delta * 0.000000205F;
 
-			ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-			ts->scale += (float)frame_delta * 0.000000205F;
 
-			if (ts->alpha <= 0) {
-				ts->is_alive = FALSE;
+			ts->scale += (float)frame_delta * 0.0000003F;
+
+			if (ts->fading_in) {
+
+				ts->alpha += (float)frame_delta *  0.000006205F;//(float)(SEC_IN_US/25);
+
+				if (ts->alpha >= 1.0F) ts->fading_in = FALSE;
 			}
+
+			if (!ts->fading_in) {
+
+				ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+				if (ts->alpha <= 0) ts->is_alive = FALSE;
+			}
+
+
+
+
 
 
 //			ts->ttl -=  (float)frame_delta * 0.00004F;

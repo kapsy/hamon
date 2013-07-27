@@ -18,7 +18,8 @@ void pi_draw();
 int init_cmds();
 void calc_frame_delta_time();
 void calc_frame_rate();
-void activate_touch_shape(float x, float y, size_t col);
+//void activate_touch_shape(float x, float y, size_t col);
+void activate_touch_shape(float x, float y, size_t col, float* vel);
 //size_t cycle_color();
 
 #endif /* GFX_INIT_H_ */
