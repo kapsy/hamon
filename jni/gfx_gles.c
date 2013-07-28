@@ -82,6 +82,7 @@ size_t current_touch_shape = 0;
 void init_touch_shapes();
 //touch_shape* cycle_touch_shapes();
 void draw_touch_shapes();
+void draw_background();
 void step_touch_shape_draw_order();
 void calc_circle_vertex();
 
@@ -178,9 +179,9 @@ typedef struct {
 typedef struct {
     GLfloat x, y, z;
     GLfloat u, v;
-} VertexType;
+} vertex;
 
-VertexType vObj[] = { // VertexBufferObjectを使用スべきか？
+vertex vObj[] = { // VertexBufferObjectを使用スべきか？
 
   {.x = -0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
   {.x =  0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
@@ -203,7 +204,7 @@ unsigned short iObj[] = {
 //  {.x = 0.25f, 		.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
 //  {.x = -0.25f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
 //};
-VertexType vObj_sq[] = { // VertexBufferObjectを使用スべきか？
+vertex vObj_sq[] = { // VertexBufferObjectを使用スべきか？
 
   {.x = -0.125f, 	.y =   0.25f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
   {.x = 0.125f, 		.y =   0.25f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
@@ -217,9 +218,19 @@ unsigned short iObj_sq[] = {
 //  0, 2, 3
 };
 
-VertexType solid_circle_vertex[CIRCLE_SEGMENTS+1];
+vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
 unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
+vertex bg_quad[] = {
+	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f},
+	{1.0f, 		-1.0f, 	0.0f, 		1.0f, 		0.0f},
+	{1.0f, 		1.0f, 		0.0f, 		1.0f, 		0.0f},
+	{-1.0f, 	1.0f, 		0.0f, 		0.0f, 		1.0f},
+};
+
+unsigned short bg_quad_index[] = {
+  0, 1, 3, 2
+};
 
 
 
@@ -238,6 +249,8 @@ GLuint g_ibo_2;
 GLuint sc_vbo;
 GLuint sc_ibo;
 
+GLuint bg_quad_vbo;
+GLuint bg_quad_ibo;
 
 GLuint g_program;
 GLuint g_program_purp;
@@ -262,10 +275,8 @@ rgb part_colors[] = {
 
 
 unsigned int frames = 0;
-    float posx = -1.0F;
-
-    float global_scale = 1.0F;
-
+float posx = -1.0F;
+float global_scale = 1.0F;
 
 float hw_ratio;
 
@@ -278,8 +289,6 @@ unsigned long new_time = 0;
 unsigned long frame_delta = 0;
 int frame_delta_avg[DELTA_AVG_COUNT];
 size_t frame_delta_cycle = 0;
-
-
 
 
 EGLBoolean pi_SurfaceCreate(ANativeWindow* nw) {
@@ -533,9 +542,17 @@ void pi_create_buffer()
 
 
 
+  // VBOの生成
+  glGenBuffers(1, &bg_quad_vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+  // データの転送
+  glBufferData(GL_ARRAY_BUFFER, sizeof(bg_quad), bg_quad, GL_STATIC_DRAW);
 
-
-
+  // インデックスバッファの作成
+  glGenBuffers(1, &bg_quad_ibo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+  // データの転送
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(bg_quad_index), bg_quad_index, GL_STATIC_DRAW);
 
 
 
@@ -738,6 +755,26 @@ void pi_draw() {
 //		glUniform1f(g_sp.u_blu, 0.5);
 //		glUniform1f(g_sp.uFrame,posx*1.23450F);
 
+
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+		glEnableVertexAttribArray(g_sp.aPosition);
+		glEnableVertexAttribArray(g_sp.aTex);
+
+		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
+//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
+//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
+		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 12);
+
+
+
+		draw_background();
+
+
+
+
 		glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
 		glEnableVertexAttribArray(g_sp.aPosition);
@@ -880,7 +917,24 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 }
 
+void draw_background() {
 
+
+
+	glUniform1f(g_sp.posX, 0.0);
+	glUniform1f(g_sp.posY, 0.0);
+
+	glUniform1f(g_sp.rgb[0], 0.7);
+	glUniform1f(g_sp.rgb[1], 0.3);
+	glUniform1f(g_sp.rgb[2], 0.2);
+	glUniform1f(g_sp.alpha, 1.0);
+	glUniform1f(g_sp.scale, 1.0);
+
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+
+
+
+}
 
 
 void draw_touch_shapes() {
@@ -912,7 +966,9 @@ void draw_touch_shapes() {
 
 			if (ts->fading_in) {
 
-				ts->alpha += (float)frame_delta *  0.000006205F;//(float)(SEC_IN_US/25);
+//				ts->alpha += (float)frame_delta *  0.000006205F;//(float)(SEC_IN_US/25);
+//				ts->alpha += (float)frame_delta *  0.0000035F;//(float)(SEC_IN_US/25);
+				ts->alpha += (float)frame_delta *  0.0000039F;//(float)(SEC_IN_US/25);
 
 				if (ts->alpha >= 1.0F) ts->fading_in = FALSE;
 			}
