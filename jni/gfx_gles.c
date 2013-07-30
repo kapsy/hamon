@@ -100,43 +100,75 @@ typedef struct {
 
 void pi_create_buffer();
 
+//const char vShaderSrc[] =
+//		"attribute 	vec3		aPosition;	\n"
+//		"attribute 	vec2		aTex;     	\n"
+//		"varying   	vec2  	vTex;			\n"
+//		"uniform	float 		uFrame;		\n"
+//		"uniform	float 		posX;			\n"
+//		"uniform	float		posY;			\n"
+//		"uniform	float 		scale;		\n"
+//		"uniform 	mat4 	projectionMatrix; \n"
+//		"void main()							\n"
+//		"	{                  						\n"
+//		"		vTex = aTex;     				\n"
+////		"		vTex = vec2(0.0, 0.0);		\n"
+////		"		gl_Position = vec4(aPosition.x - uFrame, aPosition.y + uFrame, 0, 1);		\n"
+////		"		gl_Position = projectionMatrix * vec4(aPosition.x + posX, aPosition.y + posY, 0, 1);		\n"
+////		"		aPostion.x *=scale;				\n"
+////		"		aPostion.y *=scale;			\n"
+//		"		gl_Position = vec4((aPosition.x * scale) + posX, (aPosition.y*scale) + posY, 0, 1);		\n"
+//		"	}                  						\n";
+
+
 const char vShaderSrc[] =
-		"attribute 	vec3		aPosition;	\n"
-		"attribute 	vec2		aTex;     	\n"
-		"varying   	vec2  	vTex;			\n"
-		"uniform	float 		uFrame;		\n"
-		"uniform	float 		posX;			\n"
-		"uniform	float		posY;			\n"
+		"attribute 	vec3		aposition;	\n"
+		"attribute 	vec3		atex;     		\n"
+		"varying   	vec3  	vtex;			\n"
+		"uniform	float 		uframe;		\n"
+		"uniform	float 		pos_x;			\n"
+		"uniform	float		pos_y;			\n"
 		"uniform	float 		scale;		\n"
-		"uniform 	mat4 	projectionMatrix; \n"
+//		"uniform 	mat4 	projectionMatrix; \n"
 		"void main()							\n"
 		"	{                  						\n"
-		"		vTex = aTex;     				\n"
-//		"		vTex = vec2(0.0, 0.0);		\n"
-//		"		gl_Position = vec4(aPosition.x - uFrame, aPosition.y + uFrame, 0, 1);		\n"
-//		"		gl_Position = projectionMatrix * vec4(aPosition.x + posX, aPosition.y + posY, 0, 1);		\n"
-//		"		aPostion.x *=scale;				\n"
-//		"		aPostion.y *=scale;			\n"
-		"		gl_Position = vec4((aPosition.x * scale) + posX, (aPosition.y*scale) + posY, 0, 1);		\n"
-		"	}                  						\n";
+		"		vtex = atex;     				\n"
+		"		gl_Position = vec4((aposition.x * scale) + pos_x, (aposition.y*scale) + pos_y, 0, 1);		\n"
+		"	}            \n";
+
+//const char fShaderSrc[] =
+//		"precision	mediump float;		\n"
+//		"varying		vec2  	vTex;			\n"
+//		"uniform 	float		ured;		\n"
+//		"uniform 	float		ugrn;		\n"
+//		"uniform 	float		ublu;			\n"
+////		"uniform 	float 		uBlue;		\n"
+//		"uniform	float 		alpha;			\n"
+//		"void main()        					\n"
+//		"	{                  						\n"
+////		"  		gl_FragColor = vec4(vTex.y * u_red, vTex.x * u_grn, u_blu, alpha);	\n"
+////		"  		gl_FragColor = vec4(vTex.y, vTex.x, u_blu, alpha);	\n"
+//
+////		"  		gl_FragColor = vec4(ured, ugrn, ublu, alpha);	\n"
+//		"  		gl_FragColor = vec4(vTex.y * ured, vTex.x * ugrn, ublu, alpha);	\n"
+//
+//		"	}   	               						\n";
 
 const char fShaderSrc[] =
 		"precision	mediump float;		\n"
-		"varying		vec2  	vTex;			\n"
+		"varying		vec3  	vtex;			\n"
 		"uniform 	float		ured;		\n"
 		"uniform 	float		ugrn;		\n"
 		"uniform 	float		ublu;			\n"
-//		"uniform 	float 		uBlue;		\n"
 		"uniform	float 		alpha;			\n"
 		"void main()        					\n"
 		"	{                  						\n"
-//		"  		gl_FragColor = vec4(vTex.y * u_red, vTex.x * u_grn, u_blu, alpha);	\n"
-//		"  		gl_FragColor = vec4(vTex.y, vTex.x, u_blu, alpha);	\n"
-
-//		"  		gl_FragColor = vec4(ured, ugrn, ublu, alpha);	\n"
-		"  		gl_FragColor = vec4(vTex.y * ured, vTex.x * ugrn, ublu, alpha);	\n"
+//		"  		gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);	\n"
+		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
 
 		"	}   	               						\n";
+
+
 
 
 //const char fShaderSrcBlue[] =
@@ -163,11 +195,11 @@ static GLfloat projectionMatrix[16];
 static GLint projectionMatrixLocation;
 
 typedef struct {
-  GLint  		aPosition;
-  GLint  		aTex;
-  GLint  		uFrame;
-  GLint		posX;
-  GLint 		posY;
+  GLint  		aposition;
+  GLint  		atex;
+  GLint  		uframe;
+  GLint		pos_x;
+  GLint 		pos_y;
 
   GLint rgb[3];
 
@@ -176,56 +208,63 @@ typedef struct {
 
 } ShaderParams;
 
+//typedef struct {
+//    GLfloat x, y, z;
+//    GLfloat u, v;
+//} vertex;
+
+
 typedef struct {
     GLfloat x, y, z;
-    GLfloat u, v;
+    GLfloat r, g, b;
 } vertex;
 
-vertex vObj[] = { // VertexBufferObjectを使用スべきか？
 
-  {.x = -0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-  {.x =  0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-  {.x =  0.0f, 	.y =  0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-};
-
-
-
-
-unsigned short iObj[] = {
-  0, 1, 2
-};
-
-
-		// 四角形
-//VertexType vObj_sq[] = { // VertexBufferObjectを使用スべきか？
+//vertex vObj[] = { // VertexBufferObjectを使用スべきか？
 //
-//  {.x = -0.25f, 	.y =   0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-//  {.x = 0.25f, 		.y =   0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-//  {.x = 0.25f, 		.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-//  {.x = -0.25f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+//  {.x = -0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
+//  {.x =  0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
+//  {.x =  0.0f, 	.y =  0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
 //};
-vertex vObj_sq[] = { // VertexBufferObjectを使用スべきか？
-
-  {.x = -0.125f, 	.y =   0.25f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-  {.x = 0.125f, 		.y =   0.25f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-  {.x = 0.125f, 		.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-  {.x = -0.125f, 	.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-};
-unsigned short iObj_sq[] = {
-//  0, 1, 2, 3
-//  0, 1, 3, 2
-  0, 3, 1, 2
-//  0, 2, 3
-};
+//
+//
+//
+//
+//unsigned short iObj[] = {
+//  0, 1, 2
+//};
+//
+//
+//		// 四角形
+////VertexType vObj_sq[] = { // VertexBufferObjectを使用スべきか？
+////
+////  {.x = -0.25f, 	.y =   0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
+////  {.x = 0.25f, 		.y =   0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
+////  {.x = 0.25f, 		.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+////  {.x = -0.25f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+////};
+//vertex vObj_sq[] = { // VertexBufferObjectを使用スべきか？
+//
+//  {.x = -0.125f, 	.y =   0.25f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
+//  {.x = 0.125f, 		.y =   0.25f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
+//  {.x = 0.125f, 		.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+//  {.x = -0.125f, 	.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
+//};
+//unsigned short iObj_sq[] = {
+////  0, 1, 2, 3
+////  0, 1, 3, 2
+//  0, 3, 1, 2
+////  0, 2, 3
+//};
 
 vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
 unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
 vertex bg_quad[] = {
-	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f},
-	{1.0f, 		-1.0f, 	0.0f, 		1.0f, 		0.0f},
-	{1.0f, 		1.0f, 		0.0f, 		1.0f, 		0.0f},
-	{-1.0f, 	1.0f, 		0.0f, 		0.0f, 		1.0f},
+	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+	{1.0f, 		1.0f, 		0.0f, 		0.5f, 		0.5f, 		1.0f},
+	{-1.0f, 	1.0f, 		0.0f, 		0.5f, 		0.5f, 		0.0f},
 };
 
 unsigned short bg_quad_index[] = {
@@ -369,11 +408,7 @@ int init_cmds() { // FIXME
 	frame_delta_avg_init();
 
 	init_touch_shapes();
-
-
-
 	calc_circle_vertex();
-
 
 	int res;
 
@@ -381,17 +416,14 @@ int init_cmds() { // FIXME
 	if (!res)
 		return 0;
 
-
-
-
 	pi_create_buffer();
 
-	g_sp.aPosition = glGetAttribLocation(g_program, "aPosition");
-	g_sp.aTex = glGetAttribLocation(g_program, "aTex");
-	g_sp.uFrame = glGetUniformLocation(g_program, "uFrame");
+	g_sp.aposition = glGetAttribLocation(g_program, "aposition");
+	g_sp.atex = glGetAttribLocation(g_program, "atex");
+	g_sp.uframe = glGetUniformLocation(g_program, "uframe");
 
-	g_sp.posX = glGetUniformLocation(g_program, "posX");
-	g_sp.posY = glGetUniformLocation(g_program, "posY");
+	g_sp.pos_x = glGetUniformLocation(g_program, "pos_x");
+	g_sp.pos_y = glGetUniformLocation(g_program, "pos_y");
 
 	g_sp.rgb[0] = glGetUniformLocation(g_program, "ured");
 	g_sp.rgb[1]  = glGetUniformLocation(g_program, "ugrn");
@@ -400,8 +432,6 @@ int init_cmds() { // FIXME
 	g_sp.alpha = glGetUniformLocation(g_program, "alpha");
 	g_sp.scale = glGetUniformLocation(g_program, "scale");
 
-
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
@@ -409,19 +439,11 @@ int init_cmds() { // FIXME
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
 
-
-
-
 	  /* 平行投影変換行列を求める */
 	  orthogonalMatrix(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, projectionMatrix);
 
 	  /* uniform 変数 projectionMatrix の場所を得る */
 	  projectionMatrixLocation = glGetUniformLocation(g_program, "projectionMatrix");
-
-
-
-
-
 
 	LOGD("init_cmds", "init_cmds() finished");
 	return TRUE;
@@ -500,31 +522,31 @@ int InitShaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 // GPU上のバッファオブジェクトにデータを転送
 void pi_create_buffer()
 {
-  // VBOの生成
-  glGenBuffers(1, &g_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-  // データの転送
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vObj), vObj, GL_STATIC_DRAW);
-
-  // インデックスバッファの作成
-  glGenBuffers(1, &g_ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
-  // データの転送
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj), iObj, GL_STATIC_DRAW);
-
-
-
-  // VBOの生成
-  glGenBuffers(1, &g_vbo_2);
-  glBindBuffer(GL_ARRAY_BUFFER, g_vbo_2);
-  // データの転送
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vObj_sq), vObj_sq, GL_STATIC_DRAW);
-
-  // インデックスバッファの作成
-  glGenBuffers(1, &g_ibo_2);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo_2);
-  // データの転送
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj_sq), iObj_sq, GL_STATIC_DRAW);
+//  // VBOの生成
+//  glGenBuffers(1, &g_vbo);
+//  glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
+//  // データの転送
+//  glBufferData(GL_ARRAY_BUFFER, sizeof(vObj), vObj, GL_STATIC_DRAW);
+//
+//  // インデックスバッファの作成
+//  glGenBuffers(1, &g_ibo);
+//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
+//  // データの転送
+//  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj), iObj, GL_STATIC_DRAW);
+//
+//
+//
+//  // VBOの生成
+//  glGenBuffers(1, &g_vbo_2);
+//  glBindBuffer(GL_ARRAY_BUFFER, g_vbo_2);
+//  // データの転送
+//  glBufferData(GL_ARRAY_BUFFER, sizeof(vObj_sq), vObj_sq, GL_STATIC_DRAW);
+//
+//  // インデックスバッファの作成
+//  glGenBuffers(1, &g_ibo_2);
+//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo_2);
+//  // データの転送
+//  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj_sq), iObj_sq, GL_STATIC_DRAW);
 
 
   // VBOの生成
@@ -657,7 +679,7 @@ void pi_draw() {
 
 
 		glUniform1f(g_sp.alpha, 0.8);
-		glUniform1f(g_sp.uFrame,posx);
+		glUniform1f(g_sp.uframe, posx);
 
 
 //glUniform3f()
@@ -760,14 +782,14 @@ void pi_draw() {
 
 		glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-		glEnableVertexAttribArray(g_sp.aPosition);
-		glEnableVertexAttribArray(g_sp.aTex);
+		glEnableVertexAttribArray(g_sp.aposition);
+		glEnableVertexAttribArray(g_sp.atex);
 
-		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
-		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 12);
+//		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+//		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
 
+		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 12);
 
 
 		draw_background();
@@ -777,14 +799,12 @@ void pi_draw() {
 
 		glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
-		glEnableVertexAttribArray(g_sp.aPosition);
-		glEnableVertexAttribArray(g_sp.aTex);
+		glEnableVertexAttribArray(g_sp.aposition);
+		glEnableVertexAttribArray(g_sp.atex);
 
 		// 頂点情報のサイズ、オフセットを指定
-		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
-		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 12);
+		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
 
 
 		glEnableVertexAttribArray(0);
@@ -916,17 +936,24 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 
 }
-
+float red_bg = 0.0F;
 void draw_background() {
 
+	red_bg += (float)frame_delta * 0.0000003F;
 
+	glUniform1f(g_sp.pos_x, 0.0);
+	glUniform1f(g_sp.pos_y, 0.0);
 
-	glUniform1f(g_sp.posX, 0.0);
-	glUniform1f(g_sp.posY, 0.0);
+//	glUniform1f(g_sp.rgb[0], 0.7);
+//	glUniform1f(g_sp.rgb[1], 0.3);
+//	glUniform1f(g_sp.rgb[2], 0.2);
 
-	glUniform1f(g_sp.rgb[0], 0.7);
-	glUniform1f(g_sp.rgb[1], 0.3);
-	glUniform1f(g_sp.rgb[2], 0.2);
+	if (red_bg >= 1.0) red_bg = 0;
+
+	glUniform1f(g_sp.rgb[0], red_bg);
+	glUniform1f(g_sp.rgb[1], 0.5);
+	glUniform1f(g_sp.rgb[2], 1.0);
+
 	glUniform1f(g_sp.alpha, 1.0);
 	glUniform1f(g_sp.scale, 1.0);
 
@@ -945,54 +972,31 @@ void draw_touch_shapes() {
 
 		touch_shape* ts = touch_shapes + (touch_shape_draw_order[i]);
 
-//		touch_shape* ts = touch_shapes + i;
-
 		if (ts->is_alive) {
 
 
-			glUniform1f(g_sp.posX, ts->pos_x);
-			glUniform1f(g_sp.posY, ts->pos_y);
+			glUniform1f(g_sp.pos_x, ts->pos_x);
+			glUniform1f(g_sp.pos_y, ts->pos_y);
 
 			glUniform1f(g_sp.rgb[0], ts->rgb[0]);
 			glUniform1f(g_sp.rgb[1], ts->rgb[1]);
 			glUniform1f(g_sp.rgb[2], ts->rgb[2]);
 
-//
-//			ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-//			ts->scale += (float)frame_delta * 0.000000205F;
-
-
 			ts->scale += (float)frame_delta * 0.0000003F;
 
 			if (ts->fading_in) {
 
-//				ts->alpha += (float)frame_delta *  0.000006205F;//(float)(SEC_IN_US/25);
-//				ts->alpha += (float)frame_delta *  0.0000035F;//(float)(SEC_IN_US/25);
 				ts->alpha += (float)frame_delta *  0.0000039F;//(float)(SEC_IN_US/25);
-
 				if (ts->alpha >= 1.0F) ts->fading_in = FALSE;
 			}
 
 			if (!ts->fading_in) {
-
 				ts->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
 				if (ts->alpha <= 0) ts->is_alive = FALSE;
 			}
 
-
-
-
-
-
-//			ts->ttl -=  (float)frame_delta * 0.00004F;
-//
-//			if (ts->ttl <= 0) {
-//				ts->is_alive = FALSE;
-//			}
-
 			glUniform1f(g_sp.alpha, ts->alpha);
 			glUniform1f(g_sp.scale, ts->scale);
-
 
 			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
 
@@ -1084,39 +1088,41 @@ void calc_circle_vertex() {
 	solid_circle_vertex[0].x = 0.0;
 	solid_circle_vertex[0].y = 0.0;
 
-	for (i=0; i<n; i++) {
+	for (i = 0; i < n; i++) {
 
-		rate = (double)i / n;
-		solid_circle_vertex[i+1].x = r * hw_ratio * sin(2.0 * PI * rate);
-		solid_circle_vertex[i+1].y = r * cos(2.0 * PI * rate);
+		rate = (double) i / n;
+		solid_circle_vertex[i + 1].x = r * hw_ratio * sin(2.0 * PI * rate);
+		solid_circle_vertex[i + 1].y = r * cos(2.0 * PI * rate);
 
-		float abs_x = fabsf(solid_circle_vertex[i+1].x);
-		float abs_y = fabsf(solid_circle_vertex[i+1].y);
+		float abs_x = fabsf(solid_circle_vertex[i + 1].x);
+		float abs_y = fabsf(solid_circle_vertex[i + 1].y);
 
-		if (abs_x > largest_x) largest_x = abs_x;
-		if (abs_y > largest_y) largest_y = abs_y;
+		if (abs_x > largest_x)
+			largest_x = abs_x;
+		if (abs_y > largest_y)
+			largest_y = abs_y;
 
 	}
 
+	one_factor_x = 1.0F / largest_x;
+	one_factor_y = 1.0F / largest_y;
 
-	one_factor_x = 1.0F/largest_x;
-	one_factor_y = 1.0F/largest_y;
-
-
-	for (i=0; i<CIRCLE_SEGMENTS+1; i++) {
+	for (i = 0; i < CIRCLE_SEGMENTS + 1; i++) {
 		solid_circle_index[i] = i;
 
-		solid_circle_vertex[i].u = solid_circle_vertex[i].x * one_factor_x;
-		solid_circle_vertex[i].v = solid_circle_vertex[i].y * one_factor_y;
+		solid_circle_vertex[i].r = solid_circle_vertex[i].x * one_factor_x;
+		solid_circle_vertex[i].g = solid_circle_vertex[i].y * one_factor_y;
+		solid_circle_vertex[i].b = 0.5;//solid_circle_vertex[i].y * one_factor_y;
 
-
-		LOGI("calc_circle_vertex", "solid_circle_vertex[i].u %f solid_circle_vertex[i].v %f",
-				solid_circle_vertex[i].u, solid_circle_vertex[i].v);
+		LOGI(
+				"calc_circle_vertex",
+				"solid_circle_vertex[i].r %f "
+				"solid_circle_vertex[i].g %f "
+				"solid_circle_vertex[i].b %f ",
+				solid_circle_vertex[i].r, solid_circle_vertex[i].g, solid_circle_vertex[i].b);
 
 	}
-	solid_circle_index[CIRCLE_SEGMENTS+1] = 1;
-
-
+	solid_circle_index[CIRCLE_SEGMENTS + 1] = 1;
 
 }
 
