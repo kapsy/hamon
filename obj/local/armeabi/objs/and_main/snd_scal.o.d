@@ -35,7 +35,8 @@ obj/local/armeabi/objs/and_main/snd_scal.o: jni/snd_scal.c jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/time.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h \
+ jni/hon_type.h
 
 jni/snd_asst.h:
 
@@ -114,3 +115,5 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h:
+
+jni/hon_type.h:

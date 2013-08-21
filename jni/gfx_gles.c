@@ -22,6 +22,7 @@
 
 #include "and_main.h"
 #include "gfx_gles.h"
+#include "snd_scal.h"
 
 
 #include <unistd.h>  // sleep()を定義
@@ -154,15 +155,46 @@ const char vShaderSrc[] =
 //
 //		"	}   	               						\n";
 
+//const char fShaderSrc[] =
+//		"precision	mediump float;		\n"
+//		"varying		vec3  	vtex;			\n"
+//		"uniform 	float		ured;			\n"
+//		"uniform 	float		ugrn;			\n"
+//		"uniform 	float		ublu;			\n"
+//
+//		"uniform 	vec3		vcol			\n"
+//
+//		"uniform	float 		alpha;			\n"
+//
+//
+//		"void main()        					\n"
+//		"	{                  						\n"
+//
+//
+////		"  		gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);	\n"
+//		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
+//
+//		"	}   	               						\n";
+//
+
+
 const char fShaderSrc[] =
 		"precision	mediump float;		\n"
 		"varying		vec3  	vtex;			\n"
-		"uniform 	float		ured;		\n"
-		"uniform 	float		ugrn;		\n"
+		"uniform 	float		ured;			\n"
+		"uniform 	float		ugrn;			\n"
 		"uniform 	float		ublu;			\n"
+
+//		"uniform 	vec3		vcol			\n"
+
 		"uniform	float 		alpha;			\n"
+
+
 		"void main()        					\n"
 		"	{                  						\n"
+
+
+
 //		"  		gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);	\n"
 		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
 
@@ -219,6 +251,9 @@ typedef struct {
     GLfloat r, g, b;
 } vertex;
 
+typedef struct {
+	GLfloat r, g, b;
+} vertex_rgb;
 
 //vertex vObj[] = { // VertexBufferObjectを使用スべきか？
 //
@@ -260,20 +295,87 @@ typedef struct {
 vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
 unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
+//vertex bg_quad[] = {
+//	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+//	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
+//	{1.0f, 		1.0f, 		0.0f, 		0.95f,		0.0f, 		0.35f},
+//	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
+//};
+
+
+void draw_all_backgrounds();
+
+extern int selected_scale;
+
+float alpha_fade_rate = 0.00000011F;
+
+typedef struct {
+	int fading_in;
+	int fading_out;
+	int selected_scale;
+	float alpha;
+} bg_def;
+
+bg_def bgs [] = {
+		{TRUE, 	FALSE,	0, 	0.0F},
+		{FALSE, FALSE,	0, 	0.0F}
+};
+
+int curr_bg = 0;
+int bgs_size = sizeof(bgs)/sizeof(bgs[0]);
+
+
+
 vertex bg_quad[] = {
 	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{1.0f, 		1.0f, 		0.0f, 		0.5f, 		0.5f, 		1.0f},
-	{-1.0f, 	1.0f, 		0.0f, 		0.5f, 		0.5f, 		0.0f},
+	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
+	{1.0f, 		1.0f, 		0.0f, 		0.95f,		0.0f, 		0.35f},
+	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
 };
+
+int seiseki[2][3] = {{72, 67, 84}, {67, 92, 71}};
+
+
+vertex_rgb quad_colors[5][4] = {
+		{
+			{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
+			{0.95f,	0.0f, 		0.35f},
+			{0.25f,	0.0f, 		0.25f}
+		},
+		{
+
+			{1.0f, 		0.0f, 		0.0f},
+			{1.0f, 		0.0f, 		0.0f},
+			{1.0f, 		0.0f, 		0.35f},
+			{1.0f, 		0.0f, 		0.25f}
+		},
+		{
+			{0.2f, 		0.3f, 		0.0f},
+			{0.2f, 		0.3f, 		0.0f},
+			{1.0f, 		0.0f, 		0.0f},
+			{1.0f, 		0.0f, 		0.0f}
+		},
+		{
+			{0.0f, 	 	0.1f, 		0.0f},
+			{0.0f, 		0.6f, 		0.0f},
+			{0.0f, 		0.2f, 		0.35f},
+			{0.0f, 		0.2f, 		0.05f}
+		},
+		{
+			{0.0f, 	 	0.5f, 		0.0f},
+			{0.0f, 		0.3f, 		0.0f},
+			{1.0f, 		0.2f, 		0.3f},
+			{0.0f, 		1.0f, 		1.0f}
+		}
+};
+
+//unsigned int current color = 0;
+
 
 unsigned short bg_quad_index[] = {
   0, 1, 3, 2
 };
-
-
-
-
 
 
 ShaderParams    g_sp;
@@ -293,6 +395,15 @@ GLuint bg_quad_ibo;
 
 GLuint g_program;
 GLuint g_program_purp;
+
+
+
+GLuint quad_col_1;
+
+GLuint bg_cols [TOTAL_SCALES];
+
+
+
 
 typedef struct {
 	float r, g, b;
@@ -522,63 +633,48 @@ int InitShaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 // GPU上のバッファオブジェクトにデータを転送
 void pi_create_buffer()
 {
-//  // VBOの生成
-//  glGenBuffers(1, &g_vbo);
-//  glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-//  // データの転送
-//  glBufferData(GL_ARRAY_BUFFER, sizeof(vObj), vObj, GL_STATIC_DRAW);
-//
-//  // インデックスバッファの作成
-//  glGenBuffers(1, &g_ibo);
-//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
-//  // データの転送
-//  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj), iObj, GL_STATIC_DRAW);
-//
-//
-//
-//  // VBOの生成
-//  glGenBuffers(1, &g_vbo_2);
-//  glBindBuffer(GL_ARRAY_BUFFER, g_vbo_2);
-//  // データの転送
-//  glBufferData(GL_ARRAY_BUFFER, sizeof(vObj_sq), vObj_sq, GL_STATIC_DRAW);
-//
-//  // インデックスバッファの作成
-//  glGenBuffers(1, &g_ibo_2);
-//  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo_2);
-//  // データの転送
-//  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj_sq), iObj_sq, GL_STATIC_DRAW);
 
+	// VBOの生成
+	glGenBuffers(1, &sc_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
+	// データの転送
+	glBufferData(GL_ARRAY_BUFFER, sizeof(solid_circle_vertex), solid_circle_vertex, GL_STATIC_DRAW);
 
-  // VBOの生成
-  glGenBuffers(1, &sc_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
-  // データの転送
-  glBufferData(GL_ARRAY_BUFFER, sizeof(solid_circle_vertex), solid_circle_vertex, GL_STATIC_DRAW);
-
-  // インデックスバッファの作成
-  glGenBuffers(1, &sc_ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
-  // データの転送
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(solid_circle_index), solid_circle_index, GL_STATIC_DRAW);
+	// インデックスバッファの作成
+	glGenBuffers(1, &sc_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
+	// データの転送
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(solid_circle_index), solid_circle_index, GL_STATIC_DRAW);
 
 
 
 
-  // VBOの生成
-  glGenBuffers(1, &bg_quad_vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
-  // データの転送
-  glBufferData(GL_ARRAY_BUFFER, sizeof(bg_quad), bg_quad, GL_STATIC_DRAW);
+	// VBOの生成
+	glGenBuffers(1, &bg_quad_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+	// データの転送
+	glBufferData(GL_ARRAY_BUFFER, sizeof(bg_quad), bg_quad, GL_STATIC_DRAW);
 
-  // インデックスバッファの作成
-  glGenBuffers(1, &bg_quad_ibo);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-  // データの転送
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(bg_quad_index), bg_quad_index, GL_STATIC_DRAW);
-
-
+	// インデックスバッファの作成
+	glGenBuffers(1, &bg_quad_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+	// データの転送
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(bg_quad_index), bg_quad_index, GL_STATIC_DRAW);
 
 
+	int i;
+	for (i=0; i<TOTAL_SCALES; i++) {
+		glGenBuffers(1, &bg_cols[i]);
+		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
+		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
+
+
+	}
+
+
+//	glGenBuffers(1, &quad_col_1);
+//	glBindBuffer(GL_ARRAY_BUFFER, quad_col_1);
+//	glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[3], GL_STATIC_DRAW);
 
 
 
@@ -777,22 +873,57 @@ void pi_draw() {
 //		glUniform1f(g_sp.u_blu, 0.5);
 //		glUniform1f(g_sp.uFrame,posx*1.23450F);
 
+//========================================================================
+
+
+
 
 
 
 		glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
 		glEnableVertexAttribArray(g_sp.aposition);
-		glEnableVertexAttribArray(g_sp.atex);
+//		glEnableVertexAttribArray(g_sp.atex);
 
-//		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
-//		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
+
+
+
 
 		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
-		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 12);
 
 
-		draw_background();
+		draw_all_backgrounds();
+
+
+
+
+
+
+//		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[selected_scale]);
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+//		glEnableVertexAttribArray(g_sp.atex);
+//
+//		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
+//
+//
+//		draw_background();
+//
+//
+//
+//
+//		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[1]);
+//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+//		glEnableVertexAttribArray(g_sp.atex);
+//
+//		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
+//
+//
+//		draw_background();
+
+
+
+
+
 
 
 
@@ -809,21 +940,10 @@ void pi_draw() {
 
 		glEnableVertexAttribArray(0);
 
-//		glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
-//
-//
-//
-//
-//
-//
-//
+
 //
 //		  glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
-
-//			glUniform1f(g_sp.u_red, 1.0);
-//			glUniform1f(g_sp.u_grn, 1.0);
-//			glUniform1f(g_sp.u_blu, 1.0);
 
 
 		draw_touch_shapes();
@@ -885,28 +1005,20 @@ void step_touch_shape_draw_order() {
 				touch_shape_draw_order[i] = 0;
 
 			LOGI("step_touch_shape_draw_order", "touch_shape_draw_order[%d]: %d", i, touch_shape_draw_order[i]);
-
 	}
 
-
 }
-
 
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
-
-
 	pthread_mutex_lock(&mutex);
 	step_touch_shape_draw_order();
 	touch_shape* ts = touch_shapes + (touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
 //	LOGI("activate_touch_shape", "touch_shape_draw_order[TOUCH_SHAPES_MAX -1] %d",
 //			touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
-
-
-
 
 	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
 	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
@@ -933,35 +1045,146 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 	ts->fading_in = TRUE;
 	ts->is_alive = TRUE;
 	pthread_mutex_unlock(&mutex);
-
-
 }
-float red_bg = 0.0F;
-void draw_background() {
 
-	red_bg += (float)frame_delta * 0.0000003F;
+float bg_pulse = 0.0F;
+float bg_pulse_dir = 1.0F;
+float test_alpha = 1.0F;
+
+//void draw_background() {
+//
+//	bg_pulse += (float)frame_delta * 0.0000001F * bg_pulse_dir;
+//	glUniform1f(g_sp.pos_x, 0.0);
+//	glUniform1f(g_sp.pos_y, 0.0);
+//
+//	if (bg_pulse_dir == 1.0F && bg_pulse > 1.0) bg_pulse_dir = -1.0F;
+//	if (bg_pulse_dir == -1.0F && bg_pulse < 0.2) bg_pulse_dir = 1.0F;
+//
+//	glUniform1f(g_sp.rgb[0], 0.5 * bg_pulse);
+//	glUniform1f(g_sp.rgb[1], 1.0);
+//	glUniform1f(g_sp.rgb[2], 1.0);
+//
+//	glUniform1f(g_sp.alpha, 0.5);
+//	glUniform1f(g_sp.scale, 1.0);
+//
+//	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+//
+//}
+
+void draw_background_alpha(float a) {
+
+	bg_pulse += (float)frame_delta * 0.00000021F * bg_pulse_dir;
 
 	glUniform1f(g_sp.pos_x, 0.0);
 	glUniform1f(g_sp.pos_y, 0.0);
 
-//	glUniform1f(g_sp.rgb[0], 0.7);
-//	glUniform1f(g_sp.rgb[1], 0.3);
-//	glUniform1f(g_sp.rgb[2], 0.2);
+	if (bg_pulse_dir == 1.0F && bg_pulse > 1.0) bg_pulse_dir = -1.0F;
+	if (bg_pulse_dir == -1.0F && bg_pulse < 0.2) bg_pulse_dir = 1.0F;
 
-	if (red_bg >= 1.0) red_bg = 0;
-
-	glUniform1f(g_sp.rgb[0], red_bg);
-	glUniform1f(g_sp.rgb[1], 0.5);
+	glUniform1f(g_sp.rgb[0], 0.5 * bg_pulse);
+	glUniform1f(g_sp.rgb[1], 1.0);
 	glUniform1f(g_sp.rgb[2], 1.0);
 
-	glUniform1f(g_sp.alpha, 1.0);
+	glUniform1f(g_sp.alpha, a);
 	glUniform1f(g_sp.scale, 1.0);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
+}
 
+int count =0;
+
+void draw_all_backgrounds() {
+
+
+	bg_def* bg;
+	int i = 0;
+
+		count++;
+
+	for (i=0; i<bgs_size; i++) {
+
+//		bg_def* bg = bgs + i;
+		bg = bgs + i;
+
+		if (count%20 == 0)
+		LOGD("draw_all_backgrounds", "i: %d, in: %d, out: %d. bg->alpha: %f", i, bg->fading_in, bg->fading_out, bg->alpha);
+
+		if (bg->fading_in) {
+			bg->alpha += (float)frame_delta * alpha_fade_rate;
+			if (bg->alpha >= 1.0F) {
+				bg->fading_in = FALSE;
+				bg->alpha = 1.0F;
+			}
+		}
+
+		if (bg->fading_out) {
+
+			if (count%20 == 0) {
+				LOGD("draw_all_backgrounds", "(double)frame_delta * alpha_fade_rate: %f", (float)frame_delta * alpha_fade_rate);
+				LOGD("draw_all_backgrounds", "(float)frame_delta: %f", (float)frame_delta);
+				LOGD("draw_all_backgrounds", "alpha_fade_rate: %f", alpha_fade_rate);
+				LOGD("draw_all_backgrounds", "bg->alpha: %f", bg->alpha);
+			}
+			bg->alpha -= (float)frame_delta * alpha_fade_rate;
+			if (bg->alpha <= 0.0F) {
+				bg->fading_out = FALSE;
+				bg->alpha = 0.0F;
+			}
+		}
+
+		if (bg->alpha > 0.0F) {
+
+			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[bg->selected_scale]);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+			glEnableVertexAttribArray(g_sp.atex);
+			glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
+
+			draw_background_alpha(bg->alpha);
+		}
+	}
 
 }
+
+
+void start_xfade_bgs() {
+
+	LOGD("start_xfade_bgs", "curr_bg: %d", curr_bg);
+	bg_def* bg = bgs + curr_bg;
+	bg->fading_out = TRUE;
+
+	if (curr_bg < bgs_size) curr_bg++;
+	if (curr_bg == bgs_size) curr_bg = 0;
+
+	bg = bgs + curr_bg;
+	bg->selected_scale = selected_scale;
+	bg->fading_in = TRUE;
+
+}
+
+int bg_fading() {
+
+	int rtn = FALSE;
+	int i;
+	for (i=0; i<bgs_size; i++) {
+	bg_def* bg = bgs + i;
+
+		if (bg->fading_in || bg->fading_out) {
+			rtn = TRUE;
+		}
+		if (!bg->fading_in && !bg->fading_out) {
+			rtn = FALSE;
+		}
+	}
+
+	LOGD ("bg_fading", "rtn: %d", rtn);
+	return rtn;
+}
+
+
+
+
+
 
 
 void draw_touch_shapes() {

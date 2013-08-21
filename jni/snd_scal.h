@@ -15,6 +15,8 @@
 //#define TOTAL_NOTES 24
 #define TOTAL_NOTES 24
 
+#define TOTAL_SCALES 5
+
 #include "snd_asst.h"
 
 //void play_note(int segment, float vel);

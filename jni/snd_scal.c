@@ -13,6 +13,7 @@
 
 #include "snd_ctrl.h"
 #include "snd_scal.h"
+#include "hon_type.h"
 //C2-B4
 //48 - 83
 
@@ -168,23 +169,22 @@ sample_def* get_scale_sample(int seg) {
 int cycle_scale() {
 
 	// ここでフェードをしてないかを確認しなきゃ
-	if(current_voice_fading()) {
+	if(current_voice_fading() || bg_fading()) {
 
-		__android_log_write(ANDROID_LOG_DEBUG, "cycle_scale", "current_voice_fading()");
+		LOGD("cycle_scale", "current_voice_fading() || bg_fading()");
 		return 0;
 	}
 
-	__android_log_write(ANDROID_LOG_DEBUG, "cycle_scale", "cycle_scale() called");
-	int total_scales = sizeof scales / sizeof scales[0];
+	LOGD("cycle_scale", "cycle_scale() called");
 
-	if (selected_scale < total_scales)
+	if (selected_scale < TOTAL_SCALES)
 		selected_scale += 1;
 
-	if (selected_scale == total_scales)
+	if (selected_scale == TOTAL_SCALES)
 		selected_scale = 0;
 
 	int success = enqueue_seamless_loop(looping_samples + selected_scale);
-
+	start_xfade_bgs();
 
 	return 1;
 }

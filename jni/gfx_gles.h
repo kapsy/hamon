@@ -22,4 +22,6 @@ void calc_frame_rate();
 void activate_touch_shape(float x, float y, size_t col, float* vel);
 //size_t cycle_color();
 
+void start_xfade_bgs();
+int bg_fading();
 #endif /* GFX_INIT_H_ */
