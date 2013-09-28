@@ -34,8 +34,8 @@
 
 #define ONE_SHOT_RND 180 // この値が変わるといいな
 
-#define MIN_CHORD_TIME 1000
-#define CHORD_CHANGE_RND 2000
+#define MIN_CHORD_TIME 1000 // 2000のほうがいいのかも
+#define CHORD_CHANGE_RND 2000 // 3500の方へ
 
 #define MIN_REST_TIME 4000
 #define AUTO_PLAY_REST_RND 4000
@@ -159,8 +159,10 @@ size_t chord_interval = 0;
 //static size_t exit_fade_counter = 0;
 
 extern size_t screen_width;
+extern size_t screen_height;
 extern size_t screen_height_reduced;
-
+extern size_t screen_margin_y;
+extern size_t screen_margin_x;
 
 extern SLpermille segment_pan_map[TOTAL_NOTES];
 
@@ -199,7 +201,7 @@ void init_random_seed() {
 int obtain_random(int modulus) {
 	int r;
 	r = rand();
-	__android_log_print(ANDROID_LOG_DEBUG, "obtain_random", "r %d", r);
+	LOGD("obtain_random", "r %d", r);
 
 
     return (rand() % modulus);
@@ -237,9 +239,9 @@ void init_auto_vals() {
 	rest_interval = MIN_REST_TIME + obtain_random(AUTO_PLAY_REST_RND);
 	chord_interval = MIN_CHORD_TIME + obtain_random(CHORD_CHANGE_RND);
 
-	__android_log_print(ANDROID_LOG_DEBUG, "init_auto_vals", "one_shot_interval %d", one_shot_interval);
-	__android_log_print(ANDROID_LOG_DEBUG, "init_auto_vals", "rest_interval %d", rest_interval);
-	__android_log_print(ANDROID_LOG_DEBUG, "init_auto_vals", "chord_interval %d", chord_interval);
+	LOGD("init_auto_vals", "one_shot_interval %d", one_shot_interval);
+	LOGD("init_auto_vals", "rest_interval %d", rest_interval);
+	LOGD("init_auto_vals", "chord_interval %d", chord_interval);
 
 }
 
@@ -294,7 +296,7 @@ void increase_ammo() {
 	if (ammo_increase_counter == AMMO_INCREASE_RATE && ammo_current < ammo_max) {
 		ammo_increase_counter = 0;
 		ammo_current++;
-		__android_log_print(ANDROID_LOG_DEBUG, "increase_ammo", "ammo_current %d", ammo_current);
+		LOGD("increase_ammo", "ammo_current %d", ammo_current);
 	}
 }
 
@@ -303,7 +305,7 @@ int decrease_ammo() { // タッチするときの処理・AMMOを減るため
 		ammo_current--;
 		ammo_increase_counter = 0;
 		return TRUE;
-		__android_log_print(ANDROID_LOG_DEBUG, "increase_ammo", "ammo_current %d", ammo_current);
+		LOGD("increase_ammo", "ammo_current %d", ammo_current);
 	}
 	return FALSE;
 }
@@ -478,21 +480,29 @@ void set_parts_active() {
 void auto_play() {
 	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
 		not_active_count++;
-		__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "not_active_count %d", not_active_count);
+		LOGD("auto_play", "not_active_count %d", not_active_count);
 	}
 	if (not_active_count == SILENCE_BEFORE_AUTO_PLAY) {
 
 		if (one_shot_count == one_shot_interval) {
+//
+//			float x = (float) (obtain_random(screen_width));
+//			float y = (float) (obtain_random(screen_height_reduced));
 
-			float x = (float) (obtain_random(screen_width));
-			float y = (float)(obtain_random(screen_height_reduced));
+//			float x = (float) (obtain_random(screen_width));
+//			float y = (float) ((obtain_random(screen_height - (screen_margin*2.0F))) + screen_margin);
 
-			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "x %f y %f", x, y);
+			float x = (float) ((obtain_random(screen_width - (screen_margin_x * 2.0F))) + screen_margin_x);
+			float y = (float) ((obtain_random(screen_height - (screen_margin_y * 2.0F))) + screen_margin_y);
+
+
+			LOGD("auto_play", "x %f y %f", x, y);
 			trigger_note(x, y);
 
 			one_shot_count = 0;
-			one_shot_interval = 5+obtain_random(500);
-			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "one_shot_interval %d", one_shot_interval);
+//			one_shot_interval = 5+obtain_random(500);
+			one_shot_interval = 5+obtain_random(390);
+			LOGD("auto_play", "one_shot_interval %d", one_shot_interval);
 		}
 
 
@@ -503,7 +513,7 @@ void auto_play() {
 
 			rest_count =0;
 			rest_interval = MIN_REST_TIME + obtain_random(AUTO_PLAY_REST_RND);
-			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "rest_interval %d", rest_interval);
+			LOGD("auto_play", "rest_interval %d", rest_interval);
 		}
 
 
@@ -511,7 +521,7 @@ void auto_play() {
 			int success = cycle_scale();
 			chord_count = 0;
 			chord_interval = MIN_CHORD_TIME + obtain_random(3000);
-			__android_log_print(ANDROID_LOG_DEBUG, "auto_play", "chord_interval %d", chord_interval);
+			LOGD("auto_play", "chord_interval %d", chord_interval);
 		}
 
 		one_shot_count++;
@@ -552,7 +562,7 @@ void init_part(part* p, int rec) {
 
 	p->is_alive = rec;
 
-	__android_log_print(ANDROID_LOG_DEBUG, "init_part", "p->total_tics  %d", p->total_tics);
+	LOGD("init_part", "p->total_tics  %d", p->total_tics);
 
 
 	reset_all_notes(p);
@@ -689,7 +699,7 @@ void count_part_ttl(part* p) {
 		parts_are_active();
 
 	}
-	__android_log_print(ANDROID_LOG_DEBUG, "count_part_ttl", "p->play_count: %d", p->play_count);
+	LOGD("count_part_ttl", "p->play_count: %d", p->play_count);
 
 }
 

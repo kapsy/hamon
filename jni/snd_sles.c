@@ -78,6 +78,7 @@ void timing_test_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v);
 
 
 
+void set_voice_vol_zero(voice* v);
 //void set_voice_volume(voice* voice, float vol, int pan);
 void set_voice_volume_pan(voice* v, SLmillibel vol, SLpermille pan);
 //SLmillibel float_to_slmillibel(float sender_vel, float sender_range);
@@ -189,7 +190,7 @@ void create_sl_engine()
 //only required for looping... no need to register a cb for one shot (might be though if buffers are too small).
 void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 
-	__android_log_write(ANDROID_LOG_DEBUG, "looper_callback", "looper_callback() called");
+	LOGD("looper_callback", "looper_callback() called");
 
 	//assert(bq == bqPlayerBufferQueue);
 	//assert(NULL == context);
@@ -208,13 +209,12 @@ void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 	assert(SL_RESULT_SUCCESS == result);
 }
 
-
+// timing_voiceは特別なトラックである。正確な時間を守るためのトラック。
 void init_voice(voice* v, int timing_voice, int looping_voice) {
 
 	v->vol_fade_factor = 1.0F;
 	v->vol_auto_factor = 1.0F;
 //	v->vol_exit_factor = 1.0F;
-
 
 	v->fading_in = FALSE;
 	v->fading_out = FALSE;
@@ -242,40 +242,40 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
 //        SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
 
 
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "SLDataFormat_PCM format_pcm ");
+    LOGD("init_voice", "SLDataFormat_PCM format_pcm ");
     SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "SLDataSource audioSrc");
+    LOGD("init_voice", "SLDataSource audioSrc");
 
     // configure audio sink
     SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
     SLDataSink audioSnk = {&loc_outmix, NULL};
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "SLDataSink audioSnk");
+    LOGD("init_voice", "SLDataSink audioSnk");
 
     // create audio player
     const SLInterfaceID ids[3] = {SL_IID_BUFFERQUEUE, SL_IID_EFFECTSEND,
             /*SL_IID_MUTESOLO,*/ SL_IID_VOLUME};
     const SLboolean req[3] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE,
             /*SL_BOOLEAN_TRUE,*/ SL_BOOLEAN_TRUE};
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "const SLboolean req[3]");
+    LOGD("init_voice", "const SLboolean req[3]");
 
     result = (*engineEngine)->CreateAudioPlayer(engineEngine, &v->bqPlayerObject, &audioSrc, &audioSnk, 3, ids, req);
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", " (*engineEngine)->CreateAudioPlayer");
+    LOGD("init_voice", " (*engineEngine)->CreateAudioPlayer");
     // realize the player
     result = (*v->bqPlayerObject)->Realize(v->bqPlayerObject, SL_BOOLEAN_FALSE);
     assert(SL_RESULT_SUCCESS == result);
 
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerObj)->Realize");
+    LOGD("init_voice", "(*bqPlayerObj)->Realize");
     // get the play interface
     result = (*v->bqPlayerObject)->GetInterface(v->bqPlayerObject, SL_IID_PLAY, &(v->bqPlayerPlay));
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "GetInterface(bqPlayerObj, SL_IID_PLAY, &(voice->bqPlayerPlay))");
+    LOGD("init_voice", "GetInterface(bqPlayerObj, SL_IID_PLAY, &(voice->bqPlayerPlay))");
 
     // get the volume interface
     result = (*v->bqPlayerObject)->GetInterface(v->bqPlayerObject, SL_IID_VOLUME, &(v->bqPlayerVolume));
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_VOLUME, &(voice->bqPlayerVolume)");
+    LOGD("init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_VOLUME, &(voice->bqPlayerVolume)");
 
 // 今パンほしくない
 //	SLboolean true = TRUE;
@@ -285,15 +285,10 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "EnableStereoPosition");
 
 
-
-
 	// get the buffer queue interface
     result = (*v->bqPlayerObject)->GetInterface(v->bqPlayerObject, SL_IID_BUFFERQUEUE, &(v->bqPlayerBufferQueue));
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_BUFFERQUEUE, &(voice->bqPlayerBufferQueue)");
-
-
-
+    LOGD("init_voice", "(*bqPlayerObj)->GetInterface(bqPlayerObj, SL_IID_BUFFERQUEUE, &(voice->bqPlayerBufferQueue)");
 
 	if (timing_voice) {
 	    result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, buffer_chunk_timer_callback, (void *)v);
@@ -304,15 +299,13 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
 		// result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, timing_test_callback, (void *)v);
 	}
 
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "RegisterCallback() called");
-
-
+	LOGD("init_voice", "RegisterCallback() called");
 	//if (!looping_voice) {
 		// set the player's state to playing - ここで問題が起きる
-		result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
-		assert(SL_RESULT_SUCCESS == result);
+	result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
+	assert(SL_RESULT_SUCCESS == result);
 	//}
-	__android_log_write(ANDROID_LOG_DEBUG, "init_voice", "(*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING)");
+	LOGD("init_voice", "(*bqPlayerPlay)->SetPlayState(bqPlayerPlay, SL_PLAYSTATE_PLAYING)");
 
 	v->is_playing = FALSE;
 	v->current_chunk = 0;
@@ -344,11 +337,11 @@ void shutdown_voice(voice* v) {
 
 // buffer queue players を作り出すため
 void init_all_voices() {
-	__android_log_write(ANDROID_LOG_DEBUG, "init_all_voices", "void init_all_voices() called");
+	LOGD("init_all_voices", "void init_all_voices() called");
 	int i;
 
 	for (i = 0; i < VOICE_COUNT; i++) {
-		__android_log_print(ANDROID_LOG_DEBUG, "init_all_voices", "void initPolyphony() i: %d", i);
+		LOGD("init_all_voices", "void initPolyphony() i: %d", i);
 
 //		if (i < LOOPER_COUNT) {
 //			init_voice(&poly_sampler[i], FALSE, TRUE);
@@ -356,10 +349,18 @@ void init_all_voices() {
 
 		if (i == LOOPER_COUNT) {
 			init_voice(&poly_sampler[i], TRUE, FALSE);
+
+			// NEED TO SET ALL LOOPER VOICES VOL TO ZERO.
 		} else {
 			init_voice(&poly_sampler[i], FALSE, FALSE);
 		}
 
+		// ゲロみたいな音を防げるため
+		if (i < LOOPER_COUNT) {
+			LOGD("init_all_voices", "(%d < LOOPER_COUNT),set_voice_vol_zero()", i);
+			set_voice_vol_zero(&poly_sampler[i]);
+
+		}
 
 		// バッファーのタイミングテストのため
 //		if (i == 4) {
@@ -384,16 +385,27 @@ void init_all_voices() {
 //		}
 
 	}
-	__android_log_write(ANDROID_LOG_DEBUG, "init_all_voices", "void init_all_voices() finished");
+	LOGD("init_all_voices", "void init_all_voices() finished");
 }
 
+void set_voice_vol_zero(voice* v) {
+
+	SLresult result;
+
+	v->sl_volume = SLMILLIBEL_MIN;
+	v->vol_fade_factor = 0.0F;
+
+	SLVolumeItf vol_itf = v->bqPlayerVolume;
+	result = (*vol_itf)->SetVolumeLevel(vol_itf, v->sl_volume);
+	assert(SL_RESULT_SUCCESS == result);
+}
 
 
 int enqueue_seamless_loop(sample_def* s) {
 
 	SLresult result;
 
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "enqueue_seamless_loop() called");
+	LOGD("enqueue_seamless_loop", "enqueue_seamless_loop() called");
 
 	// ここで今の再生中音をフェードアウトし
 	SLAndroidSimpleBufferQueueState current_queue_state ;
@@ -405,20 +417,19 @@ int enqueue_seamless_loop(sample_def* s) {
 	result = (*v->bqPlayerBufferQueue)->GetState(v->bqPlayerBufferQueue, &current_queue_state);
 
 
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "GetState() called");
-	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "current_queue_state.count: %d", current_queue_state.count);
+	LOGD("enqueue_seamless_loop", "GetState() called");
+	LOGD("enqueue_seamless_loop", "current_queue_state.count: %d", current_queue_state.count);
 
+	// 最初のループをフェードする必要
 	if (!initial_loop) {
 
-		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(!initial_loop) ");
-
+		LOGD("enqueue_seamless_loop", "(!initial_loop) ");
 
 		//v->sl_volume = SLMILLIBEL_MAX;
+		// 音量を最大の値を設定するため
 		v->vol_fade_factor = 1.0F;
-
 		v->fading_in = FALSE;
 		v->fading_out = TRUE;
-
 
 		cycle_looping_voice();
 
@@ -439,26 +450,26 @@ int enqueue_seamless_loop(sample_def* s) {
     result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_STOPPED);
     assert(SL_RESULT_SUCCESS == result);
 
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_STOPPED called");
+	LOGD("enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_STOPPED called");
 
 	result = (*v->bqPlayerBufferQueue)->Clear(v->bqPlayerBufferQueue);
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "Clear() called");
+    LOGD("enqueue_seamless_loop", "Clear() called");
 
     result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, looper_callback, (void *)s);
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "RegisterCallback() called");
+    LOGD("enqueue_seamless_loop", "RegisterCallback() called");
 
 	// ここで音の大きさを0に設定して
 
     result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
     assert(SL_RESULT_SUCCESS == result);
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_PLAYING called");
+    LOGD("enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_PLAYING called");
 
 	//__android_log_print(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(int)samp->data_size(): %x", samp->data_size);
 
 	result =	(*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, s->buffer_data,  (int)s->data_size);
-	__android_log_write(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "Enqueue() called");
+	LOGD("enqueue_seamless_loop", "Enqueue() called");
 
 	// ここでフェードインを始めよ
 //	v->sl_volume = SLMILLIBEL_MIN;
@@ -573,7 +584,7 @@ void pause_all_voices() {
 void voice_volume_factor(voice* v) {
 
 	v->sl_volume = (1.0F - (v->vol_fade_factor * v->vol_auto_factor)) * SLMILLIBEL_MIN;
-	__android_log_print(ANDROID_LOG_DEBUG, "voice_volume_factor", "v->vol_fade_factor: %f, v->sl_volume: %d", v->vol_fade_factor, v->sl_volume);
+	LOGD("voice_volume_factor", "v->vol_fade_factor: %f, v->sl_volume: %d", v->vol_fade_factor, v->sl_volume);
 
 	SLresult result;
 	SLVolumeItf vol_itf = v->bqPlayerVolume;
@@ -595,7 +606,7 @@ SLmillibel float_to_slmillibel(float sender_vel, float sender_range) {
 // 0以上なら制御てきに０に設定
 if (vol > 0)	vol = 0;
 
-	__android_log_print(ANDROID_LOG_DEBUG, "float_to_slmillibel", "v: %d", vol);
+	LOGD("float_to_slmillibel", "v: %d", vol);
 
 	return vol;
 }
@@ -614,7 +625,7 @@ void init_seg_pan_map() {
 		segment_pan_map[i] = ((i * SEG_PAN_AMT) - (((TOTAL_NOTES) * SEG_PAN_AMT) / 2)) + (SEG_PAN_AMT / 2);
 
 
-		__android_log_print(ANDROID_LOG_DEBUG, "init_seg_pan_map", "segment_pan_map[%d]: %d", i, segment_pan_map[i]);
+		LOGD("init_seg_pan_map", "segment_pan_map[%d]: %d", i, segment_pan_map[i]);
 	}
 
 }
@@ -627,7 +638,7 @@ int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan) {
 	voice* v = get_next_free_voice();
 	if (v == NULL)
 	{
-		__android_log_write(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v == NULL: couldn't find a free buffer");
+		LOGD("enqueue_one_shot", "v == NULL: couldn't find a free buffer");
 		return 0;
 	}
 
@@ -645,10 +656,10 @@ int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan) {
 	set_voice_volume_pan(v, vol, pan);
 
 
-	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->current_chunk: %d", v->current_chunk);
+	LOGD("enqueue_one_shot", "v->current_chunk: %d", v->current_chunk);
 //	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->current_chunk_size: %d", v->current_chunk_size);
-	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->sample->data_size: %d", v->sample->data_size);
-	__android_log_print(ANDROID_LOG_DEBUG, "enqueue_one_shot", "v->is_playing: %d", v->is_playing);
+	LOGD("enqueue_one_shot", "v->sample->data_size: %d", v->sample->data_size);
+	LOGD("enqueue_one_shot", "v->is_playing: %d", v->is_playing);
 
 	//result = (*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, get_next_data_chunk(v), v->current_chunk_size);
 
@@ -665,8 +676,8 @@ int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan) {
 // 一発的な音のため
 void set_voice_volume_pan(voice* v, SLmillibel vol, SLpermille pan) { //入力スべき値は0から1の間
 
-	__android_log_print(ANDROID_LOG_DEBUG, "set_voice_volume_pan", "vol: %d", vol);
-	__android_log_print(ANDROID_LOG_DEBUG, "set_voice_volume_pan", "pan: %d", pan);
+	LOGD("set_voice_volume_pan", "vol: %d", vol);
+	LOGD("set_voice_volume_pan", "pan: %d", pan);
 
 	//SLmillibel sl_millibel = float_to_slmillibel(vol, 1.0F);
 //	__android_log_print(ANDROID_LOG_DEBUG, "set_voice_volume", "sl_millibel: %d", sl_millibel);
@@ -738,20 +749,20 @@ unsigned short* get_next_data_chunk(voice* v) {
 	unsigned short* b;
 
 	if (v->current_chunk == v->sample->total_chunks && v->is_playing) {
-		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 1");
+		LOGD("get_next_data_chunk", "buffer_logic 1");
 
 		v->sample = &silence_chunk;
 		b = silence_chunk.buffer_data;
 		v->is_playing = FALSE;
 
 	} else if (v->current_chunk < v->sample->total_chunks && v->is_playing) {
-//		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 2");
+//		LOGD("get_next_data_chunk", "buffer_logic 2");
 
 		b = v->sample->buffer_data + (v->current_chunk * BUFFER_SIZE_SHORT);
 		v->current_chunk++;
 
 	} else if (!v->is_playing) {
-//		__android_log_write(ANDROID_LOG_DEBUG, "get_next_data_chunk", "buffer_logic 3");
+//		LOGD("get_next_data_chunk", "buffer_logic 3");
 
 		v->sample = &silence_chunk;
 		b = silence_chunk.buffer_data;
@@ -828,7 +839,7 @@ voice* get_next_free_voice() {
 		}
 	}
 
-	__android_log_print(ANDROID_LOG_DEBUG, "get_next_free_voice", "i: %d", i);
+	LOGD("get_next_free_voice", "i: %d", i);
 
 	return v;
 }
@@ -861,7 +872,7 @@ void cycle_oneshot_voice() {
 // shut down the native audio system
 void shutdown_audio()
 {
-	__android_log_write(ANDROID_LOG_DEBUG, "shutdown_audio", "shutdown_audio() called");
+	LOGD("shutdown_audio", "shutdown_audio() called");
 
 //	shutdown_all_voices();
 //

@@ -41,36 +41,20 @@
 #define CIRCLE_SEGMENTS 24
 
 
-
-
-
 typedef struct {
-
 	int is_alive;
-
 	int fading_in;
-
 	GLfloat pos_x;
 	GLfloat pos_y;
-
 	GLfloat rgb[3];
-
 	GLfloat alpha;
-
 	GLfloat scale;
-
-
-
-
 //	float ttl;
-
-
 } touch_shape;
 
 //typedef struct {
 //
 //} rgba;
-
 
 // Žæ‚èŠ¸‚¦‚¸
 touch_shape* touch_shape_list[TOUCH_SHAPES_MAX];
@@ -78,7 +62,6 @@ touch_shape* touch_shape_list[TOUCH_SHAPES_MAX];
 touch_shape touch_shapes[TOUCH_SHAPES_MAX];
 unsigned int touch_shape_draw_order[TOUCH_SHAPES_MAX];
 size_t current_touch_shape = 0;
-
 
 void init_touch_shapes();
 //touch_shape* cycle_touch_shapes();
@@ -97,7 +80,6 @@ typedef struct {
 	int width;
 	int height;
 } ScreenSettings;
-
 
 void pi_create_buffer();
 
@@ -201,8 +183,6 @@ const char fShaderSrc[] =
 		"	}   	               						\n";
 
 
-
-
 //const char fShaderSrcBlue[] =
 //  "precision mediump float;\n"\
 //  "varying   vec2  vTex;\n"
@@ -232,12 +212,9 @@ typedef struct {
   GLint  		uframe;
   GLint		pos_x;
   GLint 		pos_y;
-
-  GLint rgb[3];
-
+  GLint 		rgb[3];
   GLint		alpha;
   GLint		scale;
-
 } ShaderParams;
 
 //typedef struct {
@@ -1209,7 +1186,8 @@ void draw_touch_shapes() {
 
 			if (ts->fading_in) {
 
-				ts->alpha += (float)frame_delta *  0.0000039F;//(float)(SEC_IN_US/25);
+				//ts->alpha += (float)frame_delta *  0.0000039F;//(float)(SEC_IN_US/25);
+				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
 				if (ts->alpha >= 1.0F) ts->fading_in = FALSE;
 			}
 

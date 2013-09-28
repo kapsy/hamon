@@ -52,6 +52,9 @@ typedef void* EGLNativeDisplayType;
 size_t screen_width;
 size_t screen_height;
 size_t screen_height_reduced; // Šù‚ÉŒvŽZ‚µ‚½’lEŽ©“®“IÄ¶‚Ì‚½‚ß‚É‚±‚±‚ÅŒvŽZ
+size_t screen_margin; // ‰~Œ`‚ð’[‚ÉØ‚ê‚È‚¢‚æ‚¤‚É•`‚­‚½‚ß‚Ì’lA‰æ–Êc‚Ì‚Q‚O“
+size_t screen_margin_y;
+size_t screen_margin_x;
 
 static float touch_segment_width;
 int gfx_initialized = FALSE;
@@ -250,6 +253,10 @@ static void get_screen_dimensions(engine* e) {
 	screen_height = (int)ANativeWindow_getHeight(e->app->window);
 
 	screen_height_reduced = screen_height * 0.8F;
+
+	screen_margin_y = screen_height * 0.16F;
+	screen_margin_x = screen_height * 0.1F;
+
 /*
 	if (ANativeWindow_lock(e->app->window, &buffer, NULL) < 0) {
 	        LOGW("Unable to lock window buffer");

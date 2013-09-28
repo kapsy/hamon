@@ -644,12 +644,62 @@ X背景フェード
 
 2013/08/21
 スケールを変える機能・操作する為のテキスチャー
-
-
-音調を変えるときフェードしてない問題
 タイトル画面
 
+2013年8月23日
+X音調を変えるときフェードしてない問題・解決しました...かな
 
+x自動的に円形を描くとき、上端から少し離れた位置の機能。
+2013年8月26日
+タイトル画面・タッチを無効・有効機能
+オーディオのフェード時間を伸ばせ
+一番大切なのは、スリープしながら再生する機能。此のアプリにとって大切だよ！
+自動再生しながら、
+
+自動再生プリセット？
+
+2013年8月31日
+08-31 15:21:57.187: D/pi_SurfaceCreate(22439): pi_SurfaceCreate() called
+08-31 15:21:57.976: D/pi_SurfaceCreate(22439): g_sc.width: 800
+08-31 15:21:57.976: D/pi_SurfaceCreate(22439): g_sc.height: 480
+
+本当の画面の面積
+442X800 (Gimpによって)
+
+	// 横置きの向き (APad)
+	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getWidth: 800
+	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getHeight: 432
+	
+2013年9月1日
+09-01 12:55:20.070: D/get_screen_dimensions(3329): ANativeWindow_getWidth: 800
+09-01 12:55:20.070: D/get_screen_dimensions(3329): ANativeWindow_getHeight: 480
+09-01 12:55:20.070: D/get_screen_dimensions(3329): screen_height_reduced: 384
+
+2013/09/02　
+(Galaxy S)
+09-02 15:51:11.657: D/pi_SurfaceCreate(21339): g_sc.width: 800
+09-02 15:51:11.657: D/pi_SurfaceCreate(21339): g_sc.height: 480
+09-02 15:51:11.661: D/get_true_screen_dims(21339): w: 800
+09-02 15:51:11.661: D/get_true_screen_dims(21339): h: 480
+
+(Apad)q	
+09-02 16:08:42.309: D/pi_SurfaceCreate(24094): g_sc.width: 800
+09-02 16:08:42.309: D/pi_SurfaceCreate(24094): g_sc.height: 432
+09-02 16:08:42.309: D/get_true_screen_dims(24094): w: 800
+09-02 16:08:42.309: D/get_true_screen_dims(24094): h: 432
+
+
+2013年9月22日
+このアプリを完了するための４つの柱：
+xスプラッシュ画面
+Xテクスチャの比率を自動的に相応しい値へ
+Xスプラッシュ画面アプリの大掃除
+スプラッシュコードと音声コードを合併
+音調を変える設定機能
+バックグラウンドで再生する機能
+IAP機能
+
+	
 ＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
 ＋　　やるべきリスト　(優先順位)　＋
 ＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
