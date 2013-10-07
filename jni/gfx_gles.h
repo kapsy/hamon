@@ -13,8 +13,9 @@
 
 #define TOTAL_PART_COLORS 8
 
-EGLBoolean pi_SurfaceCreate(ANativeWindow* nw);
-void pi_draw();
+//EGLBoolean pi_SurfaceCreate(ANativeWindow* nw);
+EGLBoolean create_window_surface(ANativeWindow* nw);
+void draw_main();
 int init_cmds();
 void calc_frame_delta_time();
 void calc_frame_rate();

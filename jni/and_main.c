@@ -308,7 +308,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				LOGD("call_order", "APP_CMD_INIT_WINDOW");
 
-				int suc = pi_SurfaceCreate(e->app->window);
+//				int suc = pi_SurfaceCreate(e->app->window);
+				int suc = create_window_surface(e->app->window);
 				LOGD("call_order", "pi_SurfaceCreate, suc: %d", suc);
 				suc = init_cmds();
 				LOGD("call_order", "init_cmds, suc: %d", suc);
@@ -463,7 +464,7 @@ void android_main(struct android_app* state) {
 			calc_frame_delta_time();
 //			calc_frame_rate();
 
-			pi_draw();
+			draw_main();
 
 		}
 

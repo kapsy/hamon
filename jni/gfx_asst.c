@@ -10,7 +10,7 @@
 
 
 #include "hon_type.h"
-
+#include "gfx_asst.h"
 
 //#define SEC_IN_NS 1000000000
 //#define SEC_IN_US 1000000
@@ -46,7 +46,7 @@
 //} ScreenSettings;
 
 
-const char vShaderSrc[] =
+/*const char vShaderSrc[] =
 		"attribute vec4 vPosition;\n"
 		"void main()\n"
 		"{\n"
@@ -61,76 +61,74 @@ const char fShaderSrc[] =
 	"uniform float bitmap_ratio;\n"
 
 	"void main()\n"
-	"{\n"
-//	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n"
-
-		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
+	"{\n"		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
 		"vec2(display.y * (bitmap_ratio), display.y)   );\n"
 
-	"}\n";
+	"}\n";*/
 
 
 
-typedef struct {
-	GLint		position;
-	GLint 	tex;
-//	GLint		time;
-//	GLint		resolution;
-//	GLint 	mouse;
-	GLint display;
-	GLint		bitmap_ratio;
-} shader_params_t;
+//typedef struct {
+//	GLint		position;
+//	GLint 	tex;
+////	GLint		time;
+////	GLint		resolution;
+////	GLint 	mouse;
+//	GLint display;
+//	GLint		bitmap_ratio;
+//} shader_params_t;
 
-typedef struct {
-	GLfloat x, y, z;
-	GLfloat u, v;
-} vertex;
+//typedef struct {
+//	GLfloat x, y, z;
+//	GLfloat u, v;
+//} vertex;
 
-#pragma pack(push,1)
+//#pragma pack(push,1)
+//
+//typedef struct tagBITMAPFILEHEADER {
+//    unsigned short bfType;
+//    unsigned int   bfSize;
+//    unsigned short bfReserved1;
+//    unsigned short bfReserved2;
+//    unsigned int   bfOffBits;
+//} BITMAPFILEHEADER;
+//
+//typedef struct tagBITMAPINFOHEADER{
+//    unsigned int   biSize;
+//    int            biWidth;
+//    int            biHeight;
+//    unsigned short biPlanes;
+//    unsigned short biBitCount;
+//    unsigned int   biCompression;
+//    unsigned int   biSizeImage;
+//    int            biXPixPerMeter;
+//    int            biYPixPerMeter;
+//    unsigned int   biClrUsed;
+//    unsigned int   biClrImporant;
+//} BITMAPINFOHEADER;
+//
+//#pragma pack(pop)
 
-typedef struct tagBITMAPFILEHEADER {
-    unsigned short bfType;
-    unsigned int   bfSize;
-    unsigned short bfReserved1;
-    unsigned short bfReserved2;
-    unsigned int   bfOffBits;
-} BITMAPFILEHEADER;
+//typedef struct {
+//    int  fsize;
+//    unsigned char *pdata;    // 画像ファイルのピクセルデータ
+//    unsigned char *TexData;  // テクスチャのピクセルデータ
+//    BITMAPFILEHEADER *bmpheader;
+//    BITMAPINFOHEADER *bmpinfo;
+//    int  BmpSize;
+//    int  BmpOffBits;
+//    int  BmpWidth;           // 画像の幅
+//    int  BmpHeight;          // 画像の高さ（負ならば反転）
+//
+//    float bitmap_ratio;
+//
+//    int  BmpBit;             // 画像のビット深度
+//    int  BmpLine;
+//    int  initial_alpha;
+//    GLuint  texname;
+//} TexureType;
 
-typedef struct tagBITMAPINFOHEADER{
-    unsigned int   biSize;
-    int            biWidth;
-    int            biHeight;
-    unsigned short biPlanes;
-    unsigned short biBitCount;
-    unsigned int   biCompression;
-    unsigned int   biSizeImage;
-    int            biXPixPerMeter;
-    int            biYPixPerMeter;
-    unsigned int   biClrUsed;
-    unsigned int   biClrImporant;
-} BITMAPINFOHEADER;
-
-#pragma pack(pop)
-
-typedef struct {
-    int  fsize;
-    unsigned char *pdata;    // 画像ファイルのピクセルデータ
-    unsigned char *TexData;  // テクスチャのピクセルデータ
-    BITMAPFILEHEADER *bmpheader;
-    BITMAPINFOHEADER *bmpinfo;
-    int  BmpSize;
-    int  BmpOffBits;
-    int  BmpWidth;           // 画像の幅
-    int  BmpHeight;          // 画像の高さ（負ならば反転）
-
-    float bitmap_ratio;
-
-    int  BmpBit;             // 画像のビット深度
-    int  BmpLine;
-    int  initial_alpha;
-    GLuint  texname;
-} TexureType;
-
+/*
 vertex bg_quad[] = {
 	{-1.0f, -1.0f, 0.0f, 0.0, 0.0},
 	{1.0f, -1.0f, 0.0f, 1.0f, 0.0f},
@@ -152,14 +150,15 @@ GLuint g_vbo;
 GLuint g_ibo;
 GLuint g_program;
 //GLuint g_program_2;
+*/
 
-#define MAXSIZE  1024 * 1024 * 4
+//#define MAXSIZE  1024 * 1024 * 4
 //#define MAXSIZE  4096 * 4096 * 4
+//
+//static unsigned char g_bmpbuffer[MAXSIZE];
 
-static unsigned char g_bmpbuffer[MAXSIZE];
 
-
-int LoadFile(char *filename, void *buffer)
+int load_bitmap(char *filename, void *buffer)
 {
 	FILE *fp;
 	long fsize;
@@ -191,7 +190,7 @@ int LoadFile(char *filename, void *buffer)
 	return -1;
 }
 
-int bmpCheck(TexureType *tt, void* buffer)
+int check_bitmap(TexureType *tt, void* buffer)
 {
 	tt->bmpheader = (BITMAPFILEHEADER *)buffer;
 	// bmp フォーマットのシグネチャのチェック
@@ -246,7 +245,7 @@ int bmpCheck(TexureType *tt, void* buffer)
 }
 
 
-void makeTexture(TexureType *tt, int alpha)
+void make_texture(TexureType *tt, int alpha)
 {
 	int color, x, y;
 	tt->initial_alpha = alpha;

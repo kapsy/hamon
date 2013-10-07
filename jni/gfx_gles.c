@@ -22,12 +22,12 @@
 
 #include "and_main.h"
 #include "gfx_gles.h"
-#include "snd_scal.h"
+#include "gfx_asst.h"
 
+#include "snd_scal.h"
 
 #include <unistd.h>  // sleep()を定義
 #include <pthread.h>
-
 #include <math.h>
 #include <stdlib.h>
 
@@ -39,6 +39,8 @@
 
 #define PI 3.14159265358979
 #define CIRCLE_SEGMENTS 24
+
+#define SPLASH_COUNT_SECS 10
 
 
 typedef struct {
@@ -52,9 +54,7 @@ typedef struct {
 //	float ttl;
 } touch_shape;
 
-//typedef struct {
-//
-//} rgba;
+
 
 // 取り敢えず
 touch_shape* touch_shape_list[TOUCH_SHAPES_MAX];
@@ -63,12 +63,18 @@ touch_shape touch_shapes[TOUCH_SHAPES_MAX];
 unsigned int touch_shape_draw_order[TOUCH_SHAPES_MAX];
 size_t current_touch_shape = 0;
 
+void frame_delta_avg_init();
 void init_touch_shapes();
 //touch_shape* cycle_touch_shapes();
 void draw_touch_shapes();
-void draw_background();
+//void draw_background(); //必要ない
 void step_touch_shape_draw_order();
 void calc_circle_vertex();
+void create_gl_buffers();
+int create_gl_texture(TexureType *tt);
+int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
+void draw_splash();
+void draw_all_backgrounds();
 
 typedef struct {
 	EGLNativeWindowType nativeWin;
@@ -79,32 +85,42 @@ typedef struct {
 	EGLint minorVersion;
 	int width;
 	int height;
-} ScreenSettings;
 
-void pi_create_buffer();
-
-//const char vShaderSrc[] =
-//		"attribute 	vec3		aPosition;	\n"
-//		"attribute 	vec2		aTex;     	\n"
-//		"varying   	vec2  	vTex;			\n"
-//		"uniform	float 		uFrame;		\n"
-//		"uniform	float 		posX;			\n"
-//		"uniform	float		posY;			\n"
-//		"uniform	float 		scale;		\n"
-//		"uniform 	mat4 	projectionMatrix; \n"
-//		"void main()							\n"
-//		"	{                  						\n"
-//		"		vTex = aTex;     				\n"
-////		"		vTex = vec2(0.0, 0.0);		\n"
-////		"		gl_Position = vec4(aPosition.x - uFrame, aPosition.y + uFrame, 0, 1);		\n"
-////		"		gl_Position = projectionMatrix * vec4(aPosition.x + posX, aPosition.y + posY, 0, 1);		\n"
-////		"		aPostion.x *=scale;				\n"
-////		"		aPostion.y *=scale;			\n"
-//		"		gl_Position = vec4((aPosition.x * scale) + posX, (aPosition.y*scale) + posY, 0, 1);		\n"
-//		"	}                  						\n";
+//	float		display_ratio;
+	float hw_ratio;
+} screen_settings;
 
 
-const char vShaderSrc[] =
+
+// スプラッシュ画面のシェーダー
+
+const char v__shdr_splash[] =
+		"attribute vec4 vPosition;\n"
+		"void main()\n"
+		"{\n"
+		"   gl_Position = vPosition;\n"
+		"}\n";
+
+const char f_shdr_splash[] =
+	"precision mediump float;\n"
+	"uniform vec2 uSize;\n"
+	"uniform sampler2D sTexture;\n"
+	"uniform vec2 display;\n"
+	"uniform float bitmap_ratio;\n"
+
+	"void main()\n"
+	"{\n"
+//	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n"
+
+		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
+		"vec2(display.y * (bitmap_ratio), display.y)   );\n"
+
+	"}\n";
+
+
+// 本体のアプリのシェーダー
+
+const char v_shdr_main[] = // vShaderSrc
 		"attribute 	vec3		aposition;	\n"
 		"attribute 	vec3		atex;     		\n"
 		"varying   	vec3  	vtex;			\n"
@@ -119,77 +135,37 @@ const char vShaderSrc[] =
 		"		gl_Position = vec4((aposition.x * scale) + pos_x, (aposition.y*scale) + pos_y, 0, 1);		\n"
 		"	}            \n";
 
-//const char fShaderSrc[] =
-//		"precision	mediump float;		\n"
-//		"varying		vec2  	vTex;			\n"
-//		"uniform 	float		ured;		\n"
-//		"uniform 	float		ugrn;		\n"
-//		"uniform 	float		ublu;			\n"
-////		"uniform 	float 		uBlue;		\n"
-//		"uniform	float 		alpha;			\n"
-//		"void main()        					\n"
-//		"	{                  						\n"
-////		"  		gl_FragColor = vec4(vTex.y * u_red, vTex.x * u_grn, u_blu, alpha);	\n"
-////		"  		gl_FragColor = vec4(vTex.y, vTex.x, u_blu, alpha);	\n"
-//
-////		"  		gl_FragColor = vec4(ured, ugrn, ublu, alpha);	\n"
-//		"  		gl_FragColor = vec4(vTex.y * ured, vTex.x * ugrn, ublu, alpha);	\n"
-//
-//		"	}   	               						\n";
 
-//const char fShaderSrc[] =
-//		"precision	mediump float;		\n"
-//		"varying		vec3  	vtex;			\n"
-//		"uniform 	float		ured;			\n"
-//		"uniform 	float		ugrn;			\n"
-//		"uniform 	float		ublu;			\n"
-//
-//		"uniform 	vec3		vcol			\n"
-//
-//		"uniform	float 		alpha;			\n"
-//
-//
-//		"void main()        					\n"
-//		"	{                  						\n"
-//
-//
-////		"  		gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);	\n"
-//		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
-//
-//		"	}   	               						\n";
-//
-
-
-const char fShaderSrc[] =
+const char f_shdr_main[] = // fShaderSrc
 		"precision	mediump float;		\n"
 		"varying		vec3  	vtex;			\n"
 		"uniform 	float		ured;			\n"
 		"uniform 	float		ugrn;			\n"
 		"uniform 	float		ublu;			\n"
-
 //		"uniform 	vec3		vcol			\n"
-
 		"uniform	float 		alpha;			\n"
-
 
 		"void main()        					\n"
 		"	{                  						\n"
 
-
-
-//		"  		gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);	\n"
 		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
 
 		"	}   	               						\n";
 
 
-//const char fShaderSrcBlue[] =
-//  "precision mediump float;\n"\
-//  "varying   vec2  vTex;\n"
-//  "void main()        \n"
-//  "{                  \n"
-//  "  gl_FragColor = vec4(vTex.y, 0.0, 1.0, 0.8);\n"
-//  "}                  \n";
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void orthogonalMatrix(
 			float left, 		float right,
@@ -207,15 +183,37 @@ static GLfloat projectionMatrix[16];
 static GLint projectionMatrixLocation;
 
 typedef struct {
-  GLint  		aposition;
-  GLint  		atex;
-  GLint  		uframe;
-  GLint		pos_x;
-  GLint 		pos_y;
-  GLint 		rgb[3];
-  GLint		alpha;
-  GLint		scale;
-} ShaderParams;
+	GLint  		aposition;
+	GLint  		atex;
+	GLint  		uframe;
+	GLint			pos_x;
+	GLint 		pos_y;
+	GLint 		rgb[3];
+	GLint			alpha;
+	GLint			scale;
+
+	GLint 		display;
+//	GLint			bitmap_ratio;
+} shader_params_main;
+
+
+
+typedef struct {
+	GLint		position;
+	GLint 	tex;
+//	GLint		time;
+//	GLint		resolution;
+//	GLint 	mouse;
+
+	GLint 	alpha;
+
+	GLint 	display;
+	GLint		bitmap_ratio;
+} shader_params_tex;
+
+
+static unsigned char g_bmpbuffer[MAXSIZE];
+
 
 //typedef struct {
 //    GLfloat x, y, z;
@@ -232,55 +230,17 @@ typedef struct {
 	GLfloat r, g, b;
 } vertex_rgb;
 
-//vertex vObj[] = { // VertexBufferObjectを使用スべきか？
-//
-//  {.x = -0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-//  {.x =  0.5f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-//  {.x =  0.0f, 	.y =  0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-//};
-//
-//
-//
-//
-//unsigned short iObj[] = {
-//  0, 1, 2
-//};
-//
-//
-//		// 四角形
-////VertexType vObj_sq[] = { // VertexBufferObjectを使用スべきか？
-////
-////  {.x = -0.25f, 	.y =   0.5f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-////  {.x = 0.25f, 		.y =   0.5f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-////  {.x = 0.25f, 		.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-////  {.x = -0.25f, 	.y = -0.5f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-////};
-//vertex vObj_sq[] = { // VertexBufferObjectを使用スべきか？
-//
-//  {.x = -0.125f, 	.y =   0.25f, 	.z = 0.0f, 	.u = 0.0f, 	.v = 1.0f},
-//  {.x = 0.125f, 		.y =   0.25f, 	.z = 0.0f, 	.u = 1.0f, 	.v = 1.0f},
-//  {.x = 0.125f, 		.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-//  {.x = -0.125f, 	.y = -0.25f, 	.z = 0.0f, 	.u = 0.5f, 	.v = 0.0f},
-//};
-//unsigned short iObj_sq[] = {
-////  0, 1, 2, 3
-////  0, 1, 3, 2
-//  0, 3, 1, 2
-////  0, 2, 3
-//};
 
 vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
 unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
-//vertex bg_quad[] = {
-//	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-//	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
-//	{1.0f, 		1.0f, 		0.0f, 		0.95f,		0.0f, 		0.35f},
-//	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
-//};
 
 
-void draw_all_backgrounds();
+
+
+
+
+
 
 extern int selected_scale;
 
@@ -301,7 +261,13 @@ bg_def bgs [] = {
 int curr_bg = 0;
 int bgs_size = sizeof(bgs)/sizeof(bgs[0]);
 
-
+// 必要ないのかも
+//vertex bg_quad_splash[] = {
+//	{-1.0f, -1.0f, 0.0f, 0.0, 0.0},
+//	{1.0f, -1.0f, 0.0f, 1.0f, 0.0f},
+//	{1.0f, 1.0f, 0.0f, 1.0f, 1.0f},
+//	{-1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+//};
 
 vertex bg_quad[] = {
 	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
@@ -354,32 +320,34 @@ unsigned short bg_quad_index[] = {
   0, 1, 3, 2
 };
 
+//unsigned short iObj[] = {
+//  0, 1, 3, 2
+//};
 
-ShaderParams    g_sp;
-ScreenSettings  g_sc;
+
+shader_params_main    g_sp_m;
+screen_settings  g_sc;
 
 GLuint g_vbo;
 GLuint g_ibo;
-
-GLuint g_vbo_2;
-GLuint g_ibo_2;
-
+//GLuint g_vbo_2;
+//GLuint g_ibo_2;
 GLuint sc_vbo;
 GLuint sc_ibo;
-
 GLuint bg_quad_vbo;
 GLuint bg_quad_ibo;
-
-GLuint g_program;
-GLuint g_program_purp;
-
-
-
+GLuint g_prog_main;
+//GLuint g_program_purp;
 GLuint quad_col_1;
-
 GLuint bg_cols [TOTAL_SCALES];
 
-
+// gles2_py_textureから
+shader_params_tex    g_sp_t;
+TexureType      g_tt;
+GLuint g_prog_splash;
+//GLuint g_vbo;
+//GLuint g_ibo;
+//GLuint g_program;
 
 
 typedef struct {
@@ -400,12 +368,21 @@ rgb part_colors[] = {
 //size_t current_part_color = 0; // 必要なのか？
 
 
+// フェードとタイミング
+int splash_remaining = SPLASH_COUNT_SECS * SEC_IN_US;
+int splash_boot = 1;
+int splash_fading_in = 1;
+int splash_fading_out = 0;
+
+
+int audio_ready;
+
 
 unsigned int frames = 0;
 float posx = -1.0F;
 float global_scale = 1.0F;
 
-float hw_ratio;
+//float hw_ratio;
 
 struct timezone tzp;
 struct timeval get_time;
@@ -418,13 +395,13 @@ int frame_delta_avg[DELTA_AVG_COUNT];
 size_t frame_delta_cycle = 0;
 
 
-EGLBoolean pi_SurfaceCreate(ANativeWindow* nw) {
+EGLBoolean create_window_surface(ANativeWindow* nw) {
 
-	LOGD("pi_SurfaceCreate", "pi_SurfaceCreate() called");
+	LOGD("create_window_surface", "pi_SurfaceCreate() called");
 // ScreenSettings *sc = &g_sc;
 
-    memset(&g_sc, 0, sizeof(ScreenSettings));
-//    LOGD("pi_SurfaceCreate", "memset");
+    memset(&g_sc, 0, sizeof(screen_settings));
+//    LOGD("create_window_surface", "memset");
 
 	EGLint attrib[] = {
 		EGL_RED_SIZE,       8,
@@ -469,13 +446,15 @@ EGLBoolean pi_SurfaceCreate(ANativeWindow* nw) {
 	eglQuerySurface(g_sc.display, g_sc.surface, EGL_WIDTH, &w);
 	eglQuerySurface(g_sc.display, g_sc.surface, EGL_HEIGHT, &h);
 
-	g_sc.width = w;
-	g_sc.height = h;
+//	g_sc.width = w;
+//	g_sc.height = h;
+	g_sc.width = (float)w;
+	g_sc.height = (float)h;
 
-  	LOGD("pi_SurfaceCreate", "g_sc.width: %d", g_sc.width);
-  	LOGD("pi_SurfaceCreate", "g_sc.height: %d", g_sc.height);
+  	LOGD("create_window_surface", "g_sc.width: %d", g_sc.width);
+  	LOGD("create_window_surface", "g_sc.height: %d", g_sc.height);
 
-  	hw_ratio = (float)h / (float)w;
+  	g_sc.hw_ratio = (float)h / (float)w;
 
   	return EGL_TRUE;
 }
@@ -484,7 +463,7 @@ EGLBoolean pi_SurfaceCreate(ANativeWindow* nw) {
 
 
 
-int init_cmds() { // FIXME
+int init_cmds() {
 
 	LOGD("init_cmds", "init_cmds() called");
 
@@ -500,25 +479,29 @@ int init_cmds() { // FIXME
 
 	int res;
 
-	res = InitShaders(&g_program, vShaderSrc, fShaderSrc);
+	res = init_shaders(&g_prog_splash, v__shdr_splash, f_shdr_splash);
 	if (!res)
-		return 0;
+	return 0;
 
-	pi_create_buffer();
 
-	g_sp.aposition = glGetAttribLocation(g_program, "aposition");
-	g_sp.atex = glGetAttribLocation(g_program, "atex");
-	g_sp.uframe = glGetUniformLocation(g_program, "uframe");
+	res = init_shaders(&g_prog_main, v_shdr_main, f_shdr_main);
+	if (!res) return 0;
 
-	g_sp.pos_x = glGetUniformLocation(g_program, "pos_x");
-	g_sp.pos_y = glGetUniformLocation(g_program, "pos_y");
+	create_gl_buffers();
 
-	g_sp.rgb[0] = glGetUniformLocation(g_program, "ured");
-	g_sp.rgb[1]  = glGetUniformLocation(g_program, "ugrn");
-	g_sp.rgb[2]  = glGetUniformLocation(g_program, "ublu");
+	g_sp_m.aposition = glGetAttribLocation(g_prog_main, "aposition");
+	g_sp_m.atex = glGetAttribLocation(g_prog_main, "atex");
+	g_sp_m.uframe = glGetUniformLocation(g_prog_main, "uframe");
 
-	g_sp.alpha = glGetUniformLocation(g_program, "alpha");
-	g_sp.scale = glGetUniformLocation(g_program, "scale");
+	g_sp_m.pos_x = glGetUniformLocation(g_prog_main, "pos_x");
+	g_sp_m.pos_y = glGetUniformLocation(g_prog_main, "pos_y");
+
+	g_sp_m.rgb[0] = glGetUniformLocation(g_prog_main, "ured");
+	g_sp_m.rgb[1]  = glGetUniformLocation(g_prog_main, "ugrn");
+	g_sp_m.rgb[2]  = glGetUniformLocation(g_prog_main, "ublu");
+
+	g_sp_m.alpha = glGetUniformLocation(g_prog_main, "alpha");
+	g_sp_m.scale = glGetUniformLocation(g_prog_main, "scale");
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -527,88 +510,141 @@ int init_cmds() { // FIXME
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
 
-	  /* 平行投影変換行列を求める */
-	  orthogonalMatrix(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, projectionMatrix);
+	/* 平行投影変換行列を求める */
+	orthogonalMatrix(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, projectionMatrix);
 
-	  /* uniform 変数 projectionMatrix の場所を得る */
-	  projectionMatrixLocation = glGetUniformLocation(g_program, "projectionMatrix");
+	/* uniform 変数 projectionMatrix の場所を得る */
+	projectionMatrixLocation = glGetUniformLocation(g_prog_main, "projectionMatrix");
+
+
+
+	// gles2_py_texture からの関数
+
+
+	g_sp_t.display = glGetUniformLocation(g_prog_splash, "display");
+	g_sp_t.bitmap_ratio = glGetUniformLocation(g_prog_splash, "bitmap_ratio");
+
+	g_sp_t.position = glGetAttribLocation(g_prog_splash, "vPosition");
+//	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
+
+	int size;
+
+	size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.gles2_py_texture/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
+	LOGD("init_cmds", "load_bitmap %d", size);
+
+	check_bitmap(&g_tt, (void *)&g_bmpbuffer);
+	make_texture(&g_tt, 255);
+	create_gl_texture(&g_tt);
+
 
 	LOGD("init_cmds", "init_cmds() finished");
 	return TRUE;
+
+
 }
 
 
-GLuint LoadShader(GLenum type, const char *shaderSource)
+//void init_pi(struct engine* e) { // gles2_py_texture からの関数
+//
+//
+////	res = create_window_surface(e->app->window);
+////	if (!res)
+////	return;
+//
+////	res = InitShaders(&g_program, vShaderSrc, fShaderSrc);
+////	if (!res) return;
+//
+//	create_gl_buffers();
+//
+//	g_sp.display = glGetUniformLocation(g_program, "display");
+//	g_sp.bitmap_ratio = glGetUniformLocation(g_program, "bitmap_ratio");
+//
+//	g_sp.position = glGetAttribLocation(g_program, "vPosition");
+//	g_sp.tex = glGetAttribLocation(g_program, "aTex");
+//
+//	int size;
+//
+//	size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.gles2_py_texture/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
+//	LOGD("init_pi", "LoadFile %d", size);
+//
+//	check_bitmap(&g_tt, (void *)&g_bmpbuffer);
+//	make_texture(&g_tt, 255);
+//	create_gl_texture(&g_tt);
+//}
+
+
+
+
+GLuint load_shader(GLenum type, const char *shaderSource)
 {
-	LOGD("LoadShader", "LoadShader() called");
-  GLuint shader;
-  GLint compiled;
+	LOGD("load_shader", "load_shader() called");
+	GLuint shader;
+	GLint compiled;
 
-  shader = glCreateShader(type);
-  if (shader == 0) return 0;
+	shader = glCreateShader(type);
+	if (shader == 0) return 0;
 
-  glShaderSource(shader, 1, &shaderSource, NULL);
-  glCompileShader(shader);
+	glShaderSource(shader, 1, &shaderSource, NULL);
+	glCompileShader(shader);
 
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-  if (!compiled) { // compile error
-    GLint infoLen = 0;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-    if (infoLen > 0) {
-      char* infoLog = malloc(sizeof(char) * infoLen);
-      glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
-      LOGD("LoadShader", "Error compiling shader:\n%s\n", infoLog);
-      free(infoLog);
-    }
-    glDeleteShader(shader);
-    return 0;
-  }
-  return shader;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+	if (!compiled) { // compile error
+		GLint infoLen = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+		if (infoLen > 0) {
+			char* infoLog = malloc(sizeof(char) * infoLen);
+			glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+			LOGD("load_shader", "Error compiling shader:\n%s\n", infoLog);
+			free(infoLog);
+		}
+		glDeleteShader(shader);
+		return 0;
+	}
+	return shader;
 }
 
 
 
-
-int InitShaders(GLuint *program, char const *vShSrc, char const *fShSrc)
+int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 {
-	LOGD("InitShaders", "InitShaders() called");
-  GLuint vShader;
-  GLuint fShader;
-  GLint  linked;
-  GLuint prog;
+	LOGD("init_shaders", "init_shaders() called");
+	GLuint vShader;
+	GLuint fShader;
+	GLint  linked;
+	GLuint prog;
 
-  vShader = LoadShader(GL_VERTEX_SHADER, vShSrc);
-  fShader = LoadShader(GL_FRAGMENT_SHADER, fShSrc);
+	vShader = load_shader(GL_VERTEX_SHADER, vShSrc);
+	fShader = load_shader(GL_FRAGMENT_SHADER, fShSrc);
 
-  prog = glCreateProgram();
-  if (prog == 0) return 0;
+	prog = glCreateProgram();
+	if (prog == 0) return 0;
 
-  glAttachShader(prog, vShader);
-  glAttachShader(prog, fShader);
-  glLinkProgram(prog);
-  glGetProgramiv (prog, GL_LINK_STATUS, &linked);
-  if (!linked) { // error
-    GLint infoLen = 0;
-    glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &infoLen);
-    if (infoLen > 0) {
-      char* infoLog = malloc(sizeof(char) * infoLen);
-      glGetProgramInfoLog(prog, infoLen, NULL, infoLog);
-      LOGD("InitShaders", "Error linking program:\n%s\n", infoLog);
-      free ( infoLog );
-    }
-    glDeleteProgram (prog);
-    return GL_FALSE;
-  }
-  glDeleteShader(vShader);
-  glDeleteShader(fShader);
+	glAttachShader(prog, vShader);
+	glAttachShader(prog, fShader);
+	glLinkProgram(prog);
+	glGetProgramiv (prog, GL_LINK_STATUS, &linked);
+	if (!linked) { // error
+		GLint infoLen = 0;
+		glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &infoLen);
+		if (infoLen > 0) {
+			char* infoLog = malloc(sizeof(char) * infoLen);
+			glGetProgramInfoLog(prog, infoLen, NULL, infoLog);
+			LOGD("init_shaders", "Error linking program:\n%s\n", infoLog);
+			free ( infoLog );
+		}
+		glDeleteProgram (prog);
+		return GL_FALSE;
+	}
+	glDeleteShader(vShader);
+	glDeleteShader(fShader);
 
-  *program = prog;
-  return GL_TRUE;
+	*program = prog;
+	return GL_TRUE;
 }
 
 
 // GPU上のバッファオブジェクトにデータを転送
-void pi_create_buffer()
+void create_gl_buffers()
 {
 
 	// VBOの生成
@@ -622,9 +658,6 @@ void pi_create_buffer()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
 	// データの転送
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(solid_circle_index), solid_circle_index, GL_STATIC_DRAW);
-
-
-
 
 	// VBOの生成
 	glGenBuffers(1, &bg_quad_vbo);
@@ -644,24 +677,43 @@ void pi_create_buffer()
 		glGenBuffers(1, &bg_cols[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
-
-
 	}
 
-
-//	glGenBuffers(1, &quad_col_1);
-//	glBindBuffer(GL_ARRAY_BUFFER, quad_col_1);
-//	glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[3], GL_STATIC_DRAW);
-
-
-
-
-	LOGD("pi_create_buffer", "pi_create_buffer() finished");
+	LOGD("create_gl_buffers", "pi_create_buffer() finished");
 }
 
-//float delta_average(float dt, int count) {
+//void createBuffer() // gles2_py_textureからの関数
+//{
+//	glGenBuffers(1, &g_vbo);
+//	// vertex buffer
+//	glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(bg_quad), bg_quad, GL_STATIC_DRAW);
 //
+//	// index buffer
+//	glGenBuffers(1, &g_ibo);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj), iObj, GL_STATIC_DRAW);
 //}
+
+
+int create_gl_texture(TexureType *tt)
+{
+  glGenTextures(1, &tt->texname);
+  glBindTexture(GL_TEXTURE_2D, tt->texname);
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tt->BmpWidth, tt->BmpHeight, 0,
+                GL_RGBA, GL_UNSIGNED_BYTE, tt->TexData);
+  return 1;
+}
+
+
 
 
 void get_time_long(unsigned long* t) {
@@ -735,210 +787,152 @@ void calc_frame_rate() {
 }
 
 
-void pi_draw() {
+void draw_splash() {
 
-//	LOGI("pi_draw", "pi_draw called");
+	glUseProgram(g_prog_splash);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, g_tt.texname);
 
-//	posx+=(float)frame_delta * 0.000000105F;
+	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
 
+	glEnableVertexAttribArray(g_sp_t.position);
+	glVertexAttribPointer(g_sp_t.position, 3, GL_FLOAT, GL_FALSE, 24, (void*)0);
 
-//
-//		glViewport(0, 0, g_sc.width, g_sc.height);
-		glClear(GL_COLOR_BUFFER_BIT);
+	glEnableVertexAttribArray(0);
 
-		glUniform1f(g_sp.scale, global_scale);
+	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
+	glUniform1f(g_sp_t.bitmap_ratio, g_tt.bitmap_ratio);
 
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
+	glBindTexture(GL_TEXTURE_2D,0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		glUniform1f(g_sp.alpha, 0.8);
-		glUniform1f(g_sp.uframe, posx);
+}
 
+void draw_gameplay() {
 
-//glUniform3f()
-		glUniform1f(g_sp.rgb[0], 1.0);
-		glUniform1f(g_sp.rgb[1], 1.0);
-		glUniform1f(g_sp.rgb[2], 1.0);
+	glUniform1f(g_sp_m.scale, global_scale);
+	glUniform1f(g_sp_m.alpha, 0.8);
+	glUniform1f(g_sp_m.uframe, posx);
+	glUniform1f(g_sp_m.rgb[0], 1.0);
+	glUniform1f(g_sp_m.rgb[1], 1.0);
+	glUniform1f(g_sp_m.rgb[2], 1.0);
 
-		glUseProgram(g_program);
+	glUseProgram(g_prog_main);
 
-
-//		glUniform1f(g_sp.posX, 0.5);
-//		glUniform1f(g_sp.posY, 0.5);
-//
-//
-//		// 使用するシェーダを指定
-//		glUseProgram(g_program);
-//		// 有効にするバッファオブジェクトを指定
-//		glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
-//		// シェーダのアトリビュート変数をアクセス可能にする
-//		glEnableVertexAttribArray(g_sp.aPosition);
-//		glEnableVertexAttribArray(g_sp.aTex);
-//
-//		// 頂点情報のサイズ、オフセットを指定
-//
-////		http://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20090828
-////		第４引数は, データ型が整数型であったときに,
-////		それを [0,1] または [-1,1] の範囲に正規化するか否かを指定します.
-////		ここでは正規化しないので, GL_FALSE を指定します.
-////		第５引数には頂点情報と頂点情報の間隔を指定します.
-////		頂点情報が密に (隙間無く) 格納されていれば, 0 を指定します.
-////		そして第６引数には, 頂点情報を格納している領域の先頭の位置を指定します.
-////		ここでは頂点情報は頂点バッファオブジェクトの先頭から格納されているので, 0 を指定します.
-//
-////		 頂点情報の格納場所と書式を指定する
-////		  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-//
-//
-//		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, 20, (void*) 0);
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
-//
-//		glEnableVertexAttribArray(0);
-//		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-//
-//
-//
-//
-//		glUniform1f(g_sp.posX, -0.5);
-//		glUniform1f(g_sp.posY, -0.5);
-//		glUniform1f(g_sp.uFrame,posx*2.0F);
-//		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-//
-//
-//
-//		glUniform1f(g_sp.posX, posx);
-//		glUniform1f(g_sp.posY, -0.5);
-//		glUniform1f(g_sp.uFrame,posx*3.0F);
-//		glUniform1f(g_sp.u_blu, 0.0);
-//		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-//
-//
-//
-//		// 四角形
-//		glUniform1f(g_sp.posX, posx*2.0);
-//		glUniform1f(g_sp.posY, -0.5);
-//		glUniform1f(g_sp.u_blu, 0.3);
-//		glUniform1f(g_sp.uFrame,posx*4.0F);
-//
-//		glBindBuffer(GL_ARRAY_BUFFER, g_vbo_2);
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo_2);
-////		glEnableVertexAttribArray(g_sp.aPosition);
-////		glEnableVertexAttribArray(g_sp.aTex);
-//
-//		// 頂点情報のサイズ、オフセットを指定
-//		glVertexAttribPointer(g_sp.aPosition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (void*) 0);
-//		glVertexAttribPointer(g_sp.aTex, 2, GL_FLOAT, GL_FALSE, 20, (void*) 12);
-//
-//		glEnableVertexAttribArray(0);
-//
-//		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
-//
-//
-//		glUniform1f(g_sp.posX, posx*1.5);
-//		glUniform1f(g_sp.posY, -0.25);
-//		glUniform1f(g_sp.uFrame,posx*5.0F);
-//		glUniform1f(g_sp.u_blu, 0.7);
-////		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
-//		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
-//
-//
-//
-//		// 四角形
-//		glUniform1f(g_sp.posX, posx*2.0);
-//		glUniform1f(g_sp.posY, -0.2);
-//		glUniform1f(g_sp.u_blu, 0.5);
-//		glUniform1f(g_sp.uFrame,posx*1.23450F);
-
-//========================================================================
+	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+	glEnableVertexAttribArray(g_sp_m.aposition);
 
 
+	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+	draw_all_backgrounds();
 
+	glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
+	glEnableVertexAttribArray(g_sp_m.aposition);
+	glEnableVertexAttribArray(g_sp_m.atex);
 
+	// 頂点情報のサイズ、オフセットを指定
+	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+	glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
 
+	glEnableVertexAttribArray(0);
+//		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
-		glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-		glEnableVertexAttribArray(g_sp.aposition);
-//		glEnableVertexAttribArray(g_sp.atex);
-
-
-
-
-
-		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
-
-
-		draw_all_backgrounds();
-
-
-
-
-
-
-//		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[selected_scale]);
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-//		glEnableVertexAttribArray(g_sp.atex);
-//
-//		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
-//
-//
-//		draw_background();
-//
-//
-//
-//
-//		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[1]);
-//		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-//		glEnableVertexAttribArray(g_sp.atex);
-//
-//		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
-//
-//
-//		draw_background();
-
-
-
-
-
-
-
-
-
-		glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
-		glEnableVertexAttribArray(g_sp.aposition);
-		glEnableVertexAttribArray(g_sp.atex);
-
-		// 頂点情報のサイズ、オフセットを指定
-		glVertexAttribPointer(g_sp.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
-		glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
-
-
-		glEnableVertexAttribArray(0);
-
-
-//
-//		  glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
-
-
-
-		draw_touch_shapes();
-
-
-
+	draw_touch_shapes();
 
 //		usleep(100000);
-
-
-		eglSwapBuffers(g_sc.display, g_sc.surface);
-
-//		LOGI("pi_draw", "pi_draw finished");
 
 
 
 
 }
+
+
+
+
+
+
+void draw_frame() {
+
+//	glViewport(0, 0, g_sc.width, g_sc.height);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+
+
+	if(splash_remaining >= 0) {
+		splash_remaining -= frame_delta;
+	} else if (!splash_fading_out) {
+		splash_fading_out = TRUE;
+	}
+
+	if (splash_boot) {
+
+		if (splash_fading_in && g_sp_t.alpha < 1.0) {
+			g_sp_t.alpha += (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+		} else if (splash_fading_in && g_sp_t.alpha >= 1.0) {
+			splash_fading_in = FALSE;
+			g_sp_t.alpha = 1.0;
+		}
+
+		if (splash_fading_out && g_sp_t.alpha > 0.0) {
+			g_sp_t.alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+		} else if (splash_fading_out && g_sp_t.alpha <= 0.0) {
+
+			splash_fading_out = FALSE;
+			g_sp_t.alpha = 0.0;
+			splash_boot = FALSE;
+		}
+
+		draw_splash();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	if(audio_ready && !splash_boot) {
+
+		draw_gameplay();
+
+	}
+
+
+
+
+
+
+
+
+
+	eglSwapBuffers(g_sc.display, g_sc.surface);
+
+}
+
+
+
+
+
+
+
+
 
 //// and_main.c からに取ったコード
 ///**
@@ -983,7 +977,6 @@ void step_touch_shape_draw_order() {
 
 			LOGI("step_touch_shape_draw_order", "touch_shape_draw_order[%d]: %d", i, touch_shape_draw_order[i]);
 	}
-
 }
 
 
@@ -1002,12 +995,9 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 //	LOGI("activate_touch_shape", "x: %f ts->pos_x: %f", x, ts->pos_x);
 //	LOGI("activate_touch_shape", "y: %f ts->pos_y: %f", y, ts->pos_y);
 
-
-
 	ts->rgb[0] = part_colors[col].r;
 	ts->rgb[1] = part_colors[col].g;
 	ts->rgb[2] = part_colors[col].b;
-
 
 //	LOGI("activate_touch_shape", "ts->rgb[0] %f ts->rgb[1] %f ts->rgb[2] %f", ts->rgb[0], ts->rgb[1], ts->rgb[2]);
 
@@ -1048,22 +1038,28 @@ float test_alpha = 1.0F;
 //
 //}
 
+
+
+
+
+
+
 void draw_background_alpha(float a) {
 
 	bg_pulse += (float)frame_delta * 0.00000021F * bg_pulse_dir;
 
-	glUniform1f(g_sp.pos_x, 0.0);
-	glUniform1f(g_sp.pos_y, 0.0);
+	glUniform1f(g_sp_m.pos_x, 0.0);
+	glUniform1f(g_sp_m.pos_y, 0.0);
 
 	if (bg_pulse_dir == 1.0F && bg_pulse > 1.0) bg_pulse_dir = -1.0F;
 	if (bg_pulse_dir == -1.0F && bg_pulse < 0.2) bg_pulse_dir = 1.0F;
 
-	glUniform1f(g_sp.rgb[0], 0.5 * bg_pulse);
-	glUniform1f(g_sp.rgb[1], 1.0);
-	glUniform1f(g_sp.rgb[2], 1.0);
+	glUniform1f(g_sp_m.rgb[0], 0.5 * bg_pulse);
+	glUniform1f(g_sp_m.rgb[1], 1.0);
+	glUniform1f(g_sp_m.rgb[2], 1.0);
 
-	glUniform1f(g_sp.alpha, a);
-	glUniform1f(g_sp.scale, 1.0);
+	glUniform1f(g_sp_m.alpha, a);
+	glUniform1f(g_sp_m.scale, 1.0);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
@@ -1114,8 +1110,8 @@ void draw_all_backgrounds() {
 
 			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[bg->selected_scale]);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-			glEnableVertexAttribArray(g_sp.atex);
-			glVertexAttribPointer(g_sp.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
+			glEnableVertexAttribArray(g_sp_m.atex);
+			glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
 
 			draw_background_alpha(bg->alpha);
 		}
@@ -1175,12 +1171,12 @@ void draw_touch_shapes() {
 		if (ts->is_alive) {
 
 
-			glUniform1f(g_sp.pos_x, ts->pos_x);
-			glUniform1f(g_sp.pos_y, ts->pos_y);
+			glUniform1f(g_sp_m.pos_x, ts->pos_x);
+			glUniform1f(g_sp_m.pos_y, ts->pos_y);
 
-			glUniform1f(g_sp.rgb[0], ts->rgb[0]);
-			glUniform1f(g_sp.rgb[1], ts->rgb[1]);
-			glUniform1f(g_sp.rgb[2], ts->rgb[2]);
+			glUniform1f(g_sp_m.rgb[0], ts->rgb[0]);
+			glUniform1f(g_sp_m.rgb[1], ts->rgb[1]);
+			glUniform1f(g_sp_m.rgb[2], ts->rgb[2]);
 
 			ts->scale += (float)frame_delta * 0.0000003F;
 
@@ -1196,8 +1192,8 @@ void draw_touch_shapes() {
 				if (ts->alpha <= 0) ts->is_alive = FALSE;
 			}
 
-			glUniform1f(g_sp.alpha, ts->alpha);
-			glUniform1f(g_sp.scale, ts->scale);
+			glUniform1f(g_sp_m.alpha, ts->alpha);
+			glUniform1f(g_sp_m.scale, ts->scale);
 
 			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
 
@@ -1292,7 +1288,7 @@ void calc_circle_vertex() {
 	for (i = 0; i < n; i++) {
 
 		rate = (double) i / n;
-		solid_circle_vertex[i + 1].x = r * hw_ratio * sin(2.0 * PI * rate);
+		solid_circle_vertex[i + 1].x = r * g_sc.hw_ratio * sin(2.0 * PI * rate);
 		solid_circle_vertex[i + 1].y = r * cos(2.0 * PI * rate);
 
 		float abs_x = fabsf(solid_circle_vertex[i + 1].x);
