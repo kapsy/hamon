@@ -248,7 +248,7 @@ int check_bitmap(TexureType *tt, void* buffer)
 void make_texture(TexureType *tt, int alpha)
 {
 	int color, x, y;
-	tt->initial_alpha = alpha;
+//	tt->initial_alpha = alpha;
 
 //  09-20 18:53:19.956: D/makeTexture(23694): malloc(), tex_malloc: 1459280
 	size_t tex_malloc = sizeof(char) * tt->BmpWidth * tt->BmpHeight * 4;

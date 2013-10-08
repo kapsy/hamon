@@ -107,13 +107,14 @@ const char f_shdr_splash[] =
 	"uniform sampler2D sTexture;\n"
 	"uniform vec2 display;\n"
 	"uniform float bitmap_ratio;\n"
+	"uniform float alpha;\n"
 
 	"void main()\n"
 	"{\n"
 //	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n"
 
 		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
-		"vec2(display.y * (bitmap_ratio), display.y)   );\n"
+		"vec2(display.y * (bitmap_ratio), display.y)   ) * vec4(1.0,1.0,1.0, alpha);\n"
 
 	"}\n";
 
@@ -370,12 +371,15 @@ rgb part_colors[] = {
 
 // フェードとタイミング
 int splash_remaining = SPLASH_COUNT_SECS * SEC_IN_US;
-int splash_boot = 1;
-int splash_fading_in = 1;
-int splash_fading_out = 0;
+int splash_show = TRUE;
+int splash_fading_in = TRUE;
+int splash_fading_out = FALSE;
+
+int gameplay_show = FALSE;
 
 
-int audio_ready;
+
+int audio_ready; //オーディオファイルを全部揃っていた場合
 
 
 unsigned int frames = 0;
@@ -397,54 +401,100 @@ size_t frame_delta_cycle = 0;
 
 EGLBoolean create_window_surface(ANativeWindow* nw) {
 
-	LOGD("create_window_surface", "pi_SurfaceCreate() called");
+	LOGD("create_window_surface", "create_window_surface() called");
 // ScreenSettings *sc = &g_sc;
 
     memset(&g_sc, 0, sizeof(screen_settings));
+
+
+	LOGD("create_window_surface", "create_window_surface debug a");
+
 //    LOGD("create_window_surface", "memset");
 
+//	EGLint attrib[] = {
+//		EGL_RED_SIZE,       8,
+//		EGL_GREEN_SIZE,     8,
+//		EGL_BLUE_SIZE,      8,
+//		EGL_ALPHA_SIZE,     8,
+//		EGL_DEPTH_SIZE,     24,
+//		EGL_RENDERABLE_TYPE,
+//		EGL_OPENGL_ES2_BIT,
+//		EGL_NONE
+//	};
+
+
 	EGLint attrib[] = {
-		EGL_RED_SIZE,       8,
-		EGL_GREEN_SIZE,     8,
-		EGL_BLUE_SIZE,      8,
-		EGL_ALPHA_SIZE,     8,
-		EGL_DEPTH_SIZE,     24,
+		EGL_RED_SIZE,       		EGL_DONT_CARE,
+		EGL_GREEN_SIZE,     	EGL_DONT_CARE,
+		EGL_BLUE_SIZE,      	EGL_DONT_CARE,
+		EGL_ALPHA_SIZE,     	EGL_DONT_CARE,
+		EGL_DEPTH_SIZE,     	EGL_DONT_CARE,
 		EGL_RENDERABLE_TYPE,
 		EGL_OPENGL_ES2_BIT,
 		EGL_NONE
 	};
+
+
+	LOGD("create_window_surface", "create_window_surface debug b");
+
 	EGLint context[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
 	EGLint numConfigs;
 	EGLConfig config;
 
 	g_sc.display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+
+	LOGD("create_window_surface", "create_window_surface debug c");
 	if (g_sc.display == EGL_NO_DISPLAY)
 		return EGL_FALSE;
 
+	LOGD("create_window_surface", "create_window_surface debug d");
+
 	if (!eglInitialize(g_sc.display, &g_sc.majorVersion, &g_sc.minorVersion))
 		return EGL_FALSE;
+	LOGD("create_window_surface", "create_window_surface debug e");
 
 	if (!eglChooseConfig(g_sc.display, attrib, &config, 1, &numConfigs))
 		return EGL_FALSE;
+	LOGD("create_window_surface", "create_window_surface debug f");
+
 
 	EGLint format;
 	eglGetConfigAttrib(g_sc.display, config, EGL_NATIVE_VISUAL_ID, &format);
+
+	LOGD("create_window_surface", "create_window_surface debug g");
 	ANativeWindow_setBuffersGeometry(nw, 0, 0, format);
 
+	LOGD("create_window_surface", "create_window_surface debug h");
+
 	g_sc.surface = eglCreateWindowSurface(g_sc.display, config, nw, NULL);
+
+	LOGD("create_window_surface", "create_window_surface debug i");
 	if (g_sc.surface == EGL_NO_SURFACE)
 		return EGL_FALSE;
 
+	LOGD("create_window_surface", "create_window_surface debug j");
+
 	g_sc.context = eglCreateContext(g_sc.display, config, EGL_NO_CONTEXT, context);
+
+	LOGD("create_window_surface", "create_window_surface debug k");
 	if (g_sc.context == EGL_NO_CONTEXT)
 		return EGL_FALSE;
+
+
+	LOGD("create_window_surface", "create_window_surface debug l");
 
 	if (!eglMakeCurrent(g_sc.display, g_sc.surface, g_sc.surface, g_sc.context))
 		return EGL_FALSE;
 
+
+	LOGD("create_window_surface", "create_window_surface debug m");
+
 	EGLint w, h;
 	eglQuerySurface(g_sc.display, g_sc.surface, EGL_WIDTH, &w);
 	eglQuerySurface(g_sc.display, g_sc.surface, EGL_HEIGHT, &h);
+
+
+	LOGD("create_window_surface", "create_window_surface debug n");
 
 //	g_sc.width = w;
 //	g_sc.height = h;
@@ -455,6 +505,8 @@ EGLBoolean create_window_surface(ANativeWindow* nw) {
   	LOGD("create_window_surface", "g_sc.height: %d", g_sc.height);
 
   	g_sc.hw_ratio = (float)h / (float)w;
+
+	LOGD("create_window_surface", "create_window_surface debug o");
 
   	return EGL_TRUE;
 }
@@ -506,7 +558,7 @@ int init_cmds() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
 
@@ -523,6 +575,7 @@ int init_cmds() {
 
 	g_sp_t.display = glGetUniformLocation(g_prog_splash, "display");
 	g_sp_t.bitmap_ratio = glGetUniformLocation(g_prog_splash, "bitmap_ratio");
+	g_sp_t.alpha = glGetUniformLocation(g_prog_splash, "alpha");
 
 	g_sp_t.position = glGetAttribLocation(g_prog_splash, "vPosition");
 //	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
@@ -535,6 +588,7 @@ int init_cmds() {
 	check_bitmap(&g_tt, (void *)&g_bmpbuffer);
 	make_texture(&g_tt, 255);
 	create_gl_texture(&g_tt);
+g_tt.alpha = 0.0;
 
 
 	LOGD("init_cmds", "init_cmds() finished");
@@ -804,6 +858,7 @@ void draw_splash() {
 
 	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
 	glUniform1f(g_sp_t.bitmap_ratio, g_tt.bitmap_ratio);
+	glUniform1f(g_sp_t.alpha, g_tt.alpha);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
@@ -868,24 +923,26 @@ void draw_frame() {
 		splash_remaining -= frame_delta;
 	} else if (!splash_fading_out) {
 		splash_fading_out = TRUE;
+//		splash_boot = FALSE;
+		gameplay_show = TRUE;
 	}
 
-	if (splash_boot) {
+	if (splash_show) {
 
-		if (splash_fading_in && g_sp_t.alpha < 1.0) {
-			g_sp_t.alpha += (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-		} else if (splash_fading_in && g_sp_t.alpha >= 1.0) {
+		if (splash_fading_in && g_tt.alpha < 1.0) {
+			g_tt.alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
+		} else if (splash_fading_in && g_tt.alpha >= 1.0) {
 			splash_fading_in = FALSE;
-			g_sp_t.alpha = 1.0;
+			g_tt.alpha = 1.0;
 		}
 
-		if (splash_fading_out && g_sp_t.alpha > 0.0) {
-			g_sp_t.alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-		} else if (splash_fading_out && g_sp_t.alpha <= 0.0) {
+		if (splash_fading_out && g_tt.alpha > 0.0) {
+			g_tt.alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+		} else if (splash_fading_out && g_tt.alpha <= 0.0) {
 
 			splash_fading_out = FALSE;
-			g_sp_t.alpha = 0.0;
-			splash_boot = FALSE;
+			g_tt.alpha = 0.0;
+			splash_show = FALSE;
 		}
 
 		draw_splash();
@@ -899,16 +956,8 @@ void draw_frame() {
 
 
 
-
-
-
-
-
-
-
-
-
-	if(audio_ready && !splash_boot) {
+//	if(audio_ready && !splash_boot) {
+	if(gameplay_show) {
 
 		draw_gameplay();
 

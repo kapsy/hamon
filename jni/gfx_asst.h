@@ -57,9 +57,11 @@ typedef struct {
 
     float bitmap_ratio;
 
+    float alpha;
+
     int  BmpBit;             // 画像のビット深度
     int  BmpLine;
-    int  initial_alpha;
+//    int  initial_alpha;
     GLuint  texname;
 } TexureType;
 

@@ -464,7 +464,7 @@ void android_main(struct android_app* state) {
 			calc_frame_delta_time();
 //			calc_frame_rate();
 
-			draw_main();
+			draw_frame();
 
 		}
 
