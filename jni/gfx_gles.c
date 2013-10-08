@@ -582,7 +582,7 @@ int init_cmds() {
 
 	int size;
 
-	size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.gles2_py_texture/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
+	size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
 	LOGD("init_cmds", "load_bitmap %d", size);
 
 	check_bitmap(&g_tt, (void *)&g_bmpbuffer);
