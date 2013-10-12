@@ -14,8 +14,11 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 
-#include <android/log.h>;
-#include <android/obb.h>;
+#include <unistd.h>  // sleep()を定義
+#include <pthread.h>
+
+//#include <android/log.h>;
+//#include <android/obb.h>;
 
 
 #include "snd_asst.h"
@@ -32,6 +35,9 @@ char* string_join_src(const char* join_a, const char* join_b);
 void open_external_file(sample_def* sample_def);
 void init_silence_chunk();
 void malloc_to_buffer_factor(sample_def* s);
+
+
+void* file_loader_thread(void* args);
 
 //sample_def test[] = {
 //		{"blah", 48, NULL, NULL}
@@ -175,7 +181,12 @@ sample_def oneshot_samples[] = {
 };
 
 
+
+
+
+// 別のスレッドへ
 void load_all_assets(AAssetManager* mgr) {
+	LOGD("sound_load_thread", "load_all_assets");
 
 
 	init_silence_chunk();
@@ -199,9 +210,8 @@ void load_all_assets(AAssetManager* mgr) {
 		 memcpy(oneshot_samples[i].file_name, path, lpath);
 		 */
 
-		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
-				"oneshot_samples[%d].file_name: %s", i,
-				oneshot_samples[i].file_name);
+		LOGD("load_all_assets", "oneshot_samples[%d].file_name: %s",
+				i, oneshot_samples[i].file_name);
 
 		//open_external_file(oneshot_samples[i].file_name, i);
 
@@ -232,11 +242,9 @@ void load_all_assets(AAssetManager* mgr) {
 
 
 
-		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
-				"oneshot_samples[i].data_size: %x",
+		LOGD("load_all_assets", "oneshot_samples[i].data_size: %x",
 				oneshot_samples[i].data_size);
-		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
-				"&(oneshot_samples[i].data_size: %x",
+		LOGD("load_all_assets", "&(oneshot_samples[i].data_size: %x",
 				&(oneshot_samples[i].data_size));
 
 		//if (success == 0) break;
@@ -244,23 +252,21 @@ void load_all_assets(AAssetManager* mgr) {
 
 	for (i = 0; i < sizeof looping_samples / sizeof looping_samples[0]; i++) {
 
-		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
-				"looping_samples[%d].file_name: %s", i,
-				looping_samples[i].file_name);
+		LOGD("load_all_assets", "looping_samples[%d].file_name: %s",
+				i, looping_samples[i].file_name);
 
 		open_external_file(looping_samples + i);
 
-		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
-				"looping_samples[i].data_size: %x",
+		LOGD("load_all_assets", "looping_samples[i].data_size: %x",
 				looping_samples[i].data_size);
-		__android_log_print(ANDROID_LOG_DEBUG, "load_all_assets",
-				"&(looping_samples[i].data_size: %x",
+		LOGD("load_all_assets", "&(looping_samples[i].data_size: %x",
 				&(looping_samples[i].data_size));
 
 	}
 
-	__android_log_write(ANDROID_LOG_DEBUG, "load_all_assets",
-			"loading finished");
+//	files_loading = FALSE;
+	LOGD("load_all_assets", "loading finished");
+	LOGD("sound_load_thread", "load_all_assets loading finished");
 }
 
 void init_silence_chunk() {
@@ -300,18 +306,17 @@ char* string_join(const char* a, const char* b, const char* c) {
 // 復讐しなきゃ・今の立場って言えば、OBB方式のファイルは一番と思う
 void open_external_file(sample_def* s) {
 
-	__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "open_external_file(sample_def* s) called");
+	LOGD("open_external_file", "open_external_file(sample_def* s) called");
 
 	FILE* fp;
 
 	s->buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 	//oneshot_samples[samp].buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 
-	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file",
-			"filepath: %s", s->file_name);
+	LOGD("open_external_file", "filepath: %s", s->file_name);
 
 	if ((fp = fopen(s->file_name, "r")) != NULL) {
-		__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "fopen()");
+		LOGD("open_external_file", "fopen()");
 
 		//fread(oneshot_samples[samp].buffer_header, sizeof(unsigned short), HEADER_SIZE/2, fp);
 		fread(s->buffer_header, 1, HEADER_SIZE, fp);
@@ -323,7 +328,7 @@ void open_external_file(sample_def* s) {
 
 	fmttype = (s->buffer_header + 10);
 	if (*fmttype != 0x1) {
-		__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "*fmttype not PCM, loading aborted.");
+		LOGD("open_external_file", "*fmttype not PCM, loading aborted.");
 		//return JNI_FALSE;
 	}
 
@@ -336,8 +341,8 @@ void open_external_file(sample_def* s) {
 
 	//s->buffer_data = (unsigned short*) malloc(*databytes);
 
-	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "*fmttype: %x", *fmttype);
-	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "*databytes: %x", *databytes);
+	LOGD("open_external_file", "*fmttype: %x", *fmttype);
+	LOGD("open_external_file", "*databytes: %x", *databytes);
 
 
 	fseek(fp , HEADER_SIZE , SEEK_SET);
@@ -345,7 +350,7 @@ void open_external_file(sample_def* s) {
 	fread(s->buffer_data, 1, s->data_size, fp);
 
 	fclose(fp);
-	__android_log_write(ANDROID_LOG_DEBUG, "open_external_file", "fclose(fp);");
+	LOGD("open_external_file", "fclose(fp);");
 
 
 }
@@ -354,14 +359,14 @@ void malloc_to_buffer_factor(sample_def* s) {
 
 	size_t buffer_over = s->data_size % BUFFER_SIZE;
 
-	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "s->data_size: %d", s->data_size);
-	__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "buffer_over: %d", buffer_over);
+	LOGD("open_external_file", "s->data_size: %d", s->data_size);
+	LOGD("open_external_file", "buffer_over: %d", buffer_over);
 
 	if (buffer_over > 0 && buffer_over < BUFFER_SIZE) {
 
 		size_t buffer_rem = BUFFER_SIZE - buffer_over;
 
-		__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "buffer_rem: %d", buffer_rem);
+		LOGD("open_external_file", "buffer_rem: %d", buffer_rem);
 		s->buffer_data = (unsigned short*) malloc(s->data_size + buffer_rem );
 
 		s->total_chunks = (s->data_size + buffer_rem) / BUFFER_SIZE;
@@ -380,7 +385,7 @@ void malloc_to_buffer_factor(sample_def* s) {
 	}
 
 
-		__android_log_print(ANDROID_LOG_DEBUG, "open_external_file", "s->total_chunks: %d", s->total_chunks);
+	LOGD("open_external_file", "s->total_chunks: %d", s->total_chunks);
 
 }
 

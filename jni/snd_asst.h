@@ -34,6 +34,7 @@ extern char* internal_path;
 
 
 void load_all_assets(AAssetManager* mgr);
+void create_file_load_thread(AAssetManager* mgr);
 
 
 

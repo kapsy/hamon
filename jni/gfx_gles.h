@@ -25,4 +25,9 @@ void activate_touch_shape(float x, float y, size_t col, float* vel);
 
 void start_xfade_bgs();
 int bg_fading();
+
+void get_start_time();
+
+void get_elapsed_time(unsigned long* t);
+
 #endif /* GFX_INIT_H_ */

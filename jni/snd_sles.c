@@ -40,8 +40,8 @@
 //int PLYCNT = 10;
 // voice count
 //#define VOICE_COUNT 10 //フレームレートに影響を与える
-#define VOICE_COUNT 30
-//#define VOICE_COUNT 20
+//#define VOICE_COUNT 30
+#define VOICE_COUNT 20
 #define LOOPER_COUNT 2
 
 #define SLMILLIBEL_MIN -4000
@@ -97,6 +97,9 @@ void init_seg_pan_map();
 static SLObjectItf engineObject = NULL;
 static SLEngineItf engineEngine;
 
+
+
+
 // output mix interfaces
 static SLObjectItf outputMixObject = NULL;
 static SLEnvironmentalReverbItf outputMixEnvironmentalReverb = NULL;
@@ -134,11 +137,40 @@ SLpermille segment_pan_map[TOTAL_NOTES];
 
 
 
+SLEngineItf EngineItf;
+//SLAudioIODeviceCapabilitiesItf AudioIODeviceCapabilitiesItf;
+//SLAudioOutputDescriptor AudioOutputDescriptor;
+
+/* Get the Audio IO DEVICE CAPABILITIES interface */
+//res = (*sl)->GetInterface(sl, SL_IID_AUDIOIODEVICECAPABILITIES, (void*)&AudioIODeviceCapabilitiesItf);
+//CheckErr(res);
+//numOutputs = MAX_NUMBER_OUTPUT_DEVICES;
+//res = (*AudioIODeviceCapabilitiesItf)->GetAvailableAudioOutputs(AudioIODeviceCapabilitiesItf, &numOutputs, OutputDeviceIDs);
+//CheckErr(res);
+
+
+static SLAudioCodecDescriptor AudioCodecDescriptor;
+static SLAudioDecoderCapabilitiesItf AudioDecoderCapabilitiesItf;
+
+
+
+
 
 void create_sl_engine()
 {
 
     SLresult result;
+
+
+
+
+
+
+
+
+
+
+
 
     // create engine
     result = slCreateEngine(&engineObject, 0, NULL, 0, NULL, NULL);
@@ -183,6 +215,26 @@ void create_sl_engine()
     // ignore unsuccessful result codes for environmental reverb, as it is optional for this example
 
     init_seg_pan_map(); // FIXME
+
+
+    LOGD("create_sl_engine", "init_seg_pan_map()");
+
+
+    result = (*engineObject)->GetInterface(engineObject, SL_IID_AUDIODECODERCAPABILITIES, (void*)&AudioDecoderCapabilitiesItf);
+    assert(SL_RESULT_SUCCESS == result);
+
+
+    LOGD("create_sl_engine", "GetInterface()");
+
+
+//    result = (*AudioDecoderCapabilitiesItf)->GetAudioDecoderCapabilities(AudioDecoderCapabilitiesItf, SL_AUDIOCODEC_PCM, NULL, (void*)&AudioCodecDescriptor);
+//    assert(SL_RESULT_SUCCESS == result);
+//
+//    LOGD("create_sl_engine", "AudioCodecDescriptor.maxChannels: %d", AudioCodecDescriptor.maxChannels);
+
+
+
+
 }
 
 

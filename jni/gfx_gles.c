@@ -370,16 +370,14 @@ rgb part_colors[] = {
 
 
 // フェードとタイミング
-int splash_remaining = SPLASH_COUNT_SECS * SEC_IN_US;
-int splash_show = TRUE;
+//int splash_remaining = SPLASH_COUNT_SECS * SEC_IN_US;
 int splash_fading_in = TRUE;
 int splash_fading_out = FALSE;
+int show_splash = TRUE;
 
-int gameplay_show = FALSE;
+extern int show_gameplay;
 
-
-
-int audio_ready; //オーディオファイルを全部揃っていた場合
+//int audio_ready; //オーディオファイルを全部揃っていた場合
 
 
 unsigned int frames = 0;
@@ -391,8 +389,13 @@ float global_scale = 1.0F;
 struct timezone tzp;
 struct timeval get_time;
 
+unsigned long start_time = 0;
+
 unsigned long curr_time = 0;
 unsigned long new_time = 0;
+
+
+
 
 unsigned long frame_delta = 0;
 int frame_delta_avg[DELTA_AVG_COUNT];
@@ -779,6 +782,16 @@ void get_time_long(unsigned long* t) {
 
 }
 
+void get_start_time() {
+
+	get_time_long(&start_time);
+}
+
+void get_elapsed_time(unsigned long* t) {
+
+//	get_time_long(&curr_time);
+	*t = curr_time - start_time;
+}
 
 void frame_delta_avg_init() {
 
@@ -919,21 +932,21 @@ void draw_frame() {
 
 
 
-	if(splash_remaining >= 0) {
-		splash_remaining -= frame_delta;
-	} else if (!splash_fading_out) {
-		splash_fading_out = TRUE;
-//		splash_boot = FALSE;
-		gameplay_show = TRUE;
-	}
+//	if(splash_remaining >= 0) {
+//		splash_remaining -= frame_delta;
+//	} else if (!splash_fading_out) {
+//		splash_fading_out = TRUE;
+//		gameplay_show = TRUE;
+//	}
 
-	if (splash_show) {
+	if (show_splash) {
 
 		if (splash_fading_in && g_tt.alpha < 1.0) {
 			g_tt.alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
 		} else if (splash_fading_in && g_tt.alpha >= 1.0) {
 			splash_fading_in = FALSE;
 			g_tt.alpha = 1.0;
+
 		}
 
 		if (splash_fading_out && g_tt.alpha > 0.0) {
@@ -942,7 +955,7 @@ void draw_frame() {
 
 			splash_fading_out = FALSE;
 			g_tt.alpha = 0.0;
-			splash_show = FALSE;
+			show_splash = FALSE;
 		}
 
 		draw_splash();
@@ -957,7 +970,7 @@ void draw_frame() {
 
 
 //	if(audio_ready && !splash_boot) {
-	if(gameplay_show) {
+	if(show_gameplay) {
 
 		draw_gameplay();
 
@@ -1054,7 +1067,7 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 //	ts->scale = 1.0;
 //	ts->alpha = *vel * *vel; // TODO
 	ts->alpha = 0.0F; // TODO
-	ts->scale = *vel * *vel; // TODO 既に計算すればいいのかも
+	ts->scale = *vel * *vel * 1.7; // TODO 既に計算すればいいのかも
 
 //	ts->ttl = TOUCH_SHAPES_TTL;
 
@@ -1227,7 +1240,11 @@ void draw_touch_shapes() {
 			glUniform1f(g_sp_m.rgb[1], ts->rgb[1]);
 			glUniform1f(g_sp_m.rgb[2], ts->rgb[2]);
 
-			ts->scale += (float)frame_delta * 0.0000003F;
+//			ts->scale += (float)frame_delta * 0.0000003F;
+
+
+
+			ts->scale -= (float)frame_delta * 0.0000001F;
 
 			if (ts->fading_in) {
 

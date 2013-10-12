@@ -59,10 +59,30 @@ size_t screen_margin_x;
 static float touch_segment_width;
 int gfx_initialized = FALSE;
 
+
+int sles_init_called = FALSE;
+int sles_init_finished = FALSE;
+int show_gameplay = FALSE;
+
+
+extern int splash_fading_in;
+extern int splash_fading_out;
+
+//extern int files_loading;
+
+
+
+//long curr_time = 0;
+//unsigned long start_time = 0;
+unsigned long elapsed_time = 0;
+
+// プロトタイプ
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
 
 
+void create_init_sles_thread(struct android_app* state);
+void* init_sles_thread(void* args);
 
 // gfx_init.cに移動した
 ///**
@@ -117,60 +137,67 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-		int p;
-		int action = AKeyEvent_getAction(event);
-		switch (action & AMOTION_EVENT_ACTION_MASK) {
-		case AMOTION_EVENT_ACTION_DOWN:
-			LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_DOWN");
-//			float x = AMotionEvent_getX(event, 0);
-//			float y = AMotionEvent_getY(event, 0);
 
-			trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
-			set_parts_active();
-
-//			activate_touch_shape(x, y);
-
-			e->animating = 1;
-
-			LOGD("LOGD_engine_handle_input", "action, %d", action);
-
-			break;
-
-		case AMOTION_EVENT_ACTION_POINTER_DOWN:
-			LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_POINTER_DOWN");
-
-		    /* Bits in the action code that represent a pointer index, used with
-		     * AMOTION_EVENT_ACTION_POINTER_DOWN and AMOTION_EVENT_ACTION_POINTER_UP.  Shifting
-		     * down by AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT provides the actual pointer
-		     * index where the data for the pointer going up or down can be found.
-		     */
-		  //  AMOTION_EVENT_ACTION_POINTER_INDEX_MASK  = 0xff00,
-
-			//AMotionEvent_getPointerCount(event);
+		if (show_gameplay && !splash_fading_out) {
 
 
+			int p;
+			int action = AKeyEvent_getAction(event);
+			switch (action & AMOTION_EVENT_ACTION_MASK) {
+			case AMOTION_EVENT_ACTION_DOWN:
+				LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_DOWN");
 
-			// マルチタッチバグを解決するため、こうやれば一番いい。
-			size_t pointer_index_mask = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
-					>> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-		//	play_note(find_screen_segment(AMotionEvent_getX(event, pointer_index_mask)));
-
-			if (pointer_index_mask < 4) {
-
-				trigger_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
+				trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
 				set_parts_active();
+
+
+				e->animating = 1;
+
+				LOGD("engine_handle_input", "action, %d", action);
+
+				break;
+
+			case AMOTION_EVENT_ACTION_POINTER_DOWN:
+				LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_POINTER_DOWN");
+
+				/* Bits in the action code that represent a pointer index, used with
+				 * AMOTION_EVENT_ACTION_POINTER_DOWN and AMOTION_EVENT_ACTION_POINTER_UP.  Shifting
+				 * down by AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT provides the actual pointer
+				 * index where the data for the pointer going up or down can be found.
+				 */
+			  //  AMOTION_EVENT_ACTION_POINTER_INDEX_MASK  = 0xff00,
+				//AMotionEvent_getPointerCount(event);
+
+
+				// マルチタッチバグを解決するため、こうやれば一番いい。
+				size_t pointer_index_mask = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
+						>> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+
+				if (pointer_index_mask < 4) {
+
+					trigger_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
+					set_parts_active();
+				}
+
+				LOGD("engine_handle_input", "pointer_index_mask: %d", pointer_index_mask);
+
+				if (pointer_index_mask == 4) {
+					int s = cycle_scale();
+				}
+
+
+
+
+
+
+
+				break;
 			}
+			return 1;
 
-			LOGD("engine_handle_input", "pointer_index_mask: %d", pointer_index_mask);
-
-			if (pointer_index_mask == 4) {
-				int s = cycle_scale();
-				//play_loop();
-			}
-
-			break;
 		}
-		return 1;
+
+
 	}
     return 0;
 }
@@ -308,6 +335,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				LOGD("call_order", "APP_CMD_INIT_WINDOW");
 
+				get_start_time();
 //				int suc = pi_SurfaceCreate(e->app->window);
 				int suc = create_window_surface(e->app->window);
 				LOGD("call_order", "pi_SurfaceCreate, suc: %d", suc);
@@ -322,7 +350,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 				e->animating = TRUE;
 
-				init_sles_components(app);
+//				init_sles_components(app);
 			}
 
             break;
@@ -384,10 +412,41 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     }
 }
 
+
+
+
+
+
+
+
+pthread_t init_sles;
+pthread_attr_t init_sles_t_attr;
+
+void create_init_sles_thread(struct android_app* state) {
+	LOGD("init_sles_thread", "create_init_sles_thread");
+	pthread_create(&init_sles, NULL, init_sles_thread, (struct android_app*)state);
+}
+
+void join_init_sles_thread() {
+	LOGD("init_sles_thread", "join_init_sles_thread");
+	pthread_join(init_sles, NULL);
+	pthread_exit(NULL);
+}
+
+void* init_sles_thread(void* args) {
+
+	LOGD("init_sles_thread", "init_sles_thread(void* args)");
+	init_sles_components(args);
+	return NULL;
+}
+
+
+
+
 void init_sles_components(struct android_app* state) {
 
 	AAssetManager* asset_manager = state->activity->assetManager;
-	  ANativeActivity* nativeActivity = state->activity;
+//	  ANativeActivity* nativeActivity = state->activity;
 
 //	  internal_path = nativeActivity->externalDataPath;
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
@@ -398,14 +457,26 @@ void init_sles_components(struct android_app* state) {
 
 	create_sl_engine();
 	load_all_assets(asset_manager);
+//	create_file_load_thread(asset_manager);
+
 	init_all_voices();
 	init_auto_vals();
 
 	// snd_ctrlのこと
 	init_control_loop();
 	start_loop();
+
+	sles_init_finished = TRUE;
+	LOGD("init_sles_thread", "sles_init_finished = TRUE");
 }
 
+
+
+//void update_elapsed_time() {
+//
+//	get_time_long(&curr_time);
+//	elapsed_time = curr_time - start_time;
+//}
 
 
 void android_main(struct android_app* state) {
@@ -429,24 +500,18 @@ void android_main(struct android_app* state) {
 
 
 
-
-
-
-//	    struct timeval curr_time;
-//	    struct timeval new_time;
-//	    struct timeval delta_time;
-//	    struct timezone tzp;
 	while (1) {
-
-		////            gettimeofday(&start_time, &tzp);
 
 
 //		if (i < 1) { LOGD("call_order", "while started"); i++; }
+
+
 
 		int ident, events;
 		struct android_poll_source* source;
 		while ((ident = ALooper_pollAll(0, NULL, &events, (void**) &source)) >= 0) {
 			LOGD("call_order", "while ((ident=ALooper_pollAll...");
+			LOGD("ALooper_pollAll", "ALooper_pollAll");
 			if (source != NULL) {
 				source->process(state, source);
 			}
@@ -462,9 +527,40 @@ void android_main(struct android_app* state) {
 		if (e.animating) {
 
 			calc_frame_delta_time();
-//			calc_frame_rate();
+			get_elapsed_time(&elapsed_time);
 
+//			calc_frame_rate();
 			draw_frame();
+
+			if (!sles_init_called && !splash_fading_in && elapsed_time > (10 * SEC_IN_US)) {
+
+
+
+//				init_sles_components(state);
+				create_init_sles_thread(state);
+
+				sles_init_called = TRUE;
+
+
+			    LOGD("android_main", "android_main debug A");
+			    LOGD("android_main", "elapsed_time: %d", elapsed_time);
+
+			}
+
+			if(sles_init_finished) {
+			    LOGD("android_main", "android_main debug B");
+			    LOGD("android_main", "elapsed_time: %d", elapsed_time);
+
+				sles_init_finished = FALSE;
+				splash_fading_out = TRUE;
+				show_gameplay = TRUE;
+
+			}
+
+
+
+
+
 
 		}
 
