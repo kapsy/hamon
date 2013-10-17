@@ -76,19 +76,19 @@ int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
 void draw_splash();
 void draw_all_backgrounds();
 
-typedef struct {
-	EGLNativeWindowType nativeWin;
-	EGLDisplay display;
-	EGLContext context;
-	EGLSurface surface;
-	EGLint majorVersion;
-	EGLint minorVersion;
-	int width;
-	int height;
-
-//	float		display_ratio;
-	float hw_ratio;
-} screen_settings;
+//typedef struct {
+//	EGLNativeWindowType nativeWin;
+//	EGLDisplay display;
+//	EGLContext context;
+//	EGLSurface surface;
+//	EGLint majorVersion;
+//	EGLint minorVersion;
+//	int width;
+//	int height;
+//
+////	float		display_ratio;
+//	float hw_ratio;
+//} screen_settings;
 
 
 
@@ -244,6 +244,7 @@ unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
 
 extern int selected_scale;
+extern int sles_init_called;
 
 float alpha_fade_rate = 0.00000011F;
 
@@ -518,7 +519,7 @@ EGLBoolean create_window_surface(ANativeWindow* nw) {
 
 
 
-int init_cmds() {
+int gles_init() {
 
 	LOGD("init_cmds", "init_cmds() called");
 
@@ -583,16 +584,19 @@ int init_cmds() {
 	g_sp_t.position = glGetAttribLocation(g_prog_splash, "vPosition");
 //	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
 
-	int size;
 
-	size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
-	LOGD("init_cmds", "load_bitmap %d", size);
 
-	check_bitmap(&g_tt, (void *)&g_bmpbuffer);
-	make_texture(&g_tt, 255);
-	create_gl_texture(&g_tt);
-g_tt.alpha = 0.0;
 
+	if(!sles_init_called) {
+
+		int size;
+		size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
+		LOGD("init_cmds", "load_bitmap %d", size);
+		check_bitmap(&g_tt, (void *)&g_bmpbuffer);
+		make_texture(&g_tt, 255);
+		create_gl_texture(&g_tt);
+		g_tt.alpha = 0.0;
+	}
 
 	LOGD("init_cmds", "init_cmds() finished");
 	return TRUE;
@@ -1017,6 +1021,34 @@ void draw_frame() {
 //    e->surface = EGL_NO_SURFACE;
 //}
 
+
+// and_main.c ‚©‚ç‚ÉŽæ‚Á‚½ƒR[ƒh
+/**
+ * Tear down the EGL context currently associated with the display.
+ */
+void gles_term_display(screen_settings* e) {
+
+	LOGD("gles_term_display", "gles_term_display() called");
+
+    if (e->display != EGL_NO_DISPLAY) {
+        eglMakeCurrent(e->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (e->context != EGL_NO_CONTEXT) {
+            eglDestroyContext(e->display, e->context);
+        }
+        if (e->surface != EGL_NO_SURFACE) {
+            eglDestroySurface(e->display, e->surface);
+        }
+        eglTerminate(e->display);
+    }
+//    e->animating = 0;
+    e->display = EGL_NO_DISPLAY;
+    e->context = EGL_NO_CONTEXT;
+    e->surface = EGL_NO_SURFACE;
+}
+
+
+
+
 void init_touch_shapes() {
 
 	int i;
@@ -1266,6 +1298,19 @@ void draw_touch_shapes() {
 		}
 	}
 	pthread_mutex_unlock(&mutex);
+}
+
+void kill_all_touch_shapes() {
+
+	int i;
+	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
+//		touch_shape* ts = touch_shapes + (touch_shape_draw_order[i]);
+		touch_shape* ts = touch_shapes + i;
+		ts->is_alive = FALSE;
+
+
+		LOGD ("kill_all_touch_shapes", "kill_all_touch_shapes i: %d", i);
+	}
 }
 
 

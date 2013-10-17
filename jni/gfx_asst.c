@@ -169,7 +169,7 @@ int load_bitmap(char *filename, void *buffer)
 		fseek(fp, 0L, SEEK_END);
 		fsize = ftell(fp);
 		if (fsize >= MAXSIZE) {
-			LOGD("LoadFile", "(fsize >= MAXSIZE) ");
+			LOGD("load_bitmap", "(fsize >= MAXSIZE) ");
 			fclose(fp);
 			return -1;
 		}
@@ -184,6 +184,10 @@ int load_bitmap(char *filename, void *buffer)
 		//    for (count =0; count < 1200; count++) {
 		//    	LOGD("LoadFile", "\t%d: \t%x", count, g_bmpbuffer[count]);
 		//    }
+
+
+		LOGD("load_bitmap", "fread((void *)buffer, 1, fsize, fp)");
+
 
 		return n_read;
 	}

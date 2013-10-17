@@ -48,6 +48,8 @@ typedef struct{
 }engine;
 
 
+extern screen_settings g_sc;
+
 typedef void* EGLNativeDisplayType;
 size_t screen_width;
 size_t screen_height;
@@ -63,6 +65,8 @@ int gfx_initialized = FALSE;
 int sles_init_called = FALSE;
 int sles_init_finished = FALSE;
 int show_gameplay = FALSE;
+
+int wake_from_paused = FALSE;
 
 
 extern int splash_fading_in;
@@ -120,14 +124,45 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 		if (key == AKEYCODE_BACK) {
 
-			LOGDw( "engine_handle_input", "AKEYCODE_BACK");
+			LOGD( "engine_handle_input", "AKEYCODE_BACK");
 
 			if (key_action == AKEY_EVENT_ACTION_UP) {
-				LOGDw("engine_handle_input", "AKEY_EVENT_ACTION_UP");
+				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
 
 				//                ANativeActivity_finish(state->activity);
 			}
+
+	        return 1; // <-- prevent default handler
 		}
+/*
+		if (key == AKEYCODE_HOME) {
+			LOGD( "engine_handle_input", "AKEYCODE_HOME");
+			if (key_action == AKEY_EVENT_ACTION_UP) {
+				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
+			}
+	        return 1; // <-- prevent default handler
+		}
+
+		if (key == AKEYCODE_VOLUME_UP) {
+			LOGD( "engine_handle_input", "AKEYCODE_VOLUME_UP");
+			if (key_action == AKEY_EVENT_ACTION_UP) {
+				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
+			}
+	        return 1; // <-- prevent default handler
+		}
+
+		if (key == AKEYCODE_VOLUME_DOWN) {
+			LOGD( "engine_handle_input", "AKEYCODE_VOLUME_DOWN");
+			if (key_action == AKEY_EVENT_ACTION_UP) {
+				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
+			}
+	        return 1; // <-- prevent default handler
+		}*/
+
+
+
+
+
 	}
 
 
@@ -325,33 +360,44 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
         	e->app->savedState = malloc(sizeof(struct saved_state));
             *((struct saved_state*)e->app->savedState) = e->state;
             e->app->savedStateSize = sizeof(struct saved_state);
+
+
             break;
 
         case APP_CMD_INIT_WINDOW:
         	LOGDw("engine_handle_cmd", "APP_CMD_INIT_WINDOW");
             // The window is being shown, get it ready.
 
-			if (e->app->window != NULL) {
+
+
+        	// ココらへんは大丈夫
+        	// けど、掃除しないと…
+        	if (e->app->window != NULL) {
 
 				LOGD("call_order", "APP_CMD_INIT_WINDOW");
 
-				get_start_time();
-//				int suc = pi_SurfaceCreate(e->app->window);
+
+
+
 				int suc = create_window_surface(e->app->window);
-				LOGD("call_order", "pi_SurfaceCreate, suc: %d", suc);
-				suc = init_cmds();
+				LOGD("call_order", "create_window_surface, suc: %d", suc);
+				suc = gles_init();
 				LOGD("call_order", "init_cmds, suc: %d", suc);
 
 
 
 
+
+				get_start_time();
 				get_screen_dimensions(e);
 				calc_segment_width();
-
 				e->animating = TRUE;
-
-//				init_sles_components(app);
 			}
+
+
+
+
+
 
             break;
         case APP_CMD_START:
@@ -364,7 +410,9 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
         	LOGDw("engine_handle_cmd", "APP_CMD_TERM_WINDOW");
             // The window is being hidden or closed, clean it up.
 
-//        	gles_term_display(engine); // FIXME
+
+			gles_term_display(&g_sc);
+
 
             break;
         case APP_CMD_GAINED_FOCUS:
@@ -377,30 +425,45 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 //                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
 //                        engine->accelerometerSensor, (1000L/60)*1000);
 //            }
+
+
+
+
+        	kill_all_touch_shapes();
+        	draw_frame();
+        	e->animating = 1;
+
+
+
             break;
         case APP_CMD_LOST_FOCUS:
         	LOGDw("engine_handle_cmd", "APP_CMD_LOST_FOCUS");
             // When our app loses focus, we stop monitoring the accelerometer.
             // This is to avoid consuming battery while not being used.
-//            if (engine->accelerometerSensor != NULL) {
-//                ASensorEventQueue_disableSensor(engine->sensorEventQueue,
-//                        engine->accelerometerSensor);
-//            }
-            // Also stop animating.
+
+
+
+
+
+
+        	kill_all_touch_shapes();
+        	draw_frame();
         	e->animating = 0;
-//            engine_draw_frame(engine);
-//            quick_fade_on_exit();
-//            shutdown_audio();
-//            all_voices_fade_out_exit();
+        	if (sles_init_called)wake_from_paused = TRUE;
+//        	show_gameplay = FALSE;
+
+        	// タッチの円形全部無効スべき
+
             pause_all_voices();
-
-
-    		usleep(1000000); // 100ミリ秒
+//    		usleep(1000000); // 100ミリ秒
+    		usleep(5000000); // 100ミリ秒
     		shutdown_audio();
-    		join_control_loop();
 
-    		e->app->destroyRequested = 1; // RvA
-            //
+
+
+//    		join_control_loop();
+
+//    		e->app->destroyRequested = 1; // RvA
 
             break;
         case APP_CMD_STOP:
@@ -452,23 +515,52 @@ void init_sles_components(struct android_app* state) {
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
 //		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
 
+
+
+
+
+	load_all_assets(asset_manager);
+
+
+
+	create_sl_engine();
+	init_all_voices();
+	start_loop();
+
+
 	init_random_seed();
 	init_all_parts();
 
-	create_sl_engine();
-	load_all_assets(asset_manager);
-//	create_file_load_thread(asset_manager);
-
-	init_all_voices();
 	init_auto_vals();
-
 	// snd_ctrlのこと
 	init_control_loop();
-	start_loop();
 
 	sles_init_finished = TRUE;
 	LOGD("init_sles_thread", "sles_init_finished = TRUE");
 }
+
+
+
+
+
+
+void init_sles_gain_focus(struct android_app* state) {
+
+	create_sl_engine();
+	init_all_voices();
+	start_loop();
+
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -516,6 +608,88 @@ void android_main(struct android_app* state) {
 				source->process(state, source);
 			}
 
+
+//			 * 4/ Whenever you receive a LOOPER_ID_MAIN or LOOPER_ID_INPUT event,
+//			 *    the returned data will point to an android_poll_source structure.  You
+//			 *    can call the process() function on it, and fill in android_app->onAppCmd
+//			 *    and android_app->onInputEvent to be called for your own processing
+//			 *    of the event.
+//			 *
+//			 *    Alternatively, you can call the low-level functions to read and process
+//			 *    the data directly...  look at the process_cmd() and process_input()
+//			 *    implementations in the glue to see how to do this.
+
+
+//			if (source->id == LOOPER_ID_INPUT) {
+//
+//				process_cmd();
+//			}
+
+
+
+
+//			Solved: to prevent default "Back" button behaivor it is enough to return 1 while handling key event:
+
+//			int32_t app_handle_event(struct android_app* app, AInputEvent* event) {
+//				if (AKeyEvent_getKeyCode(event) == AKEYCODE_BACK) {
+//					// actions on back key
+//					return 1; // <-- prevent default handler
+//				};
+//				// ...
+//				return 0;
+//			}
+//
+
+
+
+//
+//
+//			if (ident == LOOPER_ID_USER) {
+//				if (e.)
+//
+//
+//
+//			}
+//
+
+
+
+//			/**
+//			 * Waits for events to be available, with optional timeout in milliseconds.
+//			 * Invokes callbacks for all file descriptors on which an event occurred.
+//			 *
+//			 * If the timeout is zero, returns immediately without blocking.
+//			 * If the timeout is negative, waits indefinitely until an event appears.
+//			 *
+//			 * Returns ALOOPER_POLL_WAKE if the poll was awoken using wake() before
+//			 * the timeout expired and no callbacks were invoked and no other file
+//			 * descriptors were ready.
+//			 *
+//			 * Returns ALOOPER_POLL_CALLBACK if one or more callbacks were invoked.
+//			 *
+//			 * Returns ALOOPER_POLL_TIMEOUT if there was no data before the given
+//			 * timeout expired.
+//			 *
+//			 * Returns ALOOPER_POLL_ERROR if an error occurred.
+//			 *
+//			 * Returns a value >= 0 containing an identifier if its file descriptor has data
+//			 * and it has no callback function (requiring the caller here to handle it).
+//			 * In this (and only this) case outFd, outEvents and outData will contain the poll
+//			 * events and data associated with the fd, otherwise they will be set to NULL.
+//			 *
+//			 * This method does not return until it has finished invoking the appropriate callbacks
+//			 * for all file descriptors that were signalled.
+//			 */
+//			int ALooper_pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
+//
+//
+//
+
+
+
+
+
+
 			if (state->destroyRequested != 0) {
 				return;
 			}
@@ -532,11 +706,22 @@ void android_main(struct android_app* state) {
 //			calc_frame_rate();
 			draw_frame();
 
+
+			if(wake_from_paused)	{
+
+			    LOGD("android_main", "android_main debug C");
+				init_sles_gain_focus(state);
+
+				wake_from_paused = FALSE;
+
+			}
+
+
+
 			if (!sles_init_called && !splash_fading_in && elapsed_time > (10 * SEC_IN_US)) {
 
 
 
-//				init_sles_components(state);
 				create_init_sles_thread(state);
 
 				sles_init_called = TRUE;
@@ -556,6 +741,12 @@ void android_main(struct android_app* state) {
 				show_gameplay = TRUE;
 
 			}
+
+
+
+
+
+
 
 
 

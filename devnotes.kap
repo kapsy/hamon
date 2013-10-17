@@ -694,7 +694,7 @@ x自動的に円形を描くとき、上端から少し離れた位置の機能。
 xスプラッシュ画面
 Xテクスチャの比率を自動的に相応しい値へ
 Xスプラッシュ画面アプリの大掃除
-スプラッシュコードと音声コードを合併
+Xスプラッシュコードと音声コードを合併
 音調を変える設定機能
 バックグラウンドで再生する機能
 IAP機能
@@ -705,7 +705,127 @@ xスプラッシュの時のプロセスの起動順番
 X問題の原因：ファイルを読みながらアプリは反応しないから、「問題が発生」っていうのポップアップが起きて、SIGSEVが起きる
 Xそれで、別のスレッドが必要のかも、ファイルを読むためのスレッド。
 
-ボイスの問題・最初のボイズを殺す方法。
+平成25年10月14日
+Xボイスの問題・最初のボイズを殺す方法。
+xbackgroundで再生する昨日。 そうしたいならサービスを使わないといけない
+
+The sounds are awesome.  Really peaceful and quite unique.  My feedback is:
+- Youre right that it's a bit quiet. Hard to hear unless fully cranked.
+- When you background it, it crashes.
+
+Galaxy S:
+
+アプリを起動：
+10-14 18:34:21.273: D/engine_handle_cmd(12673): APP_CMD_START
+10-14 18:34:21.343: D/engine_handle_cmd(12673): APP_CMD_INIT_WINDOW
+10-14 18:34:21.644: D/engine_handle_cmd(12673): APP_CMD_GAINED_FOCUS
+
+電源ボタン：
+10-14 18:29:50.152: D/engine_handle_cmd(11906): APP_CMD_SAVE_STATE
+10-14 18:29:50.179: D/engine_handle_cmd(11906): APP_CMD_STOP
+10-14 18:29:55.574: D/engine_handle_cmd(11906): APP_CMD_TERM_WINDOW
+10-14 18:29:55.652: D/engine_handle_cmd(11906): APP_CMD_DESTROY
+10-14 18:29:55.699: D/engine_handle_cmd(11906): APP_CMD_START
+10-14 18:29:55.765: D/engine_handle_cmd(11906): APP_CMD_INIT_WINDOW
+
+
+ロック解除：
+10-14 18:31:07.906: D/engine_handle_cmd(11906): APP_CMD_SAVE_STATE
+10-14 18:31:07.906: D/engine_handle_cmd(11906): APP_CMD_STOP
+10-14 18:31:07.910: D/engine_handle_cmd(11906): APP_CMD_TERM_WINDOW
+10-14 18:31:07.910: D/engine_handle_cmd(11906): APP_CMD_DESTROY
+10-14 18:31:07.949: D/engine_handle_cmd(11906): APP_CMD_START
+10-14 18:31:08.457: D/engine_handle_cmd(11906): APP_CMD_INIT_WINDOW
+10-14 18:31:08.937: D/engine_handle_cmd(11906): APP_CMD_GAINED_FOCUS
+
+ホームボタン：
+10-16 16:14:53.323: D/engine_handle_cmd(27334): APP_CMD_TERM_WINDOW
+10-16 16:14:53.374: D/engine_handle_cmd(27334): APP_CMD_LOST_FOCUS
+
+10-16 16:14:53.304: E/BufferQueue(136): [nz.kapsy.hontouniiioto/android.app.NativeActivity] dequeueBuffer: SurfaceTexture has been abandoned!
+
+OpenSLESを無効場合：
+10-16 17:16:13.901: D/engine_handle_cmd(30990): APP_CMD_LOST_FOCUS
+10-16 17:16:13.921: D/engine_handle_cmd(30990): APP_CMD_TERM_WINDOW
+10-16 17:16:15.046: D/engine_handle_cmd(30990): APP_CMD_SAVE_STATE
+10-16 17:16:15.050: D/engine_handle_cmd(30990): APP_CMD_STOP
+
+
+
+
+
+戻るボタン：
+
+10-16 16:18:04.311: D/engine_handle_cmd(28236): APP_CMD_TERM_WINDOW
+10-16 16:18:04.370: D/engine_handle_cmd(28236): APP_CMD_LOST_FOCUS
+
+
+OpenSLESを無効場合：
+10-16 17:17:03.600: D/engine_handle_cmd(30990): APP_CMD_LOST_FOCUS
+10-16 17:17:03.874: D/engine_handle_cmd(30990): APP_CMD_TERM_WINDOW
+10-16 17:17:04.292: D/engine_handle_cmd(30990): APP_CMD_STOP
+10-16 17:17:04.319: D/engine_handle_cmd(30990): APP_CMD_DESTROY
+
+
+
+
+Apad 7：
+
+アプリを起動：
+10-14 18:49:40.002: D/engine_handle_cmd(11830): APP_CMD_START
+10-14 18:49:40.172: D/engine_handle_cmd(11830): APP_CMD_INIT_WINDOW
+10-14 18:49:40.862: D/engine_handle_cmd(11830): APP_CMD_GAINED_FOCUS
+
+電源ボタン：
+10-14 18:52:13.262: D/engine_handle_cmd(11830): APP_CMD_SAVE_STATE
+10-14 18:52:13.282: D/engine_handle_cmd(11830): APP_CMD_STOP
+
+
+
+
+ロックした時：（後20秒）
+10-14 18:52:44.222: D/engine_handle_cmd(11830): APP_CMD_LOST_FOCUS
+
+10-14 18:59:03.812: W/ActivityManager(162): Activity idle timeout for ActivityRecord{416c1bb8 nz.kapsy.hontouniiioto/android.app.NativeActivity}
+
+
+ロック解除：　この時にフェードインが必要のかも
+10-14 18:55:09.492: D/engine_handle_cmd(12248): APP_CMD_START
+
+
+
+
+ホームボタン：
+10-16 16:27:15.262: D/engine_handle_cmd(3408): APP_CMD_LOST_FOCUS
+10-16 16:27:15.602: D/engine_handle_cmd(3408): APP_CMD_TERM_WINDOW
+10-16 16:27:16.042: D/engine_handle_cmd(3408): APP_CMD_SAVE_STATE
+10-16 16:27:16.042: D/engine_handle_cmd(3408): APP_CMD_STOP
+起動：
+10-17 10:37:04.678: D/engine_handle_cmd(6396): APP_CMD_START
+10-17 10:37:04.748: D/engine_handle_cmd(6396): APP_CMD_INIT_WINDOW
+10-17 10:37:05.168: D/engine_handle_cmd(6396): APP_CMD_GAINED_FOCUS
+
+
+戻るボタン：
+10-16 16:28:36.692: D/engine_handle_cmd(3408): APP_CMD_LOST_FOCUS
+10-16 16:28:36.992: D/engine_handle_cmd(3408): APP_CMD_TERM_WINDOW
+10-16 16:28:37.462: D/engine_handle_cmd(3408): APP_CMD_STOP
+10-16 16:28:37.472: D/engine_handle_cmd(3408): APP_CMD_DESTROY
+起動：
+10-17 10:37:04.678: D/engine_handle_cmd(6396): APP_CMD_START
+10-17 10:37:04.748: D/engine_handle_cmd(6396): APP_CMD_INIT_WINDOW
+10-17 10:37:05.168: D/engine_handle_cmd(6396): APP_CMD_GAINED_FOCUS
+
+
+
+
+
+
+
+
+	
+AMMOが足りない場合には赤い円形を描く
+
 	
 ＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
 ＋　　やるべきリスト　(優先順位)　＋

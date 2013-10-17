@@ -67,6 +67,10 @@
 void cycle_looping_voice();
 void cycle_oneshot_voice();
 
+voice* get_next_free_voice();
+voice* get_oldest_voice();
+
+
 void loop_fade_out(voice* v);
 void loop_fade_in(voice* v);
 void voice_volume_factor(voice* v);
@@ -84,7 +88,6 @@ void set_voice_volume_pan(voice* v, SLmillibel vol, SLpermille pan);
 //SLmillibel float_to_slmillibel(float sender_vel, float sender_range);
 
 unsigned short* get_next_data_chunk(voice* voice);
-voice* get_next_free_voice();
 
 void shutdown_voice(voice* v);
 //void shutdown_all_voices();
@@ -628,6 +631,9 @@ void pause_all_voices() {
 		result = (*play_itf)->SetPlayState(play_itf, SL_PLAYSTATE_PAUSED);
 						assert(SL_RESULT_SUCCESS == result);
 	}
+
+
+	initial_loop = TRUE;
 }
 
 
@@ -687,12 +693,17 @@ void init_seg_pan_map() {
 // 書き直すべき
 int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan) {
 
-	voice* v = get_next_free_voice();
-	if (v == NULL)
-	{
-		LOGD("enqueue_one_shot", "v == NULL: couldn't find a free buffer");
-		return 0;
-	}
+//	voice* v = get_next_free_voice();
+
+	// この方法は一番いいと思う。最古なボイズを選ぶとボイス全体の数が少ないのに、
+	// なんの違和感なくたくさんの音を鳴らすことが出来る
+	voice* v = get_oldest_voice();
+
+//	if (v == NULL)
+//	{
+//		LOGD("enqueue_one_shot", "v == NULL: couldn't find a free buffer");
+//		return 0;
+//	}
 
 
 	v->sample = s;
@@ -894,6 +905,24 @@ voice* get_next_free_voice() {
 	LOGD("get_next_free_voice", "i: %d", i);
 
 	return v;
+}
+
+voice* get_oldest_voice() {
+
+	voice* v = NULL;
+
+	if (current_oneshot_voice < VOICE_COUNT)
+		current_oneshot_voice += 1;
+
+	if (current_oneshot_voice == VOICE_COUNT)
+		current_oneshot_voice = LOOPER_COUNT;
+
+	v = poly_sampler + current_oneshot_voice;
+
+	LOGD("get_oldest_voice", "i: %d", current_oneshot_voice);
+
+	return v;
+
 }
 
 
