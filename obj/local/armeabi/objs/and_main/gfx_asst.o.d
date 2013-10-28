@@ -17,6 +17,12 @@ obj/local/armeabi/objs/and_main/gfx_asst.o: jni/gfx_asst.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/types.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/kernel.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/string.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/malloc.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/limits.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/limits.h \
@@ -78,6 +84,18 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/types
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/kernel.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/string.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/malloc.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:
 

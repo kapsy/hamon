@@ -134,6 +134,21 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 	        return 1; // <-- prevent default handler
 		}
+
+		if (key == AKEYCODE_MENU) {
+
+			LOGD( "engine_handle_input", "AKEYCODE_MENU");
+
+			if (key_action == AKEY_EVENT_ACTION_UP) {
+				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
+
+				//                ANativeActivity_finish(state->activity);
+			}
+
+	        return 1; // <-- prevent default handler
+		}
+
+
 /*
 		if (key == AKEYCODE_HOME) {
 			LOGD( "engine_handle_input", "AKEYCODE_HOME");
@@ -240,16 +255,28 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 void trigger_note(float x, float y) {
 
+	int seg = find_screen_segment(x);
+	float vel = find_vel_value(y);
+
 	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ðŠm”F‚·‚é‚½‚ß
-		int seg = find_screen_segment(x);
-		float vel = find_vel_value(y);
+
 		//play_note(seg, vel);
 
-	activate_touch_shape(x, y, current_part_color(), &vel);
+		activate_touch_shape(x, y, current_part_color(), &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
 
+	} else {
+
+
+
+//		activate_touch_no_ammo(x, y);
+
 	}
+
+
+
+
 
 }
 
@@ -718,7 +745,7 @@ void android_main(struct android_app* state) {
 
 
 
-			if (!sles_init_called && !splash_fading_in && elapsed_time > (10 * SEC_IN_US)) {
+			if (!sles_init_called && !splash_fading_in && elapsed_time > (1 * SEC_IN_US)) {
 
 
 

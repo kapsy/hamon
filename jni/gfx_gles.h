@@ -9,7 +9,7 @@
 #define GFX_INIT_H_
 
 #include <EGL/egl.h>
-
+#include "gfx_asst.h"
 
 #define TOTAL_PART_COLORS 8
 
@@ -38,6 +38,7 @@ void calc_frame_delta_time();
 void calc_frame_rate();
 //void activate_touch_shape(float x, float y, size_t col);
 void activate_touch_shape(float x, float y, size_t col, float* vel);
+void activate_touch_no_ammo(float x, float y);
 
 void kill_all_touch_shapes();
 
@@ -52,5 +53,9 @@ void get_elapsed_time(unsigned long* t);
 
 
 void gles_term_display(screen_settings* e);
+
+
+
+int create_gl_texture(texture_type *tt);
 
 #endif /* GFX_INIT_H_ */

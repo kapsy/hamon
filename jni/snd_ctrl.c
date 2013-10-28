@@ -23,6 +23,7 @@
 
 
 #define AMMO_INCREASE_RATE 5//50 // 個のticsを過ごすと、AMMOが1に増やす
+//#define AMMO_INCREASE_RATE 50//50 // 個のticsを過ごすと、AMMOが1に増やす
 #define AMMO_MAX 5
 // この値は記録した後の再生数を数える
 #define PART_TTL 9
@@ -666,7 +667,11 @@ void play_all_parts() {
 
 				note* n = (p->note_info) + j;
 
+				//取り敢えず、最初の位置によってベロシティが減る程度が変えるってのは一番いい
 				if (n->tic == p->current_tic) {
+//				if (n->tic == p->current_tic && n->vel > 0.45F) {
+
+
 
 					enqueue_one_shot(get_scale_sample(n->seg), float_to_slmillibel(n->vel, 1.0F), get_seg_permille(n->seg));
 
@@ -674,7 +679,8 @@ void play_all_parts() {
 //						total_tic_counter, i, n->tic, p->current_tic);
 
 					activate_touch_shape(n->pos_x, n->pos_y, p->color, &n->vel);
-					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
+//					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
+					LOGI("play_all_parts", "n->vel %f", n->vel);
 
 				}
 			}

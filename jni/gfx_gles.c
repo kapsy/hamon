@@ -50,28 +50,62 @@ typedef struct {
 	GLfloat pos_y;
 	GLfloat rgb[3];
 	GLfloat alpha;
+	GLfloat alpha_max;
+	GLfloat alpha_delta_factor;
+
+
 	GLfloat scale;
+
+//	int is_alive_ripple;
+//	int fading_in_ripple;
+//
+//	GLfloat alpha_ripple;
+//	GLfloat scale_ripple;
+
+
+
+
+
 //	float ttl;
 } touch_shape;
 
 
 
 // 取り敢えず
-touch_shape* touch_shape_list[TOUCH_SHAPES_MAX];
+//touch_shape* touch_shape_list[TOUCH_SHAPES_MAX];
 
 touch_shape touch_shapes[TOUCH_SHAPES_MAX];
 unsigned int touch_shape_draw_order[TOUCH_SHAPES_MAX];
 size_t current_touch_shape = 0;
 
+touch_shape touch_ripples[TOUCH_SHAPES_MAX];
+
+
+
+touch_shape touch_no_ammo[TOUCH_SHAPES_MAX];
+unsigned int touch_no_ammo_draw_order[TOUCH_SHAPES_MAX];
+size_t current_touch_no_ammo = 0;
+
+
+
+
+
+
+
+
+
+
+
 void frame_delta_avg_init();
 void init_touch_shapes();
 //touch_shape* cycle_touch_shapes();
 void draw_touch_shapes();
+void draw_touch_ripples();
 //void draw_background(); //必要ない
 void step_touch_shape_draw_order();
 void calc_circle_vertex();
 void create_gl_buffers();
-int create_gl_texture(TexureType *tt);
+//int create_gl_texture(texture_type *tt);
 int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
 void draw_splash();
 void draw_all_backgrounds();
@@ -157,8 +191,22 @@ const char f_shdr_main[] = // fShaderSrc
 
 
 
+const char f_shdr_button[] =
+	"precision mediump float;\n"
+	"uniform vec2 uSize;\n"
+	"uniform sampler2D sTexture;\n"
+	"uniform float alpha;\n"
+
+	"void main()\n"
+	"{\n"
 
 
+	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n"
+
+//		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
+//		"vec2(display.y * (bitmap_ratio), display.y)   ) * vec4(1.0,1.0,1.0, alpha);\n"
+
+	"}\n";
 
 
 
@@ -213,7 +261,38 @@ typedef struct {
 } shader_params_tex;
 
 
-static unsigned char g_bmpbuffer[MAXSIZE];
+//typedef struct {
+//
+//	int size;
+//	char file_path;
+//	unsigned char bmp_buffer[MAXSIZE];
+//
+//	TexureType tex_type;
+//
+//} texture_file;
+
+
+
+
+//static unsigned char g_bmpbuffer[MAXSIZE];
+//static texture_file splash_screen;
+//
+//static texture_file help_screen;
+texture_file textures[] = {
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp"}
+};
+
+////extern texture_file *textures;
+//
+//extern texture_file textures[];
+
+
+//extern struct texture_file textures[];
+
 
 
 //typedef struct {
@@ -315,16 +394,10 @@ vertex_rgb quad_colors[5][4] = {
 		}
 };
 
-//unsigned int current color = 0;
-
 
 unsigned short bg_quad_index[] = {
   0, 1, 3, 2
 };
-
-//unsigned short iObj[] = {
-//  0, 1, 3, 2
-//};
 
 
 shader_params_main    g_sp_m;
@@ -343,13 +416,14 @@ GLuint g_prog_main;
 GLuint quad_col_1;
 GLuint bg_cols [TOTAL_SCALES];
 
-// gles2_py_textureから
+
+
+// テキスチャーのフィールド
 shader_params_tex    g_sp_t;
-TexureType      g_tt;
+//texture_type      g_tt;
 GLuint g_prog_splash;
-//GLuint g_vbo;
-//GLuint g_ibo;
-//GLuint g_program;
+
+
 
 
 typedef struct {
@@ -366,8 +440,6 @@ rgb part_colors[] = {
 	{0.465192F, 0.537905F, 1.000000F},
 	{1.000000F, 0.186882F, 0.480862F}
 };
-
-//size_t current_part_color = 0; // 必要なのか？
 
 
 // フェードとタイミング
@@ -402,6 +474,7 @@ unsigned long frame_delta = 0;
 int frame_delta_avg[DELTA_AVG_COUNT];
 size_t frame_delta_cycle = 0;
 
+float frame_delta_ratio = 1.0; // ratio of delta to ideal fps (60)
 
 EGLBoolean create_window_surface(ANativeWindow* nw) {
 
@@ -521,11 +594,11 @@ EGLBoolean create_window_surface(ANativeWindow* nw) {
 
 int gles_init() {
 
-	LOGD("init_cmds", "init_cmds() called");
+	LOGD("gles_init", "init_cmds() called");
 
-	LOGD("init_cmds", "GL_VENDOR: %s", glGetString(GL_VENDOR));
-	LOGD("init_cmds", "GL_RENDERER: %s", glGetString(GL_RENDERER));
-	LOGD("init_cmds", "GL_VERSION: %s", glGetString(GL_VERSION));
+	LOGD("gles_init", "GL_VENDOR: %s", glGetString(GL_VENDOR));
+	LOGD("gles_init", "GL_RENDERER: %s", glGetString(GL_RENDERER));
+	LOGD("gles_init", "GL_VERSION: %s", glGetString(GL_VERSION));
 
 	frames = 0;
 	frame_delta_avg_init();
@@ -589,13 +662,64 @@ int gles_init() {
 
 	if(!sles_init_called) {
 
-		int size;
-		size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
-		LOGD("init_cmds", "load_bitmap %d", size);
-		check_bitmap(&g_tt, (void *)&g_bmpbuffer);
-		make_texture(&g_tt, 255);
-		create_gl_texture(&g_tt);
-		g_tt.alpha = 0.0;
+
+
+
+
+
+//		int size;
+//		size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
+//		LOGD("gles_init", "load_bitmap %d", size);
+//		check_bitmap(&g_tt, (void *)&g_bmpbuffer);
+//		make_texture(&g_tt, 255);
+//		create_gl_texture(&g_tt);
+//		g_tt.alpha = 0.0;
+
+		//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
+
+		int i;
+//		for (i=0; i<sizeof textures / sizeof textures[0]; i++) {
+
+
+//		アドレスの内容を参照 . 代入
+//		*ary_p[n] = var;
+
+
+		LOGD("gles_init", "debug A");
+
+
+
+		for (i=0; i<sizeof textures / sizeof textures[0]; i++) {
+
+
+			LOGD("gles_init", "debug B");
+
+
+
+
+
+
+
+
+			texture_file *tf = textures + i;
+
+			LOGD("gles_init", "debug C");
+//			tf->size = load_bitmap(tf->path, (void *)tf->buffer);
+//			check_bitmap(&tf->tex_type, (void *)tf->buffer);
+//			make_texture(&tf->tex_type, 255);
+//			tf->tex_type.alpha = 0.0;
+
+			setup_texture(tf, 0.0F);
+
+			LOGD("gles_init", "debug D");
+		}
+
+		LOGD("gles_init", "sizeof textures: %d", sizeof textures);
+		LOGD("gles_init", "sizeof textures[0]: %d", sizeof textures[0]);
+
+
+
+
 	}
 
 	LOGD("init_cmds", "init_cmds() finished");
@@ -757,7 +881,7 @@ void create_gl_buffers()
 //}
 
 
-int create_gl_texture(TexureType *tt)
+int create_gl_texture(texture_type *tt)
 {
   glGenTextures(1, &tt->texname);
   glBindTexture(GL_TEXTURE_2D, tt->texname);
@@ -847,9 +971,16 @@ void calc_frame_delta_time() {
 
 //	LOGI("calc_delta_time", "frame_delta after frame_delta_avg_calc(): %u", frame_delta);
 
+
+//	frame_delta_ratio = 17000/(float) frame_delta;
+//	if (frame_delta_ratio >= 1.0) frame_delta_ratio = 1.0;
+
+
 	curr_time = new_time;
 
 }
+
+
 
 void calc_frame_rate() {
 
@@ -863,7 +994,9 @@ void draw_splash() {
 	glUseProgram(g_prog_splash);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, g_tt.texname);
+//	glBindTexture(GL_TEXTURE_2D, g_tt.texname);
+
+	glBindTexture(GL_TEXTURE_2D, textures[0].tt.texname);
 
 	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
@@ -874,8 +1007,14 @@ void draw_splash() {
 	glEnableVertexAttribArray(0);
 
 	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
-	glUniform1f(g_sp_t.bitmap_ratio, g_tt.bitmap_ratio);
-	glUniform1f(g_sp_t.alpha, g_tt.alpha);
+
+
+//	glUniform1f(g_sp_t.bitmap_ratio, textures[0].tt.bitmap_ratio);
+//	glUniform1f(g_sp_t.alpha, textures[0].tt.alpha);
+
+	glUniform1f(g_sp_t.bitmap_ratio, textures[0].tt.bitmap_ratio);
+	glUniform1f(g_sp_t.alpha, textures[0].tt.alpha);
+
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
@@ -915,9 +1054,13 @@ void draw_gameplay() {
 	glEnableVertexAttribArray(0);
 //		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
+	draw_touch_ripples();
 	draw_touch_shapes();
 
+//	draw_touch_no_ammo();
+
 //		usleep(100000);
+//		usleep(20000);
 
 
 
@@ -936,34 +1079,56 @@ void draw_frame() {
 
 
 
-//	if(splash_remaining >= 0) {
-//		splash_remaining -= frame_delta;
-//	} else if (!splash_fading_out) {
-//		splash_fading_out = TRUE;
-//		gameplay_show = TRUE;
+//	if (show_splash) {
+//
+//		if (splash_fading_in && g_tt.alpha < 1.0) {
+//			g_tt.alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
+//		} else if (splash_fading_in && g_tt.alpha >= 1.0) {
+//			splash_fading_in = FALSE;
+//			g_tt.alpha = 1.0;
+//
+//		}
+//
+//		if (splash_fading_out && g_tt.alpha > 0.0) {
+//			g_tt.alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+//		} else if (splash_fading_out && g_tt.alpha <= 0.0) {
+//
+//			splash_fading_out = FALSE;
+//			g_tt.alpha = 0.0;
+//			show_splash = FALSE;
+//		}
+//
+//		draw_splash();
 //	}
+
+
 
 	if (show_splash) {
 
-		if (splash_fading_in && g_tt.alpha < 1.0) {
-			g_tt.alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
-		} else if (splash_fading_in && g_tt.alpha >= 1.0) {
+		texture_type *tt = &textures[0].tt;
+
+
+
+		if (splash_fading_in && tt->alpha < 1.0) {
+			tt->alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
+		} else if (splash_fading_in && tt->alpha >= 1.0) {
 			splash_fading_in = FALSE;
-			g_tt.alpha = 1.0;
+			tt->alpha = 1.0;
 
 		}
 
-		if (splash_fading_out && g_tt.alpha > 0.0) {
-			g_tt.alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-		} else if (splash_fading_out && g_tt.alpha <= 0.0) {
+		if (splash_fading_out && tt->alpha > 0.0) {
+			tt->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+		} else if (splash_fading_out && tt->alpha <= 0.0) {
 
 			splash_fading_out = FALSE;
-			g_tt.alpha = 0.0;
+			tt->alpha = 0.0;
 			show_splash = FALSE;
 		}
 
 		draw_splash();
 	}
+
 
 
 
@@ -1055,7 +1220,12 @@ void init_touch_shapes() {
 	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
 		touch_shapes[i].is_alive = FALSE;
 
+
+		touch_ripples[i].is_alive = FALSE;
+		touch_no_ammo[i].is_alive = FALSE;
+
 		touch_shape_draw_order[i] = i;
+		touch_no_ammo_draw_order[i] = i;
 	}
 }
 
@@ -1073,6 +1243,19 @@ void step_touch_shape_draw_order() {
 	}
 }
 
+//void step_touch_no_ammo_draw_order() {
+//
+//	int i;
+//	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
+//
+//			if (touch_no_ammo_draw_order[i] < TOUCH_SHAPES_MAX)
+//				touch_no_ammo_draw_order[i]++;
+//			if (touch_no_ammo_draw_order[i] == TOUCH_SHAPES_MAX)
+//				touch_no_ammo_draw_order[i] = 0;
+//
+//			LOGI("step_touch_no_ammo_draw_order", "touch_no_ammo_draw_order[%d]: %d", i, touch_no_ammo_draw_order[i]);
+//	}
+//}
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -1095,18 +1278,86 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 //	LOGI("activate_touch_shape", "ts->rgb[0] %f ts->rgb[1] %f ts->rgb[2] %f", ts->rgb[0], ts->rgb[1], ts->rgb[2]);
 
-//	ts->alpha = 1.0;
-//	ts->scale = 1.0;
-//	ts->alpha = *vel * *vel; // TODO
 	ts->alpha = 0.0F; // TODO
+
+
 	ts->scale = *vel * *vel * 1.7; // TODO 既に計算すればいいのかも
+//	LOGI("activate_touch_shape", "ts->scale: %f", ts->scale);
+
+	ts->alpha_max = ts->scale / 2.0; // TODO
 
 //	ts->ttl = TOUCH_SHAPES_TTL;
 
 	ts->fading_in = TRUE;
 	ts->is_alive = TRUE;
+
+
+
+
+
+
+	touch_shape* tr = touch_ripples + (touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
+	tr->pos_x = ((x/(float)g_sc.width)*2)-1;
+	tr->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
+	tr->rgb[0] = part_colors[col].r;
+	tr->rgb[1] = part_colors[col].g;
+	tr->rgb[2] = part_colors[col].b;
+	tr->alpha = 0.0F; // TODO
+	tr->scale = *vel * *vel * 1.7; // TODO 既に計算すればいいのかも
+
+
+
+	tr->alpha_max = *vel;
+	if (tr->alpha_max >= 1.0) tr->alpha_max = 1.0;
+	LOGI("activate_touch_shape", "tr->alpha_max: %f", tr->alpha_max);
+
+
+	tr->alpha_delta_factor = 0.000004F;
+
+
+	tr->fading_in = TRUE;
+	tr->is_alive = TRUE;
+
+
 	pthread_mutex_unlock(&mutex);
 }
+
+//void activate_touch_no_ammo(float x, float y) {
+//
+//	LOGD("activate_touch_no_ammo", "activate_touch_no_ammo");
+//	pthread_mutex_lock(&mutex);
+//	step_touch_no_ammo_draw_order();
+//	touch_shape* ts = touch_no_ammo + (touch_no_ammo_draw_order[TOUCH_SHAPES_MAX -1]);
+//
+//	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
+//	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
+//
+//	ts->rgb[0] = 1.0;
+//	ts->rgb[1] = 0.0;
+//	ts->rgb[2] = 0.0;
+//
+//	ts->alpha = 0.0F; // TODO
+//	ts->scale = 0.4;
+//	ts->alpha_max = 1.0;
+//	ts->fading_in = TRUE;
+//	ts->is_alive = TRUE;
+//
+//	pthread_mutex_unlock(&mutex);
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 float bg_pulse = 0.0F;
 float bg_pulse_dir = 1.0F;
@@ -1248,16 +1499,108 @@ int bg_fading() {
 	return rtn;
 }
 
+void draw_touch_no_ammo() {
+	int i;
+
+	pthread_mutex_lock(&mutex);
+
+	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
+
+		touch_shape* ts = touch_no_ammo + (touch_no_ammo_draw_order[i]);
+		if (ts->is_alive) {
+
+			glUniform1f(g_sp_m.pos_x, ts->pos_x);
+			glUniform1f(g_sp_m.pos_y, ts->pos_y);
+
+			glUniform1f(g_sp_m.rgb[0], 1.0);
+			glUniform1f(g_sp_m.rgb[1], 0.0);
+			glUniform1f(g_sp_m.rgb[2], 0.0);
+
+			if (ts->fading_in) {
+				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
+				if (ts->alpha >= ts->alpha_max) ts->fading_in = FALSE;
+			}
+
+			if (!ts->fading_in) {
+				ts->alpha -= (float)frame_delta *  0.000002F;//(float)(SEC_IN_US/25);
+				if (ts->alpha <= 0) ts->is_alive = FALSE;
+			}
+
+			glUniform1f(g_sp_m.alpha, ts->alpha);
+			glUniform1f(g_sp_m.scale, ts->scale);
+
+			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
+
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+
+
+}
+
+void draw_touch_ripples() {
+	int i;
+
+	pthread_mutex_lock(&mutex);
+
+	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
+
+		touch_shape* ts = touch_ripples + (touch_shape_draw_order[i]);
+
+		if (ts->is_alive) {
+
+
+			glUniform1f(g_sp_m.pos_x, ts->pos_x);
+			glUniform1f(g_sp_m.pos_y, ts->pos_y);
+
+			glUniform1f(g_sp_m.rgb[0], 1.0);
+			glUniform1f(g_sp_m.rgb[1], 1.0);
+			glUniform1f(g_sp_m.rgb[2], 1.0);
+
+//			ts->scale += (float)frame_delta * 0.0000003F;
 
 
 
+			ts->scale += (float)frame_delta * 0.0000022F;
+
+			if (ts->fading_in) {
+				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
+				if (ts->alpha >= (ts->alpha_max * 0.95)) ts->fading_in = FALSE;
+			}
+
+			if (!ts->fading_in) {
+
+
+
+
+				ts->alpha *= 0.94F;
+
+
+
+//				ts->alpha *= (frame_delta_ratio * 0.98);
+
+
+
+				if (ts->alpha < 0.005) ts->is_alive = FALSE;
+			}
+
+			glUniform1f(g_sp_m.alpha, ts->alpha);
+			glUniform1f(g_sp_m.scale, ts->scale);
+
+			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
+
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+}
 
 
 
 void draw_touch_shapes() {
 	int i;
 
-			pthread_mutex_lock(&mutex);
+	pthread_mutex_lock(&mutex);
+
 	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
 
 		touch_shape* ts = touch_shapes + (touch_shape_draw_order[i]);
@@ -1280,9 +1623,10 @@ void draw_touch_shapes() {
 
 			if (ts->fading_in) {
 
-				//ts->alpha += (float)frame_delta *  0.0000039F;//(float)(SEC_IN_US/25);
+
 				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
-				if (ts->alpha >= 1.0F) ts->fading_in = FALSE;
+//				ts->alpha += (float)frame_delta *  0.0000016F;//(float)(SEC_IN_US/25);
+				if (ts->alpha >= ts->alpha_max) ts->fading_in = FALSE;
 			}
 
 			if (!ts->fading_in) {
@@ -1299,6 +1643,23 @@ void draw_touch_shapes() {
 	}
 	pthread_mutex_unlock(&mutex);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void kill_all_touch_shapes() {
 

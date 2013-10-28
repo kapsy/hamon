@@ -821,10 +821,72 @@ Apad 7ÅF
 
 
 
+2013îN10åé18ì˙
 
-
+X`ó¯Ç›ÇΩÇ¢Ç»â~å`
 	
-AMMOÇ™ë´ÇËÇ»Ç¢èÍçáÇ…ÇÕê‘Ç¢â~å`Çï`Ç≠
+XAMMOÇ™ë´ÇËÇ»Ç¢èÍçáÇ…ÇÕê‘Ç¢â~å`Çï`Ç≠
+XÇ‚Ç¡ÇœÉQÅ[ÉÄÇ›ÇΩÇ¢Ç»AMMOåvéZã@ÇÃÇŸÇ§Ç™àÍî‘ÇÌÇ©ÇËà’Ç¢
+
+
+
+2013îN10åé21ì˙
+XMenuÉ{É^ÉìÇÉIÅ[ÉoÅ[ÉâÉCÉh
+
+2013îN10åé22ì˙
+éÊÇËä∏Ç¶Ç∏ÅAç≈èâÇÃà íuÇ…ÇÊÇ¡ÇƒÉxÉçÉVÉeÉBÇ™å∏ÇÈíˆìxÇ™ïœÇ¶ÇÈÇ¡ÇƒÇÃÇÕàÍî‘Ç¢Ç¢
+X673: if (n->tic == p->current_tic && n->vel > 0.1F) {
+
+ìßñæÇ»ÉeÉLÉXÉ`ÉÉÅ[Çï`Ç≠
+
+
+
+
+
+
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biSize: 56
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biWidth: 256
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biHeight: 128
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biPlanes: 1
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biBitCount: 32
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biCompression: 3
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biSizeImage: 131072
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biXPixPerMeter: 2835
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biYPixPerMeter: 2835
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biClrUsed: 0
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biClrImporant: 0
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biSize != 40) 
+10-23 15:14:44.976: D/makeTexture(17827): malloc(), tex_malloc: 0
+10-23 15:14:44.976: D/makeTexture(17827): tt->BmpHeight: 0
+10-23 15:14:44.976: D/makeTexture(17827): tt->BmpWidth: 0
+10-23 15:14:44.976: D/engine_handle_cmd(17827): APP_CMD_GAINED_FOCUS
+10-23 15:14:53.093: D/engine_handle_cmd(17827): APP_CMD_LOST_FOCUS
+10-23 15:14:53.496: D/engine_handle_cmd(17827): APP_CMD_GAINED_FOCUS
+
+
+10-23 15:28:28.539: D/bmpCheck(3465): (tt->bmpinfo->biSize: 124
+10-23 15:28:28.543: D/bmpCheck(3465): (tt->bmpinfo->biWidth: 256
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biHeight: 128
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biPlanes: 1
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biBitCount: 32
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biCompression: 3
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biSizeImage: 131072
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biXPixPerMeter: 2835
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biYPixPerMeter: 2835
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biClrUsed: 0
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biClrImporant: 0
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biSize != 40) 
+10-23 15:28:28.546: D/makeTexture(3465): malloc(), tex_malloc: 0
+10-23 15:28:28.546: D/makeTexture(3465): tt->BmpHeight: 0
+10-23 15:28:28.546: D/makeTexture(3465): tt->BmpWidth: 0
+10-23 15:28:28.546: D/engine_handle_cmd(3465): APP_CMD_GAINED_FOCUS
+
+
+
+
+
+
+
 
 	
 Å{Å{Å{Å{Å{Å{Å{Å{Å{Å{Å{Å{Å{Å{Å{

@@ -6,6 +6,7 @@
 //#include <android_native_app_glue.h>
 #include <android/bitmap.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 
@@ -152,11 +153,47 @@ GLuint g_program;
 //GLuint g_program_2;
 */
 
-//#define MAXSIZE  1024 * 1024 * 4
-//#define MAXSIZE  4096 * 4096 * 4
-//
-//static unsigned char g_bmpbuffer[MAXSIZE];
+//texture_file textures[] = {
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", NULL},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", NULL},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp", NULL},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp", NULL, NULL},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp", NULL, NULL}
+//};
 
+//	texture_file textures[] = {
+//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
+//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
+//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp"},
+//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp"},
+//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp"}
+//	};
+
+
+
+//void log_test() {
+//
+//	LOGD("gles_init", "sizeof *(textures[0]): %d", sizeof *textures[0]);
+//
+//
+//}
+
+
+
+
+void setup_texture(texture_file *tf, float init_alpha) {
+
+	LOGD("setup_texture", "tf->path: %c", tf->path);
+//	LOGD("setup_texture", "tf->size: %d", tf->path);
+
+	tf->buffer = (unsigned char*) malloc(MAXSIZE);
+	tf->size = load_bitmap(tf->path, (void *)tf->buffer);
+	LOGD("setup_texture", "tf->size: %d", tf->size);
+	check_bitmap(&tf->tt, (void *)tf->buffer);
+	make_texture(&tf->tt, 255);
+	create_gl_texture(&tf->tt);
+	tf->tt.alpha = 0.0;
+}
 
 int load_bitmap(char *filename, void *buffer)
 {
@@ -194,7 +231,7 @@ int load_bitmap(char *filename, void *buffer)
 	return -1;
 }
 
-int check_bitmap(TexureType *tt, void* buffer)
+int check_bitmap(texture_type *tt, void* buffer)
 {
 	tt->bmpheader = (BITMAPFILEHEADER *)buffer;
 	// bmp フォーマットのシグネチャのチェック
@@ -221,7 +258,7 @@ int check_bitmap(TexureType *tt, void* buffer)
 	LOGD("bmpCheck", "(tt->bmpinfo->biClrImporant: %d", tt->bmpinfo->biClrImporant);
 
 	// bmp フォーマットの形式チェック
-	if (tt->bmpinfo->biSize == 40) {
+	if (tt->bmpinfo->biSize == 40 || tt->bmpinfo->biSize == 124) {
 		LOGD("bmpCheck", "(tt->bmpinfo->biSize == 40) ");
 		tt->BmpWidth = tt->bmpinfo->biWidth;
 		tt->BmpHeight = tt->bmpinfo->biHeight;
@@ -249,7 +286,7 @@ int check_bitmap(TexureType *tt, void* buffer)
 }
 
 
-void make_texture(TexureType *tt, int alpha)
+void make_texture(texture_type *tt, int alpha)
 {
 	int color, x, y;
 //	tt->initial_alpha = alpha;
@@ -290,6 +327,24 @@ void make_texture(TexureType *tt, int alpha)
       switch(tt->BmpBit) {
         case 32 :
 //            LOGD("makeTexture", "case 32");
+
+
+            tt->TexData[n+0] = tt->pdata[offset+3];  // R
+            tt->TexData[n+1] = tt->pdata[offset+2];    // G
+            tt->TexData[n+2] = tt->pdata[offset+1];  // B
+            tt->TexData[n+3] = tt->pdata[offset];  // A
+
+
+//			if (y < 1) {
+//				LOGD("makeTexture", "y: %d, x: %d", y, x);
+//				LOGD("makeTexture", "tt->TexData[n+0]: %x", tt->TexData[n+0]);
+//				LOGD("makeTexture", "tt->TexData[n+1]: %x", tt->TexData[n+1]);
+//				LOGD("makeTexture", "tt->TexData[n+2]: %x", tt->TexData[n+2]);
+//				LOGD("makeTexture", "tt->TexData[n+3]: %x", tt->TexData[n+3]);
+//			}
+
+
+
             break;
         case 24 :
 //            LOGD("makeTexture", "case 24");
@@ -331,6 +386,29 @@ void make_texture(TexureType *tt, int alpha)
 //	  LOGD("makeTexture", "tt->TexData %d: %x", i, *(tt->TexData + i));
 //  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //int createTexture(TexureType *tt)

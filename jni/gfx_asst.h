@@ -18,6 +18,9 @@
 static unsigned char g_bmpbuffer[MAXSIZE];
 
 
+
+
+
 #pragma pack(push,1)
 
 typedef struct tagBITMAPFILEHEADER {
@@ -63,11 +66,52 @@ typedef struct {
     int  BmpLine;
 //    int  initial_alpha;
     GLuint  texname;
-} TexureType;
+} texture_type;
 
+
+
+
+
+
+
+
+//typedef struct {
+//	char* file_name;
+//	int midi_number;
+//	unsigned short* buffer_header;
+//	unsigned short* buffer_data;
+//	size_t data_size;
+//	size_t total_chunks;
+//} sample_def;
+
+
+
+//typedef struct {
+//
+//	int size;
+//	char* path;
+//	unsigned char buffer[MAXSIZE];
+//	texture_type tt;
+//} texture_file;
+
+typedef struct {
+
+	int size;
+	char* path;
+	unsigned char* buffer;
+	texture_type tt;
+} texture_file;
+
+
+
+//texture_file textures[];
+
+
+
+void setup_texture(texture_file *tf, float init_alpha);
 int load_bitmap(char *filename, void *buffer);
-int check_bitmap(TexureType *tt, void* buffer);
-void make_texture(TexureType *tt, int alpha);
+int check_bitmap(texture_type *tt, void* buffer);
+void make_texture(texture_type *tt, int alpha);
 
 
 #endif /* GFX_ASST_H_ */
