@@ -153,33 +153,23 @@ GLuint g_program;
 //GLuint g_program_2;
 */
 
-//texture_file textures[] = {
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", NULL},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", NULL},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp", NULL},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp", NULL, NULL},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp", NULL, NULL}
-//};
-
-//	texture_file textures[] = {
-//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp"},
-//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp"},
-//			{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp"}
-//	};
 
 
 
-//void log_test() {
-//
-//	LOGD("gles_init", "sizeof *(textures[0]): %d", sizeof *textures[0]);
-//
-//
-//}
+texture_file textures[] = {
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp"},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp"},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp"}
 
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_128.bmp"}
+};
 
-
+int sizeof_textures_element = sizeof textures / sizeof textures[0];
+int sizeof_textures = sizeof textures;
 
 void setup_texture(texture_file *tf, float init_alpha) {
 

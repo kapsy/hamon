@@ -69,31 +69,6 @@ typedef struct {
 } texture_type;
 
 
-
-
-
-
-
-
-//typedef struct {
-//	char* file_name;
-//	int midi_number;
-//	unsigned short* buffer_header;
-//	unsigned short* buffer_data;
-//	size_t data_size;
-//	size_t total_chunks;
-//} sample_def;
-
-
-
-//typedef struct {
-//
-//	int size;
-//	char* path;
-//	unsigned char buffer[MAXSIZE];
-//	texture_type tt;
-//} texture_file;
-
 typedef struct {
 
 	int size;
@@ -102,11 +77,9 @@ typedef struct {
 	texture_type tt;
 } texture_file;
 
-
-
-//texture_file textures[];
-
-
+extern texture_file textures[];
+extern int sizeof_textures_element;
+extern int sizeof_textures;
 
 void setup_texture(texture_file *tf, float init_alpha);
 int load_bitmap(char *filename, void *buffer);

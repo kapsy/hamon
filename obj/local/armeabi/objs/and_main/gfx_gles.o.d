@@ -59,6 +59,7 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  jni/hon_type.h jni/and_main.h jni/gfx_gles.h jni/gfx_asst.h \
  jni/snd_scal.h jni/snd_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
+ jni/gfx_butn.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h \
@@ -197,6 +198,8 @@ jni/snd_scal.h:
 jni/snd_asst.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h:
+
+jni/gfx_butn.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h:
 

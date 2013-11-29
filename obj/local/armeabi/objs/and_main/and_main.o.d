@@ -78,7 +78,7 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h \
- jni/and_main.h jni/hon_type.h
+ jni/and_main.h jni/hon_type.h jni/gfx_butn.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -245,3 +245,5 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2pl
 jni/and_main.h:
 
 jni/hon_type.h:
+
+jni/gfx_butn.h:

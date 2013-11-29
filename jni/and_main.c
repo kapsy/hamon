@@ -26,6 +26,7 @@
 #include "gfx_gles.h"
 #include "and_main.h"
 #include "hon_type.h"
+#include "gfx_butn.h"
 
 /**
  * Our saved state data.
@@ -83,6 +84,7 @@ unsigned long elapsed_time = 0;
 // プロトタイプ
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
+void touch_branching(float x, float y);
 
 
 void create_init_sles_thread(struct android_app* state);
@@ -197,15 +199,32 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			case AMOTION_EVENT_ACTION_DOWN:
 				LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_DOWN");
 
-				trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
-				set_parts_active();
 
 
+
+
+				touch_branching(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
+
+
+
+//				trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
+//				set_parts_active();
 				e->animating = 1;
+//				LOGD("engine_handle_input", "AMotionEvent_getX(event, 0): %f", AMotionEvent_getX(event, 0));
+//				LOGD("engine_handle_input", "AMotionEvent_getY(event, 0): %f", AMotionEvent_getY(event, 0));
+//
+////				LOGD("engine_handle_input", "action, %d", action);
 
-				LOGD("engine_handle_input", "action, %d", action);
+
+
+
+
 
 				break;
+
+
+
+
 
 			case AMOTION_EVENT_ACTION_POINTER_DOWN:
 				LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_POINTER_DOWN");
@@ -223,17 +242,17 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 				size_t pointer_index_mask = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
 						>> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 
-				if (pointer_index_mask < 4) {
+//				if (pointer_index_mask < 4) {
 
 					trigger_note(AMotionEvent_getX(event, pointer_index_mask), AMotionEvent_getY(event, pointer_index_mask));
 					set_parts_active();
-				}
+//				}
 
 				LOGD("engine_handle_input", "pointer_index_mask: %d", pointer_index_mask);
 
-				if (pointer_index_mask == 4) {
-					int s = cycle_scale();
-				}
+//				if (pointer_index_mask == 4) {
+//					int s = cycle_scale();
+//				}
 
 
 
@@ -252,6 +271,55 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     return 0;
 }
 
+
+
+void touch_branching(float x, float y) {
+
+	int s;
+	switch (get_touch_response(x, y)) {
+
+	case TOUCH_EVENT_BUTTON_0:
+		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_0");
+
+		int s = cycle_scale();
+		break;
+	case TOUCH_EVENT_BUTTON_1:
+		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_1");
+		init_all_parts();
+		break;
+	case TOUCH_EVENT_BUTTON_2:
+		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_2");
+
+
+		break;
+
+	case TOUCH_EVENT_GAME:
+		LOGD("touch_branching", "TOUCH_EVENT_GAME");
+
+
+	trigger_note(x, y);
+	set_parts_active();
+//	e->animating = 1;
+
+
+
+
+	break;
+
+	case TOUCH_EVENT_NULL:
+
+		//do nothing
+
+		break;
+
+}
+
+
+
+
+
+
+}
 
 void trigger_note(float x, float y) {
 
@@ -273,12 +341,11 @@ void trigger_note(float x, float y) {
 //		activate_touch_no_ammo(x, y);
 
 	}
-
-
-
-
-
 }
+
+
+
+
 
 
 static void calc_segment_width() {

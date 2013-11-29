@@ -23,6 +23,8 @@ typedef struct {
 	size_t data_size;
 	size_t total_chunks;
 
+	float vol_factor;
+
 } sample_def;
 
 extern sample_def oneshot_samples[];

@@ -479,6 +479,8 @@ void set_parts_active() {
 
 
 void auto_play() {
+//	LOGD("auto_play", "auto_play called()");
+
 	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
 		not_active_count++;
 		LOGD("auto_play", "not_active_count %d", not_active_count);
@@ -533,8 +535,16 @@ void auto_play() {
 }
 
 
+
 // 初期化するためだけ
 void init_all_parts() {
+
+	// 録音したノートをレセットするため
+
+	parts_active = FALSE;
+	not_active_count = 0;
+	current_rec_part = 0;
+
 
 	total_tic_counter = 0;
 
@@ -569,6 +579,8 @@ void init_part(part* p, int rec) {
 	reset_all_notes(p);
 
 }
+
+
 
 void init_part_colors(part* p) {
 

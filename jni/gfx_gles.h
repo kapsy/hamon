@@ -29,6 +29,20 @@ typedef struct {
 	float hw_ratio;
 } screen_settings;
 
+typedef struct {
+    GLfloat x, y, z;
+    GLfloat r, g, b;
+} vertex;
+
+typedef struct {
+	GLfloat r, g, b;
+} vertex_rgb;
+
+
+extern screen_settings  g_sc;
+
+extern unsigned long frame_delta;
+
 
 //EGLBoolean pi_SurfaceCreate(ANativeWindow* nw);
 EGLBoolean create_window_surface(ANativeWindow* nw);
@@ -57,5 +71,8 @@ void gles_term_display(screen_settings* e);
 
 
 int create_gl_texture(texture_type *tt);
+
+
+float gl_to_scr(float gl, int is_x);
 
 #endif /* GFX_INIT_H_ */

@@ -25,6 +25,7 @@
 #include "gfx_asst.h"
 
 #include "snd_scal.h"
+#include "gfx_butn.h"
 
 #include <unistd.h>  // sleep()を定義
 #include <pthread.h>
@@ -42,7 +43,6 @@
 
 #define SPLASH_COUNT_SECS 10
 
-
 typedef struct {
 	int is_alive;
 	int fading_in;
@@ -52,23 +52,15 @@ typedef struct {
 	GLfloat alpha;
 	GLfloat alpha_max;
 	GLfloat alpha_delta_factor;
-
-
 	GLfloat scale;
-
 //	int is_alive_ripple;
 //	int fading_in_ripple;
 //
 //	GLfloat alpha_ripple;
 //	GLfloat scale_ripple;
 
-
-
-
-
 //	float ttl;
 } touch_shape;
-
 
 
 // 取り敢えず
@@ -79,7 +71,6 @@ unsigned int touch_shape_draw_order[TOUCH_SHAPES_MAX];
 size_t current_touch_shape = 0;
 
 touch_shape touch_ripples[TOUCH_SHAPES_MAX];
-
 
 
 touch_shape touch_no_ammo[TOUCH_SHAPES_MAX];
@@ -102,9 +93,21 @@ void init_touch_shapes();
 void draw_touch_shapes();
 void draw_touch_ripples();
 //void draw_background(); //必要ない
+
+void draw_button();
+void draw_gameplay();
+
+
 void step_touch_shape_draw_order();
 void calc_circle_vertex();
 void create_gl_buffers();
+
+
+float gl_square_x_to_y(float w);
+//void calc_button_coords();
+void calc_btn_quad_verts(int bm_w, int bm_h);
+float gl_to_scr(float gl, int is_y);
+
 //int create_gl_texture(texture_type *tt);
 int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
 void draw_splash();
@@ -126,9 +129,28 @@ void draw_all_backgrounds();
 
 
 
+
+const char* vertex_shader =
+	"attribute vec4 position;\n"
+	"attribute vec2 texcoord;\n"
+	"varying vec2 texcoordVarying;\n"
+	"void main() {\n"
+		"gl_Position = position;\n"
+		"texcoordVarying = texcoord;\n"
+	"}\n";
+
+const char* fragment_shader =
+	"precision mediump float;\n"
+	"varying vec2 texcoordVarying;\n"
+	"uniform sampler2D texture;\n"
+	"void main() {\n"
+		"gl_FragColor = texture2D(texture, texcoordVarying);\n"
+	"}\n";
+
+
 // スプラッシュ画面のシェーダー
 
-const char v__shdr_splash[] =
+const char v_shdr_splash[] =
 		"attribute vec4 vPosition;\n"
 		"void main()\n"
 		"{\n"
@@ -137,7 +159,8 @@ const char v__shdr_splash[] =
 
 const char f_shdr_splash[] =
 	"precision mediump float;\n"
-	"uniform vec2 uSize;\n"
+//	"uniform vec2 uSize;\n"
+		"varying		vec2  	vtex;			\n"
 	"uniform sampler2D sTexture;\n"
 	"uniform vec2 display;\n"
 	"uniform float bitmap_ratio;\n"
@@ -146,6 +169,9 @@ const char f_shdr_splash[] =
 	"void main()\n"
 	"{\n"
 //	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n"
+
+
+//		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) - vec2(60.0, 60.0)) / vec2(256.0, 256.0)    );\n"
 
 		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
 		"vec2(display.y * (bitmap_ratio), display.y)   ) * vec4(1.0,1.0,1.0, alpha);\n"
@@ -159,7 +185,6 @@ const char v_shdr_main[] = // vShaderSrc
 		"attribute 	vec3		aposition;	\n"
 		"attribute 	vec3		atex;     		\n"
 		"varying   	vec3  	vtex;			\n"
-		"uniform	float 		uframe;		\n"
 		"uniform	float 		pos_x;			\n"
 		"uniform	float		pos_y;			\n"
 		"uniform	float 		scale;		\n"
@@ -169,6 +194,24 @@ const char v_shdr_main[] = // vShaderSrc
 		"		vtex = atex;     				\n"
 		"		gl_Position = vec4((aposition.x * scale) + pos_x, (aposition.y*scale) + pos_y, 0, 1);		\n"
 		"	}            \n";
+
+
+//const char v_shdr_main[] = // vShaderSrc
+//		"attribute 	vec3		aposition;	\n"
+//		"attribute 	vec3		atex;     		\n"
+//		"varying   	vec3  	vtex;			\n"
+////		"uniform	float 		uframe;		\n"
+//		"uniform	float 		pos_x;			\n"
+//		"uniform	float		pos_y;			\n"
+//		"uniform	float 		scale;		\n"
+////		"uniform 	mat4 	projectionMatrix; \n"
+//		"void main()							\n"
+//		"	{                  						\n"
+//		"		vtex = atex;     				\n"
+//		"		gl_Position = vec4((aposition.x * scale) + pos_x, (aposition.y*scale) + pos_y, 0, 1);		\n"
+//		"	}            \n";
+//
+
 
 
 const char f_shdr_main[] = // fShaderSrc
@@ -193,7 +236,11 @@ const char f_shdr_main[] = // fShaderSrc
 
 const char f_shdr_button[] =
 	"precision mediump float;\n"
-	"uniform vec2 uSize;\n"
+
+		"varying	vec3 vtex;\n"
+//		"uniform vec2 tex2;\n"
+
+//	"uniform vec2 uSize;\n"
 	"uniform sampler2D sTexture;\n"
 	"uniform float alpha;\n"
 
@@ -201,7 +248,15 @@ const char f_shdr_button[] =
 	"{\n"
 
 
-	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n"
+//	"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(256.0, 256.0));\n	"
+
+//		"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(128.0, 128.0));\n"
+
+//		"tex2 = vec2(vtex.x, vtex.y);\n"
+		"    gl_FragColor = texture2D(sTexture, vec2(vtex.x, vtex.y))  * vec4(1.0,1.0,1.0, alpha);\n"
+
+//		"    gl_FragColor = texture2D(sTexture, tex2);\n"
+
 
 //		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
 //		"vec2(display.y * (bitmap_ratio), display.y)   ) * vec4(1.0,1.0,1.0, alpha);\n"
@@ -234,7 +289,7 @@ static GLint projectionMatrixLocation;
 typedef struct {
 	GLint  		aposition;
 	GLint  		atex;
-	GLint  		uframe;
+//	GLint  		uframe;
 	GLint			pos_x;
 	GLint 		pos_y;
 	GLint 		rgb[3];
@@ -248,16 +303,16 @@ typedef struct {
 
 
 typedef struct {
-	GLint		position;
-	GLint 	tex;
-//	GLint		time;
-//	GLint		resolution;
-//	GLint 	mouse;
+	GLint			position;
+	GLint 		tex;
 
-	GLint 	alpha;
+	GLint 		alpha;
+	GLint			pos_x;
+	GLint 		pos_y;
+	GLint			scale;
 
-	GLint 	display;
-	GLint		bitmap_ratio;
+	GLint 		display;
+	GLint			bitmap_ratio;
 } shader_params_tex;
 
 
@@ -271,44 +326,20 @@ typedef struct {
 //
 //} texture_file;
 
-
-
-
-//static unsigned char g_bmpbuffer[MAXSIZE];
-//static texture_file splash_screen;
-//
-//static texture_file help_screen;
-texture_file textures[] = {
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp"}
-};
-
-////extern texture_file *textures;
-//
-//extern texture_file textures[];
-
-
-//extern struct texture_file textures[];
-
-
-
 //typedef struct {
 //    GLfloat x, y, z;
 //    GLfloat u, v;
 //} vertex;
 
 
-typedef struct {
-    GLfloat x, y, z;
-    GLfloat r, g, b;
-} vertex;
-
-typedef struct {
-	GLfloat r, g, b;
-} vertex_rgb;
+//typedef struct {
+//    GLfloat x, y, z;
+//    GLfloat r, g, b;
+//} vertex;
+//
+//typedef struct {
+//	GLfloat r, g, b;
+//} vertex_rgb;
 
 
 vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
@@ -316,16 +347,11 @@ unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
 
 
-
-
-
-
-
-
 extern int selected_scale;
 extern int sles_init_called;
 
-float alpha_fade_rate = 0.00000011F;
+//float alpha_fade_rate = 0.00000011F;
+float alpha_fade_rate = 0.11f / (float)SEC_IN_US;
 
 typedef struct {
 	int fading_in;
@@ -342,14 +368,6 @@ bg_def bgs [] = {
 int curr_bg = 0;
 int bgs_size = sizeof(bgs)/sizeof(bgs[0]);
 
-// 必要ないのかも
-//vertex bg_quad_splash[] = {
-//	{-1.0f, -1.0f, 0.0f, 0.0, 0.0},
-//	{1.0f, -1.0f, 0.0f, 1.0f, 0.0f},
-//	{1.0f, 1.0f, 0.0f, 1.0f, 1.0f},
-//	{-1.0f, 1.0f, 0.0f, 0.0f, 1.0f},
-//};
-
 vertex bg_quad[] = {
 	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
 	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
@@ -357,7 +375,8 @@ vertex bg_quad[] = {
 	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
 };
 
-int seiseki[2][3] = {{72, 67, 84}, {67, 92, 71}};
+// wtf???
+//int seiseki[2][3] = {{72, 67, 84}, {67, 92, 71}};
 
 
 vertex_rgb quad_colors[5][4] = {
@@ -394,14 +413,40 @@ vertex_rgb quad_colors[5][4] = {
 		}
 };
 
-
 unsigned short bg_quad_index[] = {
   0, 1, 3, 2
 };
 
 
+
+
 shader_params_main    g_sp_m;
 screen_settings  g_sc;
+
+
+
+
+// gl 浮動小数点数から画面の解像度の値へ
+float gl_to_scr(float gl, int is_x) {
+	float scr;
+	if (is_x)
+		scr = ((gl+1.0F)/2.0) * (float)g_sc.width;
+	else
+		scr = (float)g_sc.height - (((gl+1.0F)/2.0) * (float)g_sc.height);
+	return scr;
+}
+
+float gl_square_x_to_y(float w) {
+	float h = (1.0f/g_sc.hw_ratio) * w;
+  	return h;
+}
+
+
+
+
+
+
+
 
 GLuint g_vbo;
 GLuint g_ibo;
@@ -411,6 +456,12 @@ GLuint sc_vbo;
 GLuint sc_ibo;
 GLuint bg_quad_vbo;
 GLuint bg_quad_ibo;
+
+
+GLuint btn_vbo;
+GLuint btn_ibo;
+
+
 GLuint g_prog_main;
 //GLuint g_program_purp;
 GLuint quad_col_1;
@@ -419,10 +470,17 @@ GLuint bg_cols [TOTAL_SCALES];
 
 
 // テキスチャーのフィールド
-shader_params_tex    g_sp_t;
+shader_params_tex g_sp_t;
 //texture_type      g_tt;
 GLuint g_prog_splash;
 
+
+
+shader_params_tex g_sp_btn;
+GLuint g_prog_button;
+//extern button buttons;
+//extern vertex btn_quad[];
+//extern unsigned short btn_quad_index[];
 
 
 
@@ -454,7 +512,7 @@ extern int show_gameplay;
 
 
 unsigned int frames = 0;
-float posx = -1.0F;
+//float posx = -1.0F; //wtf?
 float global_scale = 1.0F;
 
 //float hw_ratio;
@@ -606,11 +664,21 @@ int gles_init() {
 	init_touch_shapes();
 	calc_circle_vertex();
 
+
+//	calc_button_coords();
+
+	calc_btn_quad_verts(BTN_W, BTN_W);
+
 	int res;
 
-	res = init_shaders(&g_prog_splash, v__shdr_splash, f_shdr_splash);
-	if (!res)
-	return 0;
+	res = init_shaders(&g_prog_splash, v_shdr_splash, f_shdr_splash);
+	if (!res)	return 0;
+
+//	res = init_shaders(&g_prog_button, v_shdr_splash, f_shdr_button);
+//	if (!res)	return 0;
+	res = init_shaders(&g_prog_button, v_shdr_main, f_shdr_button);
+	if (!res)	return 0;
+
 
 
 	res = init_shaders(&g_prog_main, v_shdr_main, f_shdr_main);
@@ -620,7 +688,7 @@ int gles_init() {
 
 	g_sp_m.aposition = glGetAttribLocation(g_prog_main, "aposition");
 	g_sp_m.atex = glGetAttribLocation(g_prog_main, "atex");
-	g_sp_m.uframe = glGetUniformLocation(g_prog_main, "uframe");
+//	g_sp_m.uframe = glGetUniformLocation(g_prog_main, "uframe");
 
 	g_sp_m.pos_x = glGetUniformLocation(g_prog_main, "pos_x");
 	g_sp_m.pos_y = glGetUniformLocation(g_prog_main, "pos_y");
@@ -660,6 +728,22 @@ int gles_init() {
 
 
 
+
+
+	g_sp_btn.pos_x = glGetUniformLocation(g_prog_button, "pos_x");
+	g_sp_btn.pos_y = glGetUniformLocation(g_prog_button, "pos_y");
+	g_sp_btn.tex = glGetAttribLocation(g_prog_button, "atex");
+	g_sp_btn.alpha = glGetUniformLocation(g_prog_button, "alpha");
+	g_sp_btn.position = glGetAttribLocation(g_prog_button, "aposition");
+	g_sp_btn.scale = glGetUniformLocation(g_prog_button, "scale");
+
+
+
+
+
+
+
+
 	if(!sles_init_called) {
 
 
@@ -689,16 +773,10 @@ int gles_init() {
 
 
 
-		for (i=0; i<sizeof textures / sizeof textures[0]; i++) {
+		for (i=0; i<sizeof_textures_element; i++) {
 
 
 			LOGD("gles_init", "debug B");
-
-
-
-
-
-
 
 
 			texture_file *tf = textures + i;
@@ -714,8 +792,8 @@ int gles_init() {
 			LOGD("gles_init", "debug D");
 		}
 
-		LOGD("gles_init", "sizeof textures: %d", sizeof textures);
-		LOGD("gles_init", "sizeof textures[0]: %d", sizeof textures[0]);
+//		LOGD("gles_init", "sizeof textures: %d", sizeof textures);
+//		LOGD("gles_init", "sizeof textures[0]: %d", sizeof textures[0]);
 
 
 
@@ -828,9 +906,34 @@ int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 // GPU上のバッファオブジェクトにデータを転送
 void create_gl_buffers()
 {
+
+	// VBOの生成
+	glGenBuffers(1, &btn_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, btn_vbo);
+	// データの転送
+	glBufferData(GL_ARRAY_BUFFER, sizeof_btn_quad, btn_quad, GL_STATIC_DRAW);
+
+	// インデックスバッファの作成
+	glGenBuffers(1, &btn_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, btn_ibo);
+	// データの転送
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof_btn_quad_index, btn_quad_index, GL_STATIC_DRAW);
+
 
 	// VBOの生成
 	glGenBuffers(1, &sc_vbo);
@@ -890,8 +993,13 @@ int create_gl_texture(texture_type *tt)
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tt->BmpWidth, tt->BmpHeight, 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, tt->TexData);
@@ -1023,11 +1131,49 @@ void draw_splash() {
 
 }
 
+
+void draw_button() {
+
+	glUseProgram(g_prog_button); // res = init_shaders(&g_prog_button, v_shdr_main, f_shdr_button);
+	glBindBuffer(GL_ARRAY_BUFFER, btn_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, btn_ibo);
+	glEnableVertexAttribArray(g_sp_btn.position);
+	glEnableVertexAttribArray(g_sp_btn.tex);
+	glVertexAttribPointer(g_sp_btn.position, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+	glVertexAttribPointer(g_sp_btn.tex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
+	glEnableVertexAttribArray(0);
+
+	int i;
+	for (i = 0; i < sizeof_button_element; i++) {
+		button* b = buttons + i;
+
+		btn_anim(b, i);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, b->main_texture->tt.texname);
+		//	glUniform2f(g_sp_btn.position, 1.0F, 1.0F);
+		glUniform1f(g_sp_btn.pos_x, b->gl_x);
+		glUniform1f(g_sp_btn.pos_y, b->gl_y);
+		glUniform1f(g_sp_btn.scale, b->scale);
+		glUniform1f(g_sp_btn.alpha, b->alpha);
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+
+
+
+
+
+
 void draw_gameplay() {
 
 	glUniform1f(g_sp_m.scale, global_scale);
 	glUniform1f(g_sp_m.alpha, 0.8);
-	glUniform1f(g_sp_m.uframe, posx);
+//	glUniform1f(g_sp_m.uframe, posx);
 	glUniform1f(g_sp_m.rgb[0], 1.0);
 	glUniform1f(g_sp_m.rgb[1], 1.0);
 	glUniform1f(g_sp_m.rgb[2], 1.0);
@@ -1078,36 +1224,9 @@ void draw_frame() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 
-
-//	if (show_splash) {
-//
-//		if (splash_fading_in && g_tt.alpha < 1.0) {
-//			g_tt.alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
-//		} else if (splash_fading_in && g_tt.alpha >= 1.0) {
-//			splash_fading_in = FALSE;
-//			g_tt.alpha = 1.0;
-//
-//		}
-//
-//		if (splash_fading_out && g_tt.alpha > 0.0) {
-//			g_tt.alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-//		} else if (splash_fading_out && g_tt.alpha <= 0.0) {
-//
-//			splash_fading_out = FALSE;
-//			g_tt.alpha = 0.0;
-//			show_splash = FALSE;
-//		}
-//
-//		draw_splash();
-//	}
-
-
-
 	if (show_splash) {
 
 		texture_type *tt = &textures[0].tt;
-
-
 
 		if (splash_fading_in && tt->alpha < 1.0) {
 			tt->alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
@@ -1125,33 +1244,15 @@ void draw_frame() {
 			tt->alpha = 0.0;
 			show_splash = FALSE;
 		}
-
 		draw_splash();
 	}
 
-
-
-
-
-
-
-
-
-
-//	if(audio_ready && !splash_boot) {
 	if(show_gameplay) {
-
 		draw_gameplay();
 
+		 if (!splash_fading_out)
+			 draw_button();
 	}
-
-
-
-
-
-
-
-
 
 	eglSwapBuffers(g_sc.display, g_sc.surface);
 
@@ -1215,31 +1316,24 @@ void gles_term_display(screen_settings* e) {
 
 
 void init_touch_shapes() {
-
 	int i;
 	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
 		touch_shapes[i].is_alive = FALSE;
-
-
 		touch_ripples[i].is_alive = FALSE;
 		touch_no_ammo[i].is_alive = FALSE;
-
 		touch_shape_draw_order[i] = i;
 		touch_no_ammo_draw_order[i] = i;
 	}
 }
 
 void step_touch_shape_draw_order() {
-
 	int i;
 	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
-
 			if (touch_shape_draw_order[i] < TOUCH_SHAPES_MAX)
 				touch_shape_draw_order[i]++;
 			if (touch_shape_draw_order[i] == TOUCH_SHAPES_MAX)
 				touch_shape_draw_order[i] = 0;
-
-			LOGI("step_touch_shape_draw_order", "touch_shape_draw_order[%d]: %d", i, touch_shape_draw_order[i]);
+//			LOGI("step_touch_shape_draw_order", "touch_shape_draw_order[%d]: %d", i, touch_shape_draw_order[i]);
 	}
 }
 
@@ -1269,8 +1363,8 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
 	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
-//	LOGI("activate_touch_shape", "x: %f ts->pos_x: %f", x, ts->pos_x);
-//	LOGI("activate_touch_shape", "y: %f ts->pos_y: %f", y, ts->pos_y);
+	LOGI("activate_touch_shape", "x: %f ts->pos_x: %f", x, ts->pos_x);
+	LOGI("activate_touch_shape", "y: %f ts->pos_y: %f", y, ts->pos_y);
 
 	ts->rgb[0] = part_colors[col].r;
 	ts->rgb[1] = part_colors[col].g;
@@ -1290,10 +1384,6 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 	ts->fading_in = TRUE;
 	ts->is_alive = TRUE;
-
-
-
-
 
 
 	touch_shape* tr = touch_ripples + (touch_shape_draw_order[TOUCH_SHAPES_MAX -1]);
@@ -1347,18 +1437,6 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 float bg_pulse = 0.0F;
 float bg_pulse_dir = 1.0F;
 float test_alpha = 1.0F;
@@ -1382,11 +1460,6 @@ float test_alpha = 1.0F;
 //	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 //
 //}
-
-
-
-
-
 
 
 void draw_background_alpha(float a) {
@@ -1534,8 +1607,6 @@ void draw_touch_no_ammo() {
 		}
 	}
 	pthread_mutex_unlock(&mutex);
-
-
 }
 
 void draw_touch_ripples() {
@@ -1548,19 +1619,12 @@ void draw_touch_ripples() {
 		touch_shape* ts = touch_ripples + (touch_shape_draw_order[i]);
 
 		if (ts->is_alive) {
-
-
 			glUniform1f(g_sp_m.pos_x, ts->pos_x);
 			glUniform1f(g_sp_m.pos_y, ts->pos_y);
-
 			glUniform1f(g_sp_m.rgb[0], 1.0);
 			glUniform1f(g_sp_m.rgb[1], 1.0);
 			glUniform1f(g_sp_m.rgb[2], 1.0);
-
 //			ts->scale += (float)frame_delta * 0.0000003F;
-
-
-
 			ts->scale += (float)frame_delta * 0.0000022F;
 
 			if (ts->fading_in) {
@@ -1570,17 +1634,8 @@ void draw_touch_ripples() {
 
 			if (!ts->fading_in) {
 
-
-
-
 				ts->alpha *= 0.94F;
-
-
-
 //				ts->alpha *= (frame_delta_ratio * 0.98);
-
-
-
 				if (ts->alpha < 0.005) ts->is_alive = FALSE;
 			}
 

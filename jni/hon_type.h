@@ -21,7 +21,9 @@
 //#define BUFFER_SIZE 128 // 0.72562358276643990929705215419501ms
 
 
-#define BUFFER_SIZE 1024 // 5.8049886621315192743764172335601ms
+//#define BUFFER_SIZE 1024 // 5.8049886621315192743764172335601ms
+
+#define BUFFER_SIZE 512 // 5.8049886621315192743764172335601ms
 //#define BUFFER_SIZE 2048
 //static int tics_per_part = 1600;
 
@@ -41,5 +43,14 @@
 
 #define SEC_IN_NS 1000000000
 #define SEC_IN_US 1000000
+
+
+
+typedef struct {
+
+	float x;
+	float y;
+
+} vec2;
 
 #endif /* HON_TYPE_H_ */
