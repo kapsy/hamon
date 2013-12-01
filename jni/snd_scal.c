@@ -175,16 +175,19 @@ int cycle_scale() {
 		return 0;
 	}
 
-	LOGD("cycle_scale", "cycle_scale() called");
+	LOGD("cycle_scale", "debug a");
 
 	if (selected_scale < TOTAL_SCALES)
 		selected_scale += 1;
 
+	LOGD("cycle_scale", "debug b");
 	if (selected_scale == TOTAL_SCALES)
 		selected_scale = 0;
 
+	LOGD("cycle_scale", "debug c, selected_scale: %d", selected_scale);
 	int success = enqueue_seamless_loop(looping_samples + selected_scale);
-	start_xfade_bgs();
+	LOGD("cycle_scale", "debug d");
+	start_xfade_bgs(); // graphics background crossfade
 
 	return 1;
 }

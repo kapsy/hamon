@@ -269,11 +269,9 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
 
 	v->vol_fade_factor = 1.0F;
 //	v->vol_auto_factor = 1.0F;
-//	v->vol_exit_factor = 1.0F;
 
 	v->fading_in = FALSE;
 	v->fading_out = FALSE;
-//	v->fading_out_exit = FALSE;
 
 	v->is_playing = FALSE;
 	v->current_chunk = 0;
@@ -289,17 +287,6 @@ void init_voice(voice* v, int timing_voice, int looping_voice) {
     SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_22_05,
         SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
         SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
-
-
-//    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_22_05,
-//        SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-//        SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
-
-    // フレームレートにあまり影響を与えないのかも
-//    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_11_025,
-//        SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-//        SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
-
 
     LOGD("init_voice", "SLDataFormat_PCM format_pcm ");
     SLDataSource audioSrc = {&loc_bufq, &format_pcm};
@@ -464,29 +451,39 @@ int enqueue_seamless_loop(sample_def* s) {
 
 	SLresult result;
 
-//	LOGD("enqueue_seamless_loop", "enqueue_seamless_loop() called");
-//	LOGD("enqueue_seamless_loop", "	s->vol_factor: %f", s->vol_factor);
+	LOGD("enqueue_seamless_loop", "enqueue_seamless_loop() called");
+	LOGD("enqueue_seamless_loop", "	s->vol_factor: %f", s->vol_factor);
 
 
 	// ここで今の再生中音をフェードアウトし
-	SLAndroidSimpleBufferQueueState current_queue_state ;
+	SLAndroidSimpleBufferQueueState current_queue_state;
 	SLuint32 state;
+	LOGD("enqueue_seamless_loop", "debug_a, current looping voice: %d", current_looping_voice);
 
 	voice* v = (poly_sampler + current_looping_voice);
-
-	// ポインターのポインターかもなぁ
-	result = (*v->bqPlayerBufferQueue)->GetState(v->bqPlayerBufferQueue, &current_queue_state);
+	LOGD("enqueue_seamless_loop", "debug_b");
 
 
+
+
+
+
+
+
+
+
+//	// ポインターのポインターかもなぁ
+//	result = (*v->bqPlayerBufferQueue)->GetState(v->bqPlayerBufferQueue, &current_queue_state);
+//	LOGD("enqueue_seamless_loop", "debug_c");
+//
 //	LOGD("enqueue_seamless_loop", "GetState() called");
 //	LOGD("enqueue_seamless_loop", "current_queue_state.count: %d", current_queue_state.count);
 
 	// 最初のループをフェードする必要
 	if (!initial_loop) {
 
-//		LOGD("enqueue_seamless_loop", "(!initial_loop) ");
+		LOGD("enqueue_seamless_loop", "(!initial_loop) ");
 
-		//v->sl_volume = SLMILLIBEL_MAX;
 		// 音量を最大の値を設定するため
 		v->vol_fade_factor = 1.0F;
 		v->fading_in = FALSE;
@@ -511,26 +508,25 @@ int enqueue_seamless_loop(sample_def* s) {
     result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_STOPPED);
     assert(SL_RESULT_SUCCESS == result);
 
-//	LOGD("enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_STOPPED called");
+	LOGD("enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_STOPPED called");
 
 	result = (*v->bqPlayerBufferQueue)->Clear(v->bqPlayerBufferQueue);
     assert(SL_RESULT_SUCCESS == result);
-//    LOGD("enqueue_seamless_loop", "Clear() called");
+    LOGD("enqueue_seamless_loop", "Clear() called");
 
     result = (*v->bqPlayerBufferQueue)->RegisterCallback(v->bqPlayerBufferQueue, looper_callback, (void *)s);
     assert(SL_RESULT_SUCCESS == result);
-//    LOGD("enqueue_seamless_loop", "RegisterCallback() called");
+    LOGD("enqueue_seamless_loop", "RegisterCallback() called");
 
 	// ここで音の大きさを0に設定して
 
     result = (*v->bqPlayerPlay)->SetPlayState(v->bqPlayerPlay, SL_PLAYSTATE_PLAYING);
     assert(SL_RESULT_SUCCESS == result);
-//    LOGD("enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_PLAYING called");
+    LOGD("enqueue_seamless_loop", "SetPlayState() SL_PLAYSTATE_PLAYING called");
 
-	//__android_log_print(ANDROID_LOG_DEBUG, "enqueue_seamless_loop", "(int)samp->data_size(): %x", samp->data_size);
 
 	result =	(*v->bqPlayerBufferQueue)->Enqueue(v->bqPlayerBufferQueue, s->buffer_data,  (int)s->data_size);
-//	LOGD("enqueue_seamless_loop", "Enqueue() called");
+	LOGD("enqueue_seamless_loop", "Enqueue() called");
 
 	// ここでフェードインを始めよ
 //	v->sl_volume = SLMILLIBEL_MIN;

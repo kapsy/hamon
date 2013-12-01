@@ -891,11 +891,17 @@ X音量は大丈夫？
 xボタンのテキスチャー
 Xボタンの配列
 
+
+
+
 ボタン機能
 
 	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
 
 ボタンのアニメーション・フェードイン
+
+
+
 
 音声の大きさを下がるための機能
 

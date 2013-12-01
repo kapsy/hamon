@@ -45,7 +45,7 @@ void* file_loader_thread(void* args);
 //};
 
 
-sample_def silence_chunk = {"no_file_name", 00, NULL, NULL};
+sample_def silence_chunk = {"no_file_name", 00, NULL, NULL, 0, 0, 1.0F};
 
 sample_def looping_samples[] = {
 
