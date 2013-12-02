@@ -58,7 +58,16 @@ sample_def looping_samples[] = {
 
 };
 
-
+//sample_def looping_samples[] = {
+//
+//
+//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001.wav", 48, NULL, NULL, 0, 0, 0.6F},
+//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_minor_001.wav", 48, NULL, NULL, 0, 0, 0.6F},
+//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_004.wav", 48, NULL, NULL, 0, 0, 0.6F},
+//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cumulonimbus_003.wav", 48, NULL, NULL, 0, 0, 0.6F},
+//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_002.wav", 48, NULL, NULL, 0, 0, 0.6F}
+//
+//};
 // ç°ÇÃóßèÍ4å¬ÇæÇØÇ≈Ç¢Ç¢Ç©Ç‡
 sample_def oneshot_samples[] = {
 //

@@ -4,12 +4,13 @@
  *  Created on: 2013/09/30
  *      Author: Michael
  */
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-#include <GLES2/gl2.h>
 
 #ifndef GFX_ASST_H_
 #define GFX_ASST_H_
+
+
+
+
 
 
 
@@ -78,7 +79,7 @@ typedef struct {
 } texture_file;
 
 extern texture_file textures[];
-extern int sizeof_textures_element;
+extern int sizeof_textures_array;
 extern int sizeof_textures;
 
 void setup_texture(texture_file *tf, float init_alpha);

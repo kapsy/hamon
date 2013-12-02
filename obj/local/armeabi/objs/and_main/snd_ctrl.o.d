@@ -61,11 +61,9 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
- jni/gfx_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h
+ jni/gfx_asst.h jni/gfx_fuls.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -197,12 +195,10 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/nat
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h:
 
-jni/gfx_asst.h:
-
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h:
+jni/gfx_asst.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h:
+jni/gfx_fuls.h:

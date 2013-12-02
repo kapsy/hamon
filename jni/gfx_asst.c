@@ -1,9 +1,18 @@
-//#include <jni.h>
-//#include <EGL/egl.h>
-//#include <GLES/gl.h>
-//#include <GLES2/gl2.h>
-//#include <android/log.h>
-//#include <android_native_app_glue.h>
+//
+//#include <android/bitmap.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <math.h>
+//#include "hon_type.h"
+//#include "gfx_asst.h"
+
+
+
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+#include <GLES2/gl2.h>
+
+
 #include <android/bitmap.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +20,11 @@
 
 
 #include "hon_type.h"
+
+
 #include "gfx_asst.h"
+
+
 
 //#define SEC_IN_NS 1000000000
 //#define SEC_IN_US 1000000
@@ -158,17 +171,22 @@ GLuint g_program;
 
 texture_file textures[] = {
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_256.bmp"},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_256.bmp"},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_256.bmp"}
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_002_960x480.bmp"},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_128.bmp"},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_128.bmp"},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_128.bmp"}
 
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_128.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_128.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_128.bmp"}
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_001_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_002_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_003_128.bmp"},
+
+
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_001_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_002_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_003_128.bmp"}
 };
 
-int sizeof_textures_element = sizeof textures / sizeof textures[0];
+int sizeof_textures_array = sizeof textures / sizeof textures[0];
 int sizeof_textures = sizeof textures;
 
 void setup_texture(texture_file *tf, float init_alpha) {

@@ -8,8 +8,12 @@
 #ifndef GFX_INIT_H_
 #define GFX_INIT_H_
 
+
 #include <EGL/egl.h>
+#include <GLES/gl.h>
 #include "gfx_asst.h"
+#include "gfx_fuls.h"
+
 
 #define TOTAL_PART_COLORS 8
 
@@ -29,6 +33,8 @@ typedef struct {
 	float hw_ratio;
 } screen_settings;
 
+
+//struct vertextag;
 typedef struct {
     GLfloat x, y, z;
     GLfloat r, g, b;
@@ -42,6 +48,11 @@ typedef struct {
 extern screen_settings  g_sc;
 
 extern unsigned long frame_delta;
+
+//extern int splash_fading_in;
+//extern int splash_fading_out;
+//
+//extern int show_splash;
 
 
 //EGLBoolean pi_SurfaceCreate(ANativeWindow* nw);
@@ -72,6 +83,12 @@ void gles_term_display(screen_settings* e);
 
 int create_gl_texture(texture_type *tt);
 
+
+//full_screen* fs;
+//void draw_full_screen_image(full_screen* fs);
+
+//void draw_full_screen_image(full_screen* fs);
+void draw_full_screen_image(full_screen* fs);
 
 float gl_to_scr(float gl, int is_x);
 

@@ -6,23 +6,48 @@
  */
 
 // OpenGL ES 2.0 code
+//#include <jni.h>
+//
+//#include <EGL/egl.h>
+//#include <GLES/gl.h>
+//
+//#include <GLES2/gl2.h>
+//#include <GLES2/gl2ext.h>
+//#include <android/log.h>
+//#include <android_native_app_glue.h>
+//
+//
+//#include "hon_type.h"
+//
+//
+//#include "and_main.h"
+//#include "gfx_gles.h"
+//#include "gfx_asst.h"
+////#include "gfx_fuls.h"
+//
+//#include "snd_scal.h"
+//#include "gfx_butn.h"
+//
+//#include <unistd.h>  // sleep()を定義
+//#include <pthread.h>
+//#include <math.h>
+//#include <stdlib.h>
+
+
 #include <jni.h>
 
-#include <EGL/egl.h>
-#include <GLES/gl.h>
+//#include <EGL/egl.h>
+//#include <GLES/gl.h>
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
-
 #include "hon_type.h"
-
-
 #include "and_main.h"
-#include "gfx_gles.h"
-#include "gfx_asst.h"
+//#include "gfx_asst.h"
+//#include "gfx_fuls.h"
 
 #include "snd_scal.h"
 #include "gfx_butn.h"
@@ -31,6 +56,22 @@
 #include <pthread.h>
 #include <math.h>
 #include <stdlib.h>
+
+#include "gfx_gles.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #define DELTA_AVG_COUNT 6
 
@@ -112,6 +153,10 @@ float gl_to_scr(float gl, int is_y);
 int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
 void draw_splash();
 void draw_all_backgrounds();
+
+
+
+//void draw_full_screen_image(full_screen* fs);
 
 //typedef struct {
 //	EGLNativeWindowType nativeWin;
@@ -506,7 +551,10 @@ int splash_fading_in = TRUE;
 int splash_fading_out = FALSE;
 int show_splash = TRUE;
 
-extern int show_gameplay;
+
+
+
+
 
 //int audio_ready; //オーディオファイルを全部揃っていた場合
 
@@ -773,7 +821,7 @@ int gles_init() {
 
 
 
-		for (i=0; i<sizeof_textures_element; i++) {
+		for (i=0; i<sizeof_textures_array; i++) {
 
 
 			LOGD("gles_init", "debug B");
@@ -1102,9 +1150,7 @@ void draw_splash() {
 	glUseProgram(g_prog_splash);
 
 	glActiveTexture(GL_TEXTURE0);
-//	glBindTexture(GL_TEXTURE_2D, g_tt.texname);
-
-	glBindTexture(GL_TEXTURE_2D, textures[0].tt.texname);
+	glBindTexture(GL_TEXTURE_2D, textures[1].tt.texname);
 
 	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
@@ -1115,20 +1161,37 @@ void draw_splash() {
 	glEnableVertexAttribArray(0);
 
 	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
-
-
-//	glUniform1f(g_sp_t.bitmap_ratio, textures[0].tt.bitmap_ratio);
-//	glUniform1f(g_sp_t.alpha, textures[0].tt.alpha);
-
 	glUniform1f(g_sp_t.bitmap_ratio, textures[0].tt.bitmap_ratio);
 	glUniform1f(g_sp_t.alpha, textures[0].tt.alpha);
-
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
 	glBindTexture(GL_TEXTURE_2D,0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+}
+
+void draw_full_screen_image(full_screen* fs) {
+
+	glUseProgram(g_prog_splash);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, fs->main_texture->tt.texname);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+
+	glEnableVertexAttribArray(g_sp_t.position);
+	glVertexAttribPointer(g_sp_t.position, 3, GL_FLOAT, GL_FALSE, 24, (void*)0);
+	glEnableVertexAttribArray(0);
+	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
+	glUniform1f(g_sp_t.bitmap_ratio, fs->main_texture->tt.bitmap_ratio);
+	glUniform1f(g_sp_t.alpha, fs->main_texture->tt.alpha);
+
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+
+//	glBindTexture(GL_TEXTURE_2D,0);
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 
@@ -1144,10 +1207,24 @@ void draw_button() {
 	glEnableVertexAttribArray(0);
 
 	int i;
-	for (i = 0; i < sizeof_button_element; i++) {
+	for (i = 0; i < sizeof_button_array; i++) {
+
 		button* b = buttons + i;
 
 		btn_anim(b, i);
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, b->pressed_texture->tt.texname);
+		//	glUniform2f(g_sp_btn.position, 1.0F, 1.0F);
+		glUniform1f(g_sp_btn.pos_x, b->gl_x);
+		glUniform1f(g_sp_btn.pos_y, b->gl_y);
+		glUniform1f(g_sp_btn.scale, b->scale);
+		glUniform1f(g_sp_btn.alpha, b->alpha_pt);
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+
+
+
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, b->main_texture->tt.texname);
@@ -1157,6 +1234,10 @@ void draw_button() {
 		glUniform1f(g_sp_btn.scale, b->scale);
 		glUniform1f(g_sp_btn.alpha, b->alpha);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+
+
+
+
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -1253,6 +1334,33 @@ void draw_frame() {
 		 if (!splash_fading_out)
 			 draw_button();
 	}
+
+//	if(show_help) {
+//
+//
+//		texture_type *tt = &textures[0].tt;
+//
+//		if (splash_fading_in && tt->alpha < 1.0) {
+//			tt->alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
+//		} else if (splash_fading_in && tt->alpha >= 1.0) {
+//			splash_fading_in = FALSE;
+//			tt->alpha = 1.0;
+//
+//		}
+//
+//		if (splash_fading_out && tt->alpha > 0.0) {
+//			tt->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
+//		} else if (splash_fading_out && tt->alpha <= 0.0) {
+//
+//			splash_fading_out = FALSE;
+//			tt->alpha = 0.0;
+//			show_splash = FALSE;
+//		}
+//		draw_splash();
+//
+//
+//
+//	}
 
 	eglSwapBuffers(g_sc.display, g_sc.surface);
 

@@ -5,17 +5,33 @@
  *      Author: Michael
  */
 
+
+///* fuga.h */
+//#ifndef FUGA_H
+//#define FUGA_H
+//
+//struct hoge_t;Å@/* ëOï˚êÈåæ */
+//
+//typedef struct fuga_t
+//{
+//  struct hoge_t* hoge;
+//} Fuga;
+
+
 #ifndef GFX_BUTN_H_
 #define GFX_BUTN_H_
 
-#include "hon_type.h"
 #include "gfx_gles.h"
-#include "gfx_asst.h"
+
+#include "hon_type.h"
+//#include "gfx_asst.h"
 
 #define BTN_W 128
 #define BTN_ALPHA_MAX 1.0F
 #define BTN_ALPHA_MIN 0.0F
 #define BTN_FADE_RATE (0.4F/(float)SEC_IN_US)
+#define BTN_PRESS_FADE_RATE (7.0F/(float)SEC_IN_US)
+#define BTN_PRESS_FADE_RATE_OUT (1.3F/(float)SEC_IN_US)
 //#define BTN_FADE_RATE 1.0f
 
 enum {
@@ -28,12 +44,16 @@ enum {
 
 };
 
+texture_file;
+
 typedef struct {
 	texture_file* main_texture;
 	texture_file* pressed_texture;
 	float gl_x, gl_y;
 	float scale;
 	float alpha;
+	float alpha_pt;
+	int pressed_peak;
 
 	// bl: x=0, y=max tr: x=max, y=0
 	vec2 touch_bl, touch_tr;
@@ -56,7 +76,7 @@ extern button buttons[];
 extern vertex btn_quad[];
 extern unsigned short btn_quad_index[];
 
-extern int sizeof_button_element;
+extern int sizeof_button_array;
 extern int sizeof_buttons;
 extern int sizeof_btn_quad;
 extern int sizeof_btn_quad_index;

@@ -464,20 +464,12 @@ int enqueue_seamless_loop(sample_def* s) {
 	LOGD("enqueue_seamless_loop", "debug_b");
 
 
+	// ポインターのポインターかもなぁ
+	result = (*v->bqPlayerBufferQueue)->GetState(v->bqPlayerBufferQueue, &current_queue_state);
+	LOGD("enqueue_seamless_loop", "debug_c");
 
-
-
-
-
-
-
-
-//	// ポインターのポインターかもなぁ
-//	result = (*v->bqPlayerBufferQueue)->GetState(v->bqPlayerBufferQueue, &current_queue_state);
-//	LOGD("enqueue_seamless_loop", "debug_c");
-//
-//	LOGD("enqueue_seamless_loop", "GetState() called");
-//	LOGD("enqueue_seamless_loop", "current_queue_state.count: %d", current_queue_state.count);
+	LOGD("enqueue_seamless_loop", "GetState() called");
+	LOGD("enqueue_seamless_loop", "current_queue_state.count: %d", current_queue_state.count);
 
 	// 最初のループをフェードする必要
 	if (!initial_loop) {
@@ -492,6 +484,7 @@ int enqueue_seamless_loop(sample_def* s) {
 		cycle_looping_voice();
 
 		v = (poly_sampler + current_looping_voice);
+		LOGD("enqueue_seamless_loop", "debug_d, current looping voice: %d", current_looping_voice);
 	} else {
 
 		// 浮動小数点型なボリューム操作機能を使うべきだ

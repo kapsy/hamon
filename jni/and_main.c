@@ -28,6 +28,10 @@
 #include "hon_type.h"
 #include "gfx_butn.h"
 
+
+
+
+#include "and_main.h"
 /**
  * Our saved state data.
  */
@@ -66,6 +70,7 @@ int gfx_initialized = FALSE;
 int sles_init_called = FALSE;
 int sles_init_finished = FALSE;
 int show_gameplay = FALSE;
+int show_help = FALSE;
 
 int wake_from_paused = FALSE;
 
@@ -201,10 +206,13 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 
 
+//		if (show_splash) {
+//			splash_fading_out = TRUE;
+//		}
+//		else {
+						touch_branching(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
 
-
-				touch_branching(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
-
+//		}
 
 
 //				trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
@@ -290,6 +298,10 @@ void touch_branching(float x, float y) {
 	case TOUCH_EVENT_BUTTON_2:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_2");
 
+
+//		show_help = TRUE;
+//		splash_fading_in = TRUE;
+//		show_splash = TRUE;
 
 		break;
 

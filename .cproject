@@ -28,7 +28,6 @@
 							</builder>
 							<tool id="com.android.gcc.compiler.1400062939" name="Android GCC Compiler" superClass="com.android.gcc.compiler">
 								<option id="com.android.gcc.option.includePath.21212609" superClass="com.android.gcc.option.includePath" valueType="includePath">
-									<listOptionValue builtIn="false" value="../jni"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Android\android-ndk-r8d\platforms\android-14\arch-x86\usr\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Android\android-ndk-r8d\toolchains\arm-linux-androideabi-4.6\prebuilt\windows\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;C:\Android\android-ndk-r8d\toolchains\arm-linux-androideabi-4.6\prebuilt\windows\lib\gcc\arm-linux-androideabi\4.6\include-fixed&quot;"/>
@@ -57,5 +56,7 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.android.AndroidPerProjectProfile"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/hontouniiioto"/>
+	</storageModule>
 </cproject>
