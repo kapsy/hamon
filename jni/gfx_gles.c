@@ -6,32 +6,7 @@
  */
 
 // OpenGL ES 2.0 code
-//#include <jni.h>
-//
-//#include <EGL/egl.h>
-//#include <GLES/gl.h>
-//
-//#include <GLES2/gl2.h>
-//#include <GLES2/gl2ext.h>
-//#include <android/log.h>
-//#include <android_native_app_glue.h>
-//
-//
-//#include "hon_type.h"
-//
-//
-//#include "and_main.h"
-//#include "gfx_gles.h"
-//#include "gfx_asst.h"
-////#include "gfx_fuls.h"
-//
-//#include "snd_scal.h"
-//#include "gfx_butn.h"
-//
-//#include <unistd.h>  // sleep()を定義
-//#include <pthread.h>
-//#include <math.h>
-//#include <stdlib.h>
+
 
 
 #include <jni.h>
@@ -43,25 +18,25 @@
 #include <GLES2/gl2ext.h>
 #include <android/log.h>
 #include <android_native_app_glue.h>
-
-#include "hon_type.h"
-#include "and_main.h"
-//#include "gfx_asst.h"
-//#include "gfx_fuls.h"
-
-#include "snd_scal.h"
-#include "gfx_butn.h"
-
 #include <unistd.h>  // sleep()を定義
 #include <pthread.h>
 #include <math.h>
 #include <stdlib.h>
 
+
+
+
+
+
+#include "and_main.h"
 #include "gfx_gles.h"
 
 
+#include "gfx_butn.h"
+#include "gfx/fullscreene.h"
 
-
+#include "gfx/background.h"
+#include "game/moods.h"
 
 
 
@@ -80,7 +55,9 @@
 //#define TOUCH_SHAPES_TTL 200.0F //必要ないよ。アルファでやるなら十分
 
 #define PI 3.14159265358979
-#define CIRCLE_SEGMENTS 24
+//#define CIRCLE_SEGMENTS 24
+#define CIRCLE_SEGMENTS 6
+
 
 #define SPLASH_COUNT_SECS 10
 
@@ -144,15 +121,15 @@ void calc_circle_vertex();
 void create_gl_buffers();
 
 
-float gl_square_x_to_y(float w);
+//float gl_square_x_to_y(float w);
 //void calc_button_coords();
-void calc_btn_quad_verts(int bm_w, int bm_h);
-float gl_to_scr(float gl, int is_y);
+//void calc_btn_quad_verts(int bm_w, int bm_h);
+//float gl_to_scr(float gl, int is_y);
 
 //int create_gl_texture(texture_type *tt);
 int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
-void draw_splash();
-void draw_all_backgrounds();
+//void draw_splash();
+//void draw_all_backgrounds();
 
 
 
@@ -361,106 +338,81 @@ typedef struct {
 } shader_params_tex;
 
 
-//typedef struct {
-//
-//	int size;
-//	char file_path;
-//	unsigned char bmp_buffer[MAXSIZE];
-//
-//	TexureType tex_type;
-//
-//} texture_file;
-
-//typedef struct {
-//    GLfloat x, y, z;
-//    GLfloat u, v;
-//} vertex;
 
 
-//typedef struct {
-//    GLfloat x, y, z;
-//    GLfloat r, g, b;
-//} vertex;
-//
-//typedef struct {
-//	GLfloat r, g, b;
-//} vertex_rgb;
-
-
-vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
+struct vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
 unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
 
 
-extern int selected_scale;
-extern int sles_init_called;
+//extern int selected_scale;
+//extern int sles_init_called;
 
-//float alpha_fade_rate = 0.00000011F;
-float alpha_fade_rate = 0.11f / (float)SEC_IN_US;
+//float alpha_fade_rate = 0.11f / (float)SEC_IN_US;
+//
+//typedef struct {
+//	int fading_in;
+//	int fading_out;
+//	int selected_scale;
+//	float alpha;
+//} bg_def;
+//
+//bg_def bgs [] = {
+//		{TRUE, 	FALSE,	0, 	0.0F},
+//		{FALSE, FALSE,	0, 	0.0F}
+//};
 
-typedef struct {
-	int fading_in;
-	int fading_out;
-	int selected_scale;
-	float alpha;
-} bg_def;
+//int curr_bg = 0;
+//int bgs_size = sizeof(bgs)/sizeof(bgs[0]);
 
-bg_def bgs [] = {
-		{TRUE, 	FALSE,	0, 	0.0F},
-		{FALSE, FALSE,	0, 	0.0F}
-};
-
-int curr_bg = 0;
-int bgs_size = sizeof(bgs)/sizeof(bgs[0]);
-
-vertex bg_quad[] = {
-	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
-	{1.0f, 		1.0f, 		0.0f, 		0.95f,		0.0f, 		0.35f},
-	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
-};
+//vertex bg_quad[] = {
+//	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+//	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
+//	{1.0f, 		1.0f, 		0.0f, 		0.95f,		0.0f, 		0.35f},
+//	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
+//};
 
 // wtf???
 //int seiseki[2][3] = {{72, 67, 84}, {67, 92, 71}};
 
 
-vertex_rgb quad_colors[5][4] = {
-		{
-			{0.0f, 		0.0f, 		0.0f},
-			{0.0f, 		0.0f, 		0.0f},
-			{0.95f,	0.0f, 		0.35f},
-			{0.25f,	0.0f, 		0.25f}
-		},
-		{
+//vertex_rgb quad_colors[5][4] = {
+//		{
+//			{0.0f, 		0.0f, 		0.0f},
+//			{0.0f, 		0.0f, 		0.0f},
+//			{0.95f,	0.0f, 		0.35f},
+//			{0.25f,	0.0f, 		0.25f}
+//		},
+//		{
+//
+//			{1.0f, 		0.0f, 		0.0f},
+//			{1.0f, 		0.0f, 		0.0f},
+//			{1.0f, 		0.0f, 		0.35f},
+//			{1.0f, 		0.0f, 		0.25f}
+//		},
+//		{
+//			{0.2f, 		0.3f, 		0.0f},
+//			{0.2f, 		0.3f, 		0.0f},
+//			{1.0f, 		0.0f, 		0.0f},
+//			{1.0f, 		0.0f, 		0.0f}
+//		},
+//		{
+//			{0.0f, 	 	0.1f, 		0.0f},
+//			{0.0f, 		0.6f, 		0.0f},
+//			{0.0f, 		0.2f, 		0.35f},
+//			{0.0f, 		0.2f, 		0.05f}
+//		},
+//		{
+//			{0.0f, 	 	0.5f, 		0.0f},
+//			{0.0f, 		0.3f, 		0.0f},
+//			{1.0f, 		0.2f, 		0.3f},
+//			{0.0f, 		1.0f, 		1.0f}
+//		}
+//};
 
-			{1.0f, 		0.0f, 		0.0f},
-			{1.0f, 		0.0f, 		0.0f},
-			{1.0f, 		0.0f, 		0.35f},
-			{1.0f, 		0.0f, 		0.25f}
-		},
-		{
-			{0.2f, 		0.3f, 		0.0f},
-			{0.2f, 		0.3f, 		0.0f},
-			{1.0f, 		0.0f, 		0.0f},
-			{1.0f, 		0.0f, 		0.0f}
-		},
-		{
-			{0.0f, 	 	0.1f, 		0.0f},
-			{0.0f, 		0.6f, 		0.0f},
-			{0.0f, 		0.2f, 		0.35f},
-			{0.0f, 		0.2f, 		0.05f}
-		},
-		{
-			{0.0f, 	 	0.5f, 		0.0f},
-			{0.0f, 		0.3f, 		0.0f},
-			{1.0f, 		0.2f, 		0.3f},
-			{0.0f, 		1.0f, 		1.0f}
-		}
-};
-
-unsigned short bg_quad_index[] = {
-  0, 1, 3, 2
-};
+//unsigned short bg_quad_index[] = {
+//  0, 1, 3, 2
+//};
 
 
 
@@ -472,19 +424,19 @@ screen_settings  g_sc;
 
 
 // gl 浮動小数点数から画面の解像度の値へ
-float gl_to_scr(float gl, int is_x) {
-	float scr;
-	if (is_x)
-		scr = ((gl+1.0F)/2.0) * (float)g_sc.width;
-	else
-		scr = (float)g_sc.height - (((gl+1.0F)/2.0) * (float)g_sc.height);
-	return scr;
-}
-
-float gl_square_x_to_y(float w) {
-	float h = (1.0f/g_sc.hw_ratio) * w;
-  	return h;
-}
+//float gl_to_scr(float gl, int is_x) {
+//	float scr;
+//	if (is_x)
+//		scr = ((gl+1.0F)/2.0) * (float)g_sc.width;
+//	else
+//		scr = (float)g_sc.height - (((gl+1.0F)/2.0) * (float)g_sc.height);
+//	return scr;
+//}
+//
+//float gl_square_x_to_y(float w) {
+//	float h = (1.0f/g_sc.hw_ratio) * w;
+//  	return h;
+//}
 
 
 
@@ -499,8 +451,8 @@ GLuint g_ibo;
 //GLuint g_ibo_2;
 GLuint sc_vbo;
 GLuint sc_ibo;
-GLuint bg_quad_vbo;
-GLuint bg_quad_ibo;
+GLuint fs_quad_vbo;
+GLuint fs_quad_ibo;
 
 
 GLuint btn_vbo;
@@ -510,7 +462,7 @@ GLuint btn_ibo;
 GLuint g_prog_main;
 //GLuint g_program_purp;
 GLuint quad_col_1;
-GLuint bg_cols [TOTAL_SCALES];
+GLuint bg_cols [sizeof_moods_elements];
 
 
 
@@ -547,16 +499,15 @@ rgb part_colors[] = {
 
 // フェードとタイミング
 //int splash_remaining = SPLASH_COUNT_SECS * SEC_IN_US;
-int splash_fading_in = TRUE;
-int splash_fading_out = FALSE;
-int show_splash = TRUE;
+
+
+//int splash_fading_in = TRUE;
+//int splash_fading_out = FALSE;
+//int show_splash = TRUE;
 
 
 
 
-
-
-//int audio_ready; //オーディオファイルを全部揃っていた場合
 
 
 unsigned int frames = 0;
@@ -751,7 +702,7 @@ int gles_init() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
 
@@ -773,11 +724,6 @@ int gles_init() {
 	g_sp_t.position = glGetAttribLocation(g_prog_splash, "vPosition");
 //	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
 
-
-
-
-
-
 	g_sp_btn.pos_x = glGetUniformLocation(g_prog_button, "pos_x");
 	g_sp_btn.pos_y = glGetUniformLocation(g_prog_button, "pos_y");
 	g_sp_btn.tex = glGetAttribLocation(g_prog_button, "atex");
@@ -787,65 +733,20 @@ int gles_init() {
 
 
 
-
-
-
-
-
 	if(!sles_init_called) {
-
-
-
-
-
-
-//		int size;
-//		size = load_bitmap("/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp", (void *)g_bmpbuffer);
-//		LOGD("gles_init", "load_bitmap %d", size);
-//		check_bitmap(&g_tt, (void *)&g_bmpbuffer);
-//		make_texture(&g_tt, 255);
-//		create_gl_texture(&g_tt);
-//		g_tt.alpha = 0.0;
-
-		//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
-
 		int i;
-//		for (i=0; i<sizeof textures / sizeof textures[0]; i++) {
 
 
 //		アドレスの内容を参照 . 代入
 //		*ary_p[n] = var;
 
-
-		LOGD("gles_init", "debug A");
-
-
-
-		for (i=0; i<sizeof_textures_array; i++) {
-
-
-			LOGD("gles_init", "debug B");
-
-
-			texture_file *tf = textures + i;
-
-			LOGD("gles_init", "debug C");
-//			tf->size = load_bitmap(tf->path, (void *)tf->buffer);
-//			check_bitmap(&tf->tex_type, (void *)tf->buffer);
-//			make_texture(&tf->tex_type, 255);
-//			tf->tex_type.alpha = 0.0;
-
+		for (i=0; i<sizeof_textures_elements; i++) {
+			struct texture_file *tf = textures + i;
 			setup_texture(tf, 0.0F);
-
-			LOGD("gles_init", "debug D");
 		}
 
 //		LOGD("gles_init", "sizeof textures: %d", sizeof textures);
 //		LOGD("gles_init", "sizeof textures[0]: %d", sizeof textures[0]);
-
-
-
-
 	}
 
 	LOGD("init_cmds", "init_cmds() finished");
@@ -962,7 +863,7 @@ int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 
 
 
-
+//struct vertex fs_quad[];
 
 
 
@@ -995,44 +896,43 @@ void create_gl_buffers()
 	// データの転送
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(solid_circle_index), solid_circle_index, GL_STATIC_DRAW);
 
+
+
 	// VBOの生成
-	glGenBuffers(1, &bg_quad_vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+	glGenBuffers(1, &fs_quad_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
 	// データの転送
-	glBufferData(GL_ARRAY_BUFFER, sizeof(bg_quad), bg_quad, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fs_quad), fs_quad, GL_STATIC_DRAW);
 
 	// インデックスバッファの作成
-	glGenBuffers(1, &bg_quad_ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+	glGenBuffers(1, &fs_quad_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
 	// データの転送
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(bg_quad_index), bg_quad_index, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(fs_quad_index), fs_quad_index, GL_STATIC_DRAW);
+
+
+
+	//vertex_rgb quad_colors[5][4] = {
+	//		{
+	//			{0.0f, 		0.0f, 		0.0f},
+	//			{0.0f, 		0.0f, 		0.0f},
+	//			{0.95f,	0.0f, 		0.35f},
+	//			{0.25f,	0.0f, 		0.25f}
+	//		},
 
 
 	int i;
-	for (i=0; i<TOTAL_SCALES; i++) {
+	for (i=0; i<sizeof_moods_elements; i++) {
 		glGenBuffers(1, &bg_cols[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
-		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
+//		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof((moods +i)->bg->colors), (moods +i)->bg->colors, GL_STATIC_DRAW);
 	}
 
 	LOGD("create_gl_buffers", "pi_create_buffer() finished");
 }
 
-//void createBuffer() // gles2_py_textureからの関数
-//{
-//	glGenBuffers(1, &g_vbo);
-//	// vertex buffer
-//	glBindBuffer(GL_ARRAY_BUFFER, g_vbo);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(bg_quad), bg_quad, GL_STATIC_DRAW);
-//
-//	// index buffer
-//	glGenBuffers(1, &g_ibo);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_ibo);
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iObj), iObj, GL_STATIC_DRAW);
-//}
-
-
-int create_gl_texture(texture_type *tt)
+int create_gl_texture(struct texture_type *tt)
 {
   glGenTextures(1, &tt->texname);
   glBindTexture(GL_TEXTURE_2D, tt->texname);
@@ -1043,7 +943,6 @@ int create_gl_texture(texture_type *tt)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -1145,48 +1044,50 @@ void calc_frame_rate() {
 }
 
 
-void draw_splash() {
+//void draw_splash() {
+//
+//	glUseProgram(g_prog_splash);
+//
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_2D, textures[0].tt.texname);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+//
+//	glEnableVertexAttribArray(g_sp_t.position);
+//	glVertexAttribPointer(g_sp_t.position, 3, GL_FLOAT, GL_FALSE, 24, (void*)0);
+//
+//	glEnableVertexAttribArray(0);
+//
+//	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
+//	glUniform1f(g_sp_t.bitmap_ratio, textures[0].tt.bitmap_ratio);
+//	glUniform1f(g_sp_t.alpha, textures[0].tt.alpha);
+//
+//	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+//
+//	glBindTexture(GL_TEXTURE_2D,0);
+//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+//
+//}
 
-	glUseProgram(g_prog_splash);
+void draw_full_screen_image(struct full_screen* fs) {
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[1].tt.texname);
-
-	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-
-	glEnableVertexAttribArray(g_sp_t.position);
-	glVertexAttribPointer(g_sp_t.position, 3, GL_FLOAT, GL_FALSE, 24, (void*)0);
-
-	glEnableVertexAttribArray(0);
-
-	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
-	glUniform1f(g_sp_t.bitmap_ratio, textures[0].tt.bitmap_ratio);
-	glUniform1f(g_sp_t.alpha, textures[0].tt.alpha);
-
-	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
-
-	glBindTexture(GL_TEXTURE_2D,0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-}
-
-void draw_full_screen_image(full_screen* fs) {
 
 	glUseProgram(g_prog_splash);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fs->main_texture->tt.texname);
 
-	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
 
 	glEnableVertexAttribArray(g_sp_t.position);
 	glVertexAttribPointer(g_sp_t.position, 3, GL_FLOAT, GL_FALSE, 24, (void*)0);
 	glEnableVertexAttribArray(0);
 	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
 	glUniform1f(g_sp_t.bitmap_ratio, fs->main_texture->tt.bitmap_ratio);
-	glUniform1f(g_sp_t.alpha, fs->main_texture->tt.alpha);
+
+	glUniform1f(g_sp_t.alpha, fs->alpha);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
@@ -1209,30 +1110,29 @@ void draw_button() {
 	int i;
 	for (i = 0; i < sizeof_button_array; i++) {
 
-		button* b = buttons + i;
+		struct button* b = buttons + i;
 
 		btn_anim(b, i);
 
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, b->pressed_texture->tt.texname);
-		//	glUniform2f(g_sp_btn.position, 1.0F, 1.0F);
 		glUniform1f(g_sp_btn.pos_x, b->gl_x);
 		glUniform1f(g_sp_btn.pos_y, b->gl_y);
 		glUniform1f(g_sp_btn.scale, b->scale);
+
+// alpha_pt>0.0のみ
 		glUniform1f(g_sp_btn.alpha, b->alpha_pt);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, b->pressed_texture->tt.texname);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
 
 
-
+		glUniform1f(g_sp_btn.alpha, b->alpha);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, b->main_texture->tt.texname);
 		//	glUniform2f(g_sp_btn.position, 1.0F, 1.0F);
-		glUniform1f(g_sp_btn.pos_x, b->gl_x);
-		glUniform1f(g_sp_btn.pos_y, b->gl_y);
-		glUniform1f(g_sp_btn.scale, b->scale);
-		glUniform1f(g_sp_btn.alpha, b->alpha);
+//		glUniform1f(g_sp_btn.pos_x, b->gl_x);
+//		glUniform1f(g_sp_btn.pos_y, b->gl_y);
+//		glUniform1f(g_sp_btn.scale, b->scale);
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
 
@@ -1252,22 +1152,21 @@ void draw_button() {
 
 void draw_gameplay() {
 
-	glUniform1f(g_sp_m.scale, global_scale);
-	glUniform1f(g_sp_m.alpha, 0.8);
-//	glUniform1f(g_sp_m.uframe, posx);
-	glUniform1f(g_sp_m.rgb[0], 1.0);
-	glUniform1f(g_sp_m.rgb[1], 1.0);
-	glUniform1f(g_sp_m.rgb[2], 1.0);
-
-	glUseProgram(g_prog_main);
-
-	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-	glEnableVertexAttribArray(g_sp_m.aposition);
-
-
-	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
-	draw_all_backgrounds();
+//	glUniform1f(g_sp_m.scale, global_scale);
+//	glUniform1f(g_sp_m.alpha, 0.8);
+//	glUniform1f(g_sp_m.rgb[0], 1.0);
+//	glUniform1f(g_sp_m.rgb[1], 1.0);
+//	glUniform1f(g_sp_m.rgb[2], 1.0);
+//
+//	glUseProgram(g_prog_main);
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
+//	glEnableVertexAttribArray(g_sp_m.aposition);
+//
+//
+//	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+//	draw_all_backgrounds();
 
 	glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
@@ -1285,6 +1184,8 @@ void draw_gameplay() {
 	draw_touch_shapes();
 
 //	draw_touch_no_ammo();
+
+
 
 //		usleep(100000);
 //		usleep(20000);
@@ -1305,62 +1206,25 @@ void draw_frame() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 
-	if (show_splash) {
-
-		texture_type *tt = &textures[0].tt;
-
-		if (splash_fading_in && tt->alpha < 1.0) {
-			tt->alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
-		} else if (splash_fading_in && tt->alpha >= 1.0) {
-			splash_fading_in = FALSE;
-			tt->alpha = 1.0;
-
-		}
-
-		if (splash_fading_out && tt->alpha > 0.0) {
-			tt->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-		} else if (splash_fading_out && tt->alpha <= 0.0) {
-
-			splash_fading_out = FALSE;
-			tt->alpha = 0.0;
-			show_splash = FALSE;
-		}
-		draw_splash();
+	if (screens[0].is_showing) {
+		fse_anim(screens + 1);
+		fse_anim(screens + 0);
 	}
 
 	if(show_gameplay) {
+
+		bg_anim_all();
 		draw_gameplay();
 
-		 if (!splash_fading_out)
+		 if (!screens[0].fading_out)
 			 draw_button();
 	}
 
-//	if(show_help) {
-//
-//
-//		texture_type *tt = &textures[0].tt;
-//
-//		if (splash_fading_in && tt->alpha < 1.0) {
-//			tt->alpha += (float)frame_delta *  0.000000605F;//(float)(SEC_IN_US/25);
-//		} else if (splash_fading_in && tt->alpha >= 1.0) {
-//			splash_fading_in = FALSE;
-//			tt->alpha = 1.0;
-//
-//		}
-//
-//		if (splash_fading_out && tt->alpha > 0.0) {
-//			tt->alpha -= (float)frame_delta *  0.000000205F;//(float)(SEC_IN_US/25);
-//		} else if (splash_fading_out && tt->alpha <= 0.0) {
-//
-//			splash_fading_out = FALSE;
-//			tt->alpha = 0.0;
-//			show_splash = FALSE;
-//		}
-//		draw_splash();
-//
-//
-//
-//	}
+
+
+	if(screens[2].is_showing) {
+		fse_anim(screens + 2);
+	}
 
 	eglSwapBuffers(g_sc.display, g_sc.surface);
 
@@ -1445,19 +1309,7 @@ void step_touch_shape_draw_order() {
 	}
 }
 
-//void step_touch_no_ammo_draw_order() {
-//
-//	int i;
-//	for(i=0;i<TOUCH_SHAPES_MAX;i++) {
-//
-//			if (touch_no_ammo_draw_order[i] < TOUCH_SHAPES_MAX)
-//				touch_no_ammo_draw_order[i]++;
-//			if (touch_no_ammo_draw_order[i] == TOUCH_SHAPES_MAX)
-//				touch_no_ammo_draw_order[i] = 0;
-//
-//			LOGI("step_touch_no_ammo_draw_order", "touch_no_ammo_draw_order[%d]: %d", i, touch_no_ammo_draw_order[i]);
-//	}
-//}
+
 
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -1520,202 +1372,209 @@ void activate_touch_shape(float x, float y, size_t col, float* vel) {
 	pthread_mutex_unlock(&mutex);
 }
 
-//void activate_touch_no_ammo(float x, float y) {
-//
-//	LOGD("activate_touch_no_ammo", "activate_touch_no_ammo");
-//	pthread_mutex_lock(&mutex);
-//	step_touch_no_ammo_draw_order();
-//	touch_shape* ts = touch_no_ammo + (touch_no_ammo_draw_order[TOUCH_SHAPES_MAX -1]);
-//
-//	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
-//	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
-//
-//	ts->rgb[0] = 1.0;
-//	ts->rgb[1] = 0.0;
-//	ts->rgb[2] = 0.0;
-//
-//	ts->alpha = 0.0F; // TODO
-//	ts->scale = 0.4;
-//	ts->alpha_max = 1.0;
-//	ts->fading_in = TRUE;
-//	ts->is_alive = TRUE;
-//
-//	pthread_mutex_unlock(&mutex);
-//}
 
 
-
-float bg_pulse = 0.0F;
-float bg_pulse_dir = 1.0F;
-float test_alpha = 1.0F;
-
-//void draw_background() {
+//void draw_full_screen_image(full_screen* fs) {
 //
-//	bg_pulse += (float)frame_delta * 0.0000001F * bg_pulse_dir;
-//	glUniform1f(g_sp.pos_x, 0.0);
-//	glUniform1f(g_sp.pos_y, 0.0);
+//	glUseProgram(g_prog_splash);// res = init_shaders(&g_prog_splash, v_shdr_splash, f_shdr_splash);
 //
-//	if (bg_pulse_dir == 1.0F && bg_pulse > 1.0) bg_pulse_dir = -1.0F;
-//	if (bg_pulse_dir == -1.0F && bg_pulse < 0.2) bg_pulse_dir = 1.0F;
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_2D, fs->main_texture->tt.texname);
 //
-//	glUniform1f(g_sp.rgb[0], 0.5 * bg_pulse);
-//	glUniform1f(g_sp.rgb[1], 1.0);
-//	glUniform1f(g_sp.rgb[2], 1.0);
+//	glBindBuffer(GL_ARRAY_BUFFER, bg_quad_vbo);
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
 //
-//	glUniform1f(g_sp.alpha, 0.5);
-//	glUniform1f(g_sp.scale, 1.0);
+//	glEnableVertexAttribArray(g_sp_t.position);
+//	glVertexAttribPointer(g_sp_t.position, 3, GL_FLOAT, GL_FALSE, 24, (void*)0);
+//	glEnableVertexAttribArray(0);
+//	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
+//	glUniform1f(g_sp_t.bitmap_ratio, fs->main_texture->tt.bitmap_ratio);
+//
+//	glUniform1f(g_sp_t.alpha, fs->alpha);
 //
 //	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 //
 //}
 
 
-void draw_background_alpha(float a) {
+void draw_background(struct background* bg) {
 
-	bg_pulse += (float)frame_delta * 0.00000021F * bg_pulse_dir;
+//		glUniform1f(g_sp_m.scale, global_scale);
+//		glUniform1f(g_sp_m.alpha, 0.8);
+//		glUniform1f(g_sp_m.rgb[0], 1.0);
+//		glUniform1f(g_sp_m.rgb[1], 1.0);
+//		glUniform1f(g_sp_m.rgb[2], 1.0);
+	glUseProgram(g_prog_main);
+
+	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
+	glEnableVertexAttribArray(g_sp_m.aposition);
+	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bg_cols[selected_mood]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
+	glEnableVertexAttribArray(g_sp_m.atex);
+	glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
 
 	glUniform1f(g_sp_m.pos_x, 0.0);
 	glUniform1f(g_sp_m.pos_y, 0.0);
 
-	if (bg_pulse_dir == 1.0F && bg_pulse > 1.0) bg_pulse_dir = -1.0F;
-	if (bg_pulse_dir == -1.0F && bg_pulse < 0.2) bg_pulse_dir = 1.0F;
-
-	glUniform1f(g_sp_m.rgb[0], 0.5 * bg_pulse);
+	glUniform1f(g_sp_m.rgb[0], 0.5 * bg->pulse);
 	glUniform1f(g_sp_m.rgb[1], 1.0);
 	glUniform1f(g_sp_m.rgb[2], 1.0);
 
-	glUniform1f(g_sp_m.alpha, a);
+	glUniform1f(g_sp_m.alpha, bg->fs->alpha);
 	glUniform1f(g_sp_m.scale, 1.0);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
 }
 
-int count =0;
+//void draw_background_alpha(float a) {
+//
+//	bg_pulse += (float)frame_delta * 0.00000021F * bg_pulse_dir;
+//
+//	glUniform1f(g_sp_m.pos_x, 0.0);
+//	glUniform1f(g_sp_m.pos_y, 0.0);
+//
+//	if (bg_pulse_dir == 1.0F && bg_pulse > 1.0) bg_pulse_dir = -1.0F;
+//	if (bg_pulse_dir == -1.0F && bg_pulse < 0.2) bg_pulse_dir = 1.0F;
+//
+//	glUniform1f(g_sp_m.rgb[0], 0.5 * bg_pulse);
+//	glUniform1f(g_sp_m.rgb[1], 1.0);
+//	glUniform1f(g_sp_m.rgb[2], 1.0);
+//
+//	glUniform1f(g_sp_m.alpha, a);
+//	glUniform1f(g_sp_m.scale, 1.0);
+//
+//	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+//
+//}
 
-void draw_all_backgrounds() {
+//int count =0;
+
+//void draw_all_backgrounds() {
+//
+//
+//	bg_def* bg;
+//	int i = 0;
+//
+////		count++;
+//
+//	for (i=0; i<bgs_size; i++) {
+//
+//		bg = bgs + i;
+//
+////		if (count%20 == 0)
+////		LOGD("draw_all_backgrounds", "i: %d, in: %d, out: %d. bg->alpha: %f", i, bg->fading_in, bg->fading_out, bg->alpha);
+//
+//		if (bg->fading_in) {
+//			bg->alpha += (float)frame_delta * alpha_fade_rate;
+//			if (bg->alpha >= 1.0F) {
+//				bg->fading_in = FALSE;
+//				bg->alpha = 1.0F;
+//			}
+//		}
+//
+//		if (bg->fading_out) {
+//
+////			if (count%20 == 0) {
+////				LOGD("draw_all_backgrounds", "(double)frame_delta * alpha_fade_rate: %f", (float)frame_delta * alpha_fade_rate);
+////				LOGD("draw_all_backgrounds", "(float)frame_delta: %f", (float)frame_delta);
+////				LOGD("draw_all_backgrounds", "alpha_fade_rate: %f", alpha_fade_rate);
+////				LOGD("draw_all_backgrounds", "bg->alpha: %f", bg->alpha);
+////			}
+//			bg->alpha -= (float)frame_delta * alpha_fade_rate;
+//			if (bg->alpha <= 0.0F) {
+//				bg->fading_out = FALSE;
+//				bg->alpha = 0.0F;
+//			}
+//		}
+//
+//		if (bg->alpha > 0.0F) {
+//
+//			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[bg->selected_scale]);
+//			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
+//			glEnableVertexAttribArray(g_sp_m.atex);
+//			glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
+//
+//			draw_background_alpha(bg->alpha);
+//		}
+//	}
+//
+//}
 
 
-	bg_def* bg;
-	int i = 0;
+//void start_xfade_bgs() {
+//
+//	LOGD("start_xfade_bgs", "curr_bg: %d", curr_bg);
+//	bg_def* bg = bgs + curr_bg;
+//	bg->fading_out = TRUE;
+//
+//	if (curr_bg < bgs_size) curr_bg++;
+//	if (curr_bg == bgs_size) curr_bg = 0;
+//
+//	bg = bgs + curr_bg;
+//	bg->selected_scale = selected_scale;
+//	bg->fading_in = TRUE;
+//
+//}
+//
+//int bg_fading() {
+//
+//	int rtn = FALSE;
+//	int i;
+//	for (i=0; i<bgs_size; i++) {
+//	bg_def* bg = bgs + i;
+//
+//		if (bg->fading_in || bg->fading_out) {
+//			rtn = TRUE;
+//		}
+//		if (!bg->fading_in && !bg->fading_out) {
+//			rtn = FALSE;
+//		}
+//	}
+//
+//	LOGD ("bg_fading", "rtn: %d", rtn);
+//	return rtn;
+//}
 
-		count++;
-
-	for (i=0; i<bgs_size; i++) {
-
-//		bg_def* bg = bgs + i;
-		bg = bgs + i;
-
-		if (count%20 == 0)
-		LOGD("draw_all_backgrounds", "i: %d, in: %d, out: %d. bg->alpha: %f", i, bg->fading_in, bg->fading_out, bg->alpha);
-
-		if (bg->fading_in) {
-			bg->alpha += (float)frame_delta * alpha_fade_rate;
-			if (bg->alpha >= 1.0F) {
-				bg->fading_in = FALSE;
-				bg->alpha = 1.0F;
-			}
-		}
-
-		if (bg->fading_out) {
-
-			if (count%20 == 0) {
-				LOGD("draw_all_backgrounds", "(double)frame_delta * alpha_fade_rate: %f", (float)frame_delta * alpha_fade_rate);
-				LOGD("draw_all_backgrounds", "(float)frame_delta: %f", (float)frame_delta);
-				LOGD("draw_all_backgrounds", "alpha_fade_rate: %f", alpha_fade_rate);
-				LOGD("draw_all_backgrounds", "bg->alpha: %f", bg->alpha);
-			}
-			bg->alpha -= (float)frame_delta * alpha_fade_rate;
-			if (bg->alpha <= 0.0F) {
-				bg->fading_out = FALSE;
-				bg->alpha = 0.0F;
-			}
-		}
-
-		if (bg->alpha > 0.0F) {
-
-			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[bg->selected_scale]);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bg_quad_ibo);
-			glEnableVertexAttribArray(g_sp_m.atex);
-			glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
-
-			draw_background_alpha(bg->alpha);
-		}
-	}
-
-}
-
-
-void start_xfade_bgs() {
-
-	LOGD("start_xfade_bgs", "curr_bg: %d", curr_bg);
-	bg_def* bg = bgs + curr_bg;
-	bg->fading_out = TRUE;
-
-	if (curr_bg < bgs_size) curr_bg++;
-	if (curr_bg == bgs_size) curr_bg = 0;
-
-	bg = bgs + curr_bg;
-	bg->selected_scale = selected_scale;
-	bg->fading_in = TRUE;
-
-}
-
-int bg_fading() {
-
-	int rtn = FALSE;
-	int i;
-	for (i=0; i<bgs_size; i++) {
-	bg_def* bg = bgs + i;
-
-		if (bg->fading_in || bg->fading_out) {
-			rtn = TRUE;
-		}
-		if (!bg->fading_in && !bg->fading_out) {
-			rtn = FALSE;
-		}
-	}
-
-	LOGD ("bg_fading", "rtn: %d", rtn);
-	return rtn;
-}
-
-void draw_touch_no_ammo() {
-	int i;
-
-	pthread_mutex_lock(&mutex);
-
-	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
-
-		touch_shape* ts = touch_no_ammo + (touch_no_ammo_draw_order[i]);
-		if (ts->is_alive) {
-
-			glUniform1f(g_sp_m.pos_x, ts->pos_x);
-			glUniform1f(g_sp_m.pos_y, ts->pos_y);
-
-			glUniform1f(g_sp_m.rgb[0], 1.0);
-			glUniform1f(g_sp_m.rgb[1], 0.0);
-			glUniform1f(g_sp_m.rgb[2], 0.0);
-
-			if (ts->fading_in) {
-				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
-				if (ts->alpha >= ts->alpha_max) ts->fading_in = FALSE;
-			}
-
-			if (!ts->fading_in) {
-				ts->alpha -= (float)frame_delta *  0.000002F;//(float)(SEC_IN_US/25);
-				if (ts->alpha <= 0) ts->is_alive = FALSE;
-			}
-
-			glUniform1f(g_sp_m.alpha, ts->alpha);
-			glUniform1f(g_sp_m.scale, ts->scale);
-
-			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
-
-		}
-	}
-	pthread_mutex_unlock(&mutex);
-}
+//void draw_touch_no_ammo() {
+//	int i;
+//
+//	pthread_mutex_lock(&mutex);
+//
+//	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
+//
+//		touch_shape* ts = touch_no_ammo + (touch_no_ammo_draw_order[i]);
+//		if (ts->is_alive) {
+//
+//			glUniform1f(g_sp_m.pos_x, ts->pos_x);
+//			glUniform1f(g_sp_m.pos_y, ts->pos_y);
+//
+//			glUniform1f(g_sp_m.rgb[0], 1.0);
+//			glUniform1f(g_sp_m.rgb[1], 0.0);
+//			glUniform1f(g_sp_m.rgb[2], 0.0);
+//
+//			if (ts->fading_in) {
+//				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
+//				if (ts->alpha >= ts->alpha_max) ts->fading_in = FALSE;
+//			}
+//
+//			if (!ts->fading_in) {
+//				ts->alpha -= (float)frame_delta *  0.000002F;//(float)(SEC_IN_US/25);
+//				if (ts->alpha <= 0) ts->is_alive = FALSE;
+//			}
+//
+//			glUniform1f(g_sp_m.alpha, ts->alpha);
+//			glUniform1f(g_sp_m.scale, ts->scale);
+//
+//			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
+//
+//		}
+//	}
+//	pthread_mutex_unlock(&mutex);
+//}
 
 void draw_touch_ripples() {
 	int i;
@@ -1778,17 +1637,12 @@ void draw_touch_shapes() {
 			glUniform1f(g_sp_m.rgb[1], ts->rgb[1]);
 			glUniform1f(g_sp_m.rgb[2], ts->rgb[2]);
 
-//			ts->scale += (float)frame_delta * 0.0000003F;
-
-
-
 			ts->scale -= (float)frame_delta * 0.0000001F;
 
 			if (ts->fading_in) {
 
 
 				ts->alpha += (float)frame_delta *  0.0000036F;//(float)(SEC_IN_US/25);
-//				ts->alpha += (float)frame_delta *  0.0000016F;//(float)(SEC_IN_US/25);
 				if (ts->alpha >= ts->alpha_max) ts->fading_in = FALSE;
 			}
 

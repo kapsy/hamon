@@ -21,10 +21,10 @@
 #ifndef GFX_BUTN_H_
 #define GFX_BUTN_H_
 
-#include "gfx_gles.h"
+//#include "gfx_gles.h"
 
 #include "hon_type.h"
-//#include "gfx_asst.h"
+#include "gfx/vertex.h"
 
 #define BTN_W 128
 #define BTN_ALPHA_MAX 1.0F
@@ -44,11 +44,15 @@ enum {
 
 };
 
-texture_file;
+//texture_file;
 
-typedef struct {
-	texture_file* main_texture;
-	texture_file* pressed_texture;
+
+struct texture_file;
+struct vec2;
+
+struct button{
+	struct texture_file* main_texture;
+	struct texture_file* pressed_texture;
 	float gl_x, gl_y;
 	float scale;
 	float alpha;
@@ -56,7 +60,7 @@ typedef struct {
 	int pressed_peak;
 
 	// bl: x=0, y=max tr: x=max, y=0
-	vec2 touch_bl, touch_tr;
+	struct vec2 touch_bl, touch_tr;
 	int event_enum;
 
 	int is_touch_anim;
@@ -66,14 +70,14 @@ typedef struct {
 
 
 
-}button;
+};
 
 //extern int show_buttons;
 //extern int btn_fading_in;
 //extern int btn_fading_out;
 
-extern button buttons[];
-extern vertex btn_quad[];
+extern struct button buttons[];
+extern struct vertex btn_quad[];
 extern unsigned short btn_quad_index[];
 
 extern int sizeof_button_array;
@@ -84,6 +88,6 @@ extern int sizeof_btn_quad_index;
 void calc_btn_quad_verts(int bm_w, int bm_h);
 int get_touch_response(float x, float y);
 //void btn_anim(button* b);
-void btn_anim(button* b, int index);
+void btn_anim(struct button* b, int index);
 
 #endif /* GFX_BUTN_H_ */

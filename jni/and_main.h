@@ -8,7 +8,7 @@
 #ifndef AND_MAIN_H_
 #define AND_MAIN_H_
 
-
+//extern int sles_init_called;
 
 //#include <jni.h>
 //#include <errno.h>
@@ -37,7 +37,7 @@
 
 void trigger_note(float x, float y);
 
-
+extern int sles_init_called;
 extern int show_gameplay;
 extern int show_help;
 

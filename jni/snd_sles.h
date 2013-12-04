@@ -6,14 +6,17 @@
 #ifndef SND_SLES_H_
 #define SND_SLES_H_
 
-#include "snd_asst.h"
-#include "snd_scal.h"
+//#include "snd_asst.h"
+//#include "snd_scal.h"
 
 
 // for native audio
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 //void load_all_buffers(AAssetManager* mgr);
+
+
+struct sample_def;
 
 typedef struct {
 	SLObjectItf bqPlayerObject;
@@ -23,7 +26,7 @@ typedef struct {
 	SLBufferQueueState bqstate;
 
 	size_t current_chunk;
-	sample_def* sample;
+	struct sample_def* sample;
 	int is_playing;
 	int timing_test_index;
 
@@ -45,9 +48,12 @@ void create_sl_engine();
 void init_all_voices();
 
 
-int enqueue_seamless_loop(sample_def * samp);
+
+struct sample_def* get_scale_sample(int seg);
+
+int enqueue_seamless_loop(struct sample_def * samp);
 //int enqueue_one_shot(sample_def * samp, float vel);
-int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan);
+int enqueue_one_shot(struct sample_def * s, SLmillibel vol, SLpermille pan);
 
 
 

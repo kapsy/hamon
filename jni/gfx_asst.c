@@ -9,7 +9,7 @@
 
 
 #include <EGL/egl.h>
-#include <GLES/gl.h>
+//#include <GLES/gl.h>
 #include <GLES2/gl2.h>
 
 
@@ -169,12 +169,10 @@ GLuint g_program;
 
 
 
-texture_file textures[] = {
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_001_800x400.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_test_002_960x480.bmp"},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_001_128.bmp"},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_002_128.bmp"},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_A_003_128.bmp"}
+struct texture_file textures[] = {
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_main_001_480x960.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_bg_001_480x960.bmp"},
+
 
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_001_128.bmp"},
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_002_128.bmp"},
@@ -186,10 +184,10 @@ texture_file textures[] = {
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_003_128.bmp"}
 };
 
-int sizeof_textures_array = sizeof textures / sizeof textures[0];
+int sizeof_textures_elements = sizeof textures / sizeof textures[0];
 int sizeof_textures = sizeof textures;
 
-void setup_texture(texture_file *tf, float init_alpha) {
+void setup_texture(struct texture_file *tf, float init_alpha) {
 
 	LOGD("setup_texture", "tf->path: %c", tf->path);
 //	LOGD("setup_texture", "tf->size: %d", tf->path);
@@ -239,9 +237,9 @@ int load_bitmap(char *filename, void *buffer)
 	return -1;
 }
 
-int check_bitmap(texture_type *tt, void* buffer)
+int check_bitmap(struct texture_type *tt, void* buffer)
 {
-	tt->bmpheader = (BITMAPFILEHEADER *)buffer;
+	tt->bmpheader = (struct bitmap_file_header *)buffer;
 	// bmp フォーマットのシグネチャのチェック
 	if (tt->bmpheader->bfType != ('B' | ('M' << 8))) {
 		LOGD("bmpCheck", "(tt->bmpheader->bfType != ('B' | ('M' << 8)))");
@@ -249,7 +247,7 @@ int check_bitmap(texture_type *tt, void* buffer)
 	}
 	tt->BmpSize = tt->bmpheader->bfSize;
 	tt->BmpOffBits = tt->bmpheader->bfOffBits;
-	tt->bmpinfo = (BITMAPINFOHEADER *)(buffer + sizeof(BITMAPFILEHEADER));
+	tt->bmpinfo = (struct bitmap_info_header *)(buffer + sizeof(struct bitmap_file_header));
 
 
 	LOGD("bmpCheck", "(tt->bmpinfo->biSize: %d", tt->bmpinfo->biSize);
@@ -294,7 +292,7 @@ int check_bitmap(texture_type *tt, void* buffer)
 }
 
 
-void make_texture(texture_type *tt, int alpha)
+void make_texture(struct texture_type *tt, int alpha)
 {
 	int color, x, y;
 //	tt->initial_alpha = alpha;

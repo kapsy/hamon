@@ -27,14 +27,20 @@
 //#include <time.h>
 
 
-// kapsys includes
-//#include <android/log.h>;
+
+//#include "game/moods.h"
+
+
 
 #include "snd_sles.h"
-#include "snd_asst.h"
 #include "hon_type.h"
 #include "snd_ctrl.h"
 #include "snd_scal.h"
+#include "snd_asst.h"
+
+
+
+
 
 
 //int PLYCNT = 10;
@@ -117,7 +123,7 @@ int initial_loop = TRUE;
 
 static voice poly_sampler[VOICE_COUNT];
 
-extern sample_def silence_chunk;
+extern struct sample_def silence_chunk;
 
 // aux effect on the output mix, used by the buffer queue player
 static const SLEnvironmentalReverbSettings reverbSettings =
@@ -252,7 +258,7 @@ void looper_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* samp) {
 
 	SLresult result;
 
-	result = (*buffer_queue)->Enqueue(buffer_queue, ((sample_def*)samp)->buffer_data, ((sample_def*)samp)->data_size);
+	result = (*buffer_queue)->Enqueue(buffer_queue, ((struct sample_def*)samp)->buffer_data, ((struct sample_def*)samp)->data_size);
 
 	//result = (*bqPlayerBufferQueue)->GetState(bqPlayerBufferQueue, &bqstate);
 
@@ -447,7 +453,7 @@ void set_voice_vol_zero(voice* v) {
 }
 
 
-int enqueue_seamless_loop(sample_def* s) {
+int enqueue_seamless_loop(struct sample_def* s) {
 
 	SLresult result;
 
@@ -706,10 +712,18 @@ void init_seg_pan_map() {
 
 }
 
+//sample_def* get_scale_sample(int seg) {
+//
+//	int sample = moods->scale->midimap[seg];
+//	sample -= START_NOTE;
+//
+//	return (oneshot_samples + sample);
+//
+//}
 
 
 // 書き直すべき
-int enqueue_one_shot(sample_def * s, SLmillibel vol, SLpermille pan) {
+int enqueue_one_shot(struct sample_def * s, SLmillibel vol, SLpermille pan) {
 
 //	voice* v = get_next_free_voice();
 

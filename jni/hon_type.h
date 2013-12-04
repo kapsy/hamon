@@ -46,11 +46,6 @@
 
 
 
-typedef struct {
 
-	float x;
-	float y;
-
-} vec2;
 
 #endif /* HON_TYPE_H_ */

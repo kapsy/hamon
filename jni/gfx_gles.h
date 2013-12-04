@@ -8,11 +8,17 @@
 #ifndef GFX_INIT_H_
 #define GFX_INIT_H_
 
+//full_screen* fs;
+
+//struct background;
+//struct fullscreen;
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 #include "gfx_asst.h"
-#include "gfx_fuls.h"
+//#include "gfx/fullscreene.h"
+//#include "gfx/background.h"
+#include "hon_type.h"
 
 
 #define TOTAL_PART_COLORS 8
@@ -34,15 +40,15 @@ typedef struct {
 } screen_settings;
 
 
-//struct vertextag;
-typedef struct {
-    GLfloat x, y, z;
-    GLfloat r, g, b;
-} vertex;
-
-typedef struct {
-	GLfloat r, g, b;
-} vertex_rgb;
+////struct vertextag;
+//typedef struct vertex{
+//    GLfloat x, y, z;
+//    GLfloat r, g, b;
+//} vertex;
+//
+//typedef struct vertex_rgb{
+//	GLfloat r, g, b;
+//} vertex_rgb;
 
 
 extern screen_settings  g_sc;
@@ -75,20 +81,11 @@ int bg_fading();
 void get_start_time();
 
 void get_elapsed_time(unsigned long* t);
-
-
 void gles_term_display(screen_settings* e);
+int create_gl_texture(struct texture_type *tt);
 
-
-
-int create_gl_texture(texture_type *tt);
-
-
-//full_screen* fs;
-//void draw_full_screen_image(full_screen* fs);
-
-//void draw_full_screen_image(full_screen* fs);
-void draw_full_screen_image(full_screen* fs);
+void draw_full_screen_image(struct full_screen* fs);
+void draw_background(struct background* bg);
 
 float gl_to_scr(float gl, int is_x);
 

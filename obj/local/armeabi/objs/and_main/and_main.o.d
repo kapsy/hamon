@@ -57,13 +57,13 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h \
- jni/snd_sles.h jni/snd_asst.h jni/snd_scal.h \
+ jni/snd_sles.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
- jni/snd_ctrl.h \
+ jni/snd_scal.h jni/snd_asst.h jni/snd_ctrl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
@@ -75,8 +75,8 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- jni/gfx_asst.h jni/gfx_fuls.h jni/and_main.h jni/hon_type.h \
- jni/gfx_butn.h
+ jni/gfx_asst.h jni/hon_type.h jni/and_main.h jni/gfx_butn.h \
+ jni/gfx/vertex.h jni/gfx/fullscreene.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -196,10 +196,6 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:
 
 jni/snd_sles.h:
 
-jni/snd_asst.h:
-
-jni/snd_scal.h:
-
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h:
@@ -209,6 +205,10 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSL
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h:
+
+jni/snd_scal.h:
+
+jni/snd_asst.h:
 
 jni/snd_ctrl.h:
 
@@ -236,10 +236,12 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplat
 
 jni/gfx_asst.h:
 
-jni/gfx_fuls.h:
+jni/hon_type.h:
 
 jni/and_main.h:
 
-jni/hon_type.h:
-
 jni/gfx_butn.h:
+
+jni/gfx/vertex.h:
+
+jni/gfx/fullscreene.h:

@@ -30,14 +30,14 @@ char* internal_path;
 
 char* string_join(const char* a, const char* b, const char* c);
 
-char* string_join_src(const char* join_a, const char* join_b);
+//char* string_join_src(const char* join_a, const char* join_b);
 //void open_external_file(char* filepath, int samp);
-void open_external_file(sample_def* sample_def);
+void open_external_file(struct sample_def* sample_def);
 void init_silence_chunk();
-void malloc_to_buffer_factor(sample_def* s);
+void malloc_to_buffer_factor(struct sample_def* s);
 
 
-void* file_loader_thread(void* args);
+//void* file_loader_thread(void* args);
 
 //sample_def test[] = {
 //		{"blah", 48, NULL, NULL}
@@ -45,9 +45,9 @@ void* file_loader_thread(void* args);
 //};
 
 
-sample_def silence_chunk = {"no_file_name", 00, NULL, NULL, 0, 0, 1.0F};
+struct sample_def silence_chunk = {"no_file_name", 00, NULL, NULL, 0, 0, 1.0F};
 
-sample_def looping_samples[] = {
+struct sample_def looping_samples[] = {
 
 
 		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001_n22.wav", 48, NULL, NULL, 0, 0, 0.6F},
@@ -69,7 +69,7 @@ sample_def looping_samples[] = {
 //
 //};
 // 今の立場4個だけでいいかも
-sample_def oneshot_samples[] = {
+struct sample_def oneshot_samples[] = {
 //
 //		{"hontouniiioto_heavy_48.wav", 48, NULL, NULL},
 //		{"hontouniiioto_heavy_49.wav", 48, NULL, NULL},
@@ -112,42 +112,6 @@ sample_def oneshot_samples[] = {
 //		string_join: /mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_48.wav
 
 
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_48.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_49.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_50.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_51.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_52.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_53.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_54.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_55.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_56.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_57.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_58.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_59.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_60.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_61.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_62.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_63.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_64.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_65.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_66.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_67.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_68.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_69.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_70.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_71.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_72.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_73.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_74.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_75.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_76.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_77.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_78.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_79.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_80.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_81.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_82.wav", 48, NULL, NULL},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_83.wav", 48, NULL, NULL}
 
 
 		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_48_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
@@ -188,44 +152,6 @@ sample_def oneshot_samples[] = {
 		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/hontouniiioto_heavy_83_n22.wav", 48, NULL, NULL, 0, 0, 1.0F}
 
 
-
-
-/*		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_48.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_49.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_50.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_51.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_52.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_53.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_54.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_55.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_56.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_57.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_58.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_59.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_60.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_61.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_62.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_63.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_64.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_65.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_66.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_67.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_68.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_69.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_70.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_71.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_72.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_73.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_74.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_75.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_76.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_77.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_78.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_79.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_80.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_81.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_82.wav", 48, NULL, NULL},
-		{"/mnt/sdcard/hontouniiioto/hontouniiioto_heavy_83.wav", 48, NULL, NULL}*/
 
 };
 
@@ -320,7 +246,7 @@ void load_all_assets(AAssetManager* mgr) {
 
 void init_silence_chunk() {
 
-	sample_def* s = &silence_chunk;
+	struct sample_def* s = &silence_chunk;
 
 	s->data_size = BUFFER_SIZE;
 
@@ -353,7 +279,7 @@ char* string_join(const char* a, const char* b, const char* c) {
 
 // so these are copies of the pointer not the pointer itself, just like any other argument
 // 復讐しなきゃ・今の立場って言えば、OBB方式のファイルは一番と思う
-void open_external_file(sample_def* s) {
+void open_external_file(struct sample_def* s) {
 
 	LOGD("open_external_file", "open_external_file(sample_def* s) called");
 
@@ -404,7 +330,7 @@ void open_external_file(sample_def* s) {
 
 }
 
-void malloc_to_buffer_factor(sample_def* s) {
+void malloc_to_buffer_factor(struct sample_def* s) {
 
 	size_t buffer_over = s->data_size % BUFFER_SIZE;
 

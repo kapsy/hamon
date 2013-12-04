@@ -27,8 +27,8 @@
 #include "and_main.h"
 #include "hon_type.h"
 #include "gfx_butn.h"
-
-
+//#include "gfx_fuls.h"
+#include "gfx/fullscreene.h"
 
 
 #include "and_main.h"
@@ -75,8 +75,8 @@ int show_help = FALSE;
 int wake_from_paused = FALSE;
 
 
-extern int splash_fading_in;
-extern int splash_fading_out;
+//extern int splash_fading_in;
+//extern int splash_fading_out;
 
 //extern int files_loading;
 
@@ -195,7 +195,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 
-		if (show_gameplay && !splash_fading_out) {
+		if (show_gameplay && !screens[0].fading_out) {
 
 
 			int p;
@@ -298,6 +298,8 @@ void touch_branching(float x, float y) {
 	case TOUCH_EVENT_BUTTON_2:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_2");
 
+		screens[2].is_showing = TRUE;
+		screens[2].fading_in = TRUE;
 
 //		show_help = TRUE;
 //		splash_fading_in = TRUE;
@@ -824,7 +826,7 @@ void android_main(struct android_app* state) {
 
 
 
-			if (!sles_init_called && !splash_fading_in && elapsed_time > (1 * SEC_IN_US)) {
+			if (!sles_init_called && !screens[0].fading_in&& elapsed_time > (1 * SEC_IN_US)) {
 
 
 
@@ -843,7 +845,10 @@ void android_main(struct android_app* state) {
 			    LOGD("android_main", "elapsed_time: %d", elapsed_time);
 
 				sles_init_finished = FALSE;
-				splash_fading_out = TRUE;
+
+
+				screens[0].fading_out = TRUE;
+//				splash_fading_out = TRUE;
 				show_gameplay = TRUE;
 
 			}
