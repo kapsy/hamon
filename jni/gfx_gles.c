@@ -25,24 +25,27 @@
 
 
 
-
+#include "gfx/vertex.h"
 
 
 #include "and_main.h"
 #include "gfx_gles.h"
 
-
 #include "gfx_butn.h"
-#include "gfx/fullscreene.h"
 
+
+
+#include "gfx/fullscreene.h"
+//
 #include "gfx/background.h"
 #include "game/moods.h"
 
+//
+//struct background;
+//struct fullscreene;
 
 
-
-
-
+//struct vertex;
 
 
 

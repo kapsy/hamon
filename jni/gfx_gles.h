@@ -10,14 +10,12 @@
 
 //full_screen* fs;
 
-//struct background;
-//struct fullscreen;
+struct background;
+struct full_screen;
 
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 #include "gfx_asst.h"
-//#include "gfx/fullscreene.h"
-//#include "gfx/background.h"
 #include "hon_type.h"
 
 

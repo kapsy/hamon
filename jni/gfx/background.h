@@ -40,7 +40,7 @@
 
 
 
-struct fullscreen;
+struct full_screen;
 struct vertex_rgb;
 
 
@@ -57,7 +57,7 @@ struct background {
 
 };
 
-extern struct background backgrounds[];
+//extern struct background backgrounds[];
 //extern int curr_bg;
 extern int sizeof_backgrounds_elements; // ”z—ñ‚ÌŒÂ‘Ì‚Ì”
 //extern int selected_scale;

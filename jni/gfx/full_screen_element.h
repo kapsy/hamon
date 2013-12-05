@@ -1,29 +1,24 @@
 /*
- * gfx_pics.h
+ * full_screen_element.h
  *
- *  Created on: 2013/12/02
+ *  Created on: 2013/12/05
  *      Author: Michael
  */
 
-#ifndef FULLSCREENE_H_
-#define FULLSCREENE_H_
-
-#include "gfx/vertex.h"
+#ifndef FULL_SCREEN_ELEMENT_H_
+#define FULL_SCREEN_ELEMENT_H_
 
 #define SPLASH_FADE_RATE (0.4F/(float)SEC_IN_US)
 #define HELP_FADE_RATE (0.4F/(float)SEC_IN_US)
-#include <GLES/gl.h>
+#define BG_FADE_RATE (0.11F/(float)SEC_IN_US)
+#define BG_PULSE_FADE_RATE (0.21F/(float)SEC_IN_US)
 
 
-//struct vertex{
-//    GLfloat x, y, z;
-//    GLfloat r, g, b;
-//};
+#include "gfx/vertex.h"
 
 struct texture_file;
 
-// 全画面の絵を定義するため（例：スプラッシュ）
-struct full_screen {
+struct full_screen_element {
 
 	char* title;
 	struct texture_file* main_texture;
@@ -36,9 +31,30 @@ struct full_screen {
 };
 
 
+struct background {
+
+	struct full_screen* fs;
+
+	struct vertex_rgb colors[4];
+
+	float pulse;
+	float pulse_size;
+	float pulse_dir; // 正弦波のほうがいいのかも
+//	int selected_scale;
+
+};
+
+
+
+extern int sizeof_backgrounds_elements; // 配列の個体の数
+
+
+
+
 extern struct vertex fs_quad[];
 extern unsigned short fs_quad_index[];
 extern struct full_screen screens[];
+
 
 extern int sizeof_fs_quad_elements;
 extern int sizeof_fs_quad;
@@ -47,10 +63,15 @@ extern int sizeof_fs_quad_index;
 extern int sizeof_screens_array;
 extern int sizeof_screens;
 
+
 void fse_anim(struct full_screen* fs);
 void fse_alpha_anim(struct full_screen* fs);
 int fse_fading(struct full_screen* fs);
 
 
+void bg_anim_all();
+void bg_pulse(struct background* bg);
+void bg_xfade();
+int bgs_fading();
 
-#endif /* GFX_PICS_H_ */
+#endif /* FULL_SCREEN_ELEMENT_H_ */

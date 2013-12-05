@@ -60,7 +60,7 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- jni/gfx_asst.h jni/gfx/fullscreene.h jni/gfx/background.h
+ jni/gfx_asst.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -193,7 +193,3 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
 
 jni/gfx_asst.h:
-
-jni/gfx/fullscreene.h:
-
-jni/gfx/background.h:

@@ -23,11 +23,18 @@
 #include "snd_scal.h"
 #include "snd_asst.h"
 #include "snd_ctrl.h"
+
+
+
 #include "gfx_gles.h"
 #include "and_main.h"
 #include "hon_type.h"
-#include "gfx_butn.h"
-//#include "gfx_fuls.h"
+
+
+
+
+
+//#include "gfx_butn.h"
 #include "gfx/fullscreene.h"
 
 

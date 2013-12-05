@@ -62,13 +62,14 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
+ jni/gfx/vertex.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
  jni/and_main.h jni/gfx_gles.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- jni/gfx_asst.h jni/gfx/fullscreene.h jni/gfx/background.h jni/hon_type.h \
- jni/gfx_butn.h jni/gfx/vertex.h jni/game/moods.h
+ jni/gfx_asst.h jni/hon_type.h jni/gfx_butn.h jni/gfx/fullscreene.h \
+ jni/gfx/vertex.h jni/gfx/background.h jni/game/moods.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -196,6 +197,12 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:
 
+jni/gfx/vertex.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+
 jni/and_main.h:
 
 jni/gfx_gles.h:
@@ -204,20 +211,16 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
-
 jni/gfx_asst.h:
-
-jni/gfx/fullscreene.h:
-
-jni/gfx/background.h:
 
 jni/hon_type.h:
 
 jni/gfx_butn.h:
 
+jni/gfx/fullscreene.h:
+
 jni/gfx/vertex.h:
+
+jni/gfx/background.h:
 
 jni/game/moods.h:

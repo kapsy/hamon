@@ -75,8 +75,8 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- jni/gfx_asst.h jni/hon_type.h jni/and_main.h jni/gfx_butn.h \
- jni/gfx/vertex.h jni/gfx/fullscreene.h
+ jni/gfx_asst.h jni/hon_type.h jni/and_main.h jni/gfx/fullscreene.h \
+ jni/gfx/vertex.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -240,8 +240,6 @@ jni/hon_type.h:
 
 jni/and_main.h:
 
-jni/gfx_butn.h:
+jni/gfx/fullscreene.h:
 
 jni/gfx/vertex.h:
-
-jni/gfx/fullscreene.h:
