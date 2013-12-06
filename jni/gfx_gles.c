@@ -49,8 +49,8 @@
 //#define TOUCH_SHAPES_TTL 200.0F //必要ないよ。アルファでやるなら十分
 
 #define PI 3.14159265358979
-//#define CIRCLE_SEGMENTS 24
-#define CIRCLE_SEGMENTS 6
+#define CIRCLE_SEGMENTS 24
+//#define CIRCLE_SEGMENTS 6
 
 
 #define SPLASH_COUNT_SECS 10
@@ -1119,7 +1119,7 @@ void draw_gameplay() {
 
 
 
-//	draw_touch_ripples();
+	draw_touch_ripples();
 	draw_touch_shapes();
 
 

@@ -98,7 +98,7 @@ void bg_anim_all() {
 		struct background* bg = (moods + i)->bg;
 		bg_pulse(bg);
 		fse_alpha_anim(bg->fs);
-		draw_background(bg);
+//		draw_background(bg);
 	}
 }
 
