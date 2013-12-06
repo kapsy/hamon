@@ -14,6 +14,10 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 
+
+#include <android/log.h>
+#include <time.h>
+
 #include <unistd.h>  // sleep()‚ð’è‹`
 #include <pthread.h>
 

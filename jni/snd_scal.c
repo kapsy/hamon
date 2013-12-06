@@ -6,13 +6,15 @@
  */
 
 // ‰¹’²‚Ìî•ñ‚ğ•û‘¹‚·‚é‚½‚ß
-
-//#include "snd_asst.h"
+#include <android/asset_manager.h>
+#include <android/storage_manager.h>
 //#include "snd_sles.h"
 //#include <android/log.h>
 //
 //#include "snd_ctrl.h"
-//#include "snd_scal.h"
+#include "snd_asst.h"
+#include "snd_scal.h"
+#include "game/moods.h"
 //#include "hon_type.h"
 //C2-B4
 //48 - 83
@@ -92,9 +94,9 @@
 
 // ‚±‚ÌŠÖ”‚Í•K—v‚È‚¢‚©‚à
 // ‰Šú‰»‚ğ‚·‚é‚½‚ß‚¾‚¯‚ÌŠÖ”
-//void start_loop() {
-//	int success = enqueue_seamless_loop(looping_samples + selected_scale);
-//}
+void start_loop() {
+	int success = enqueue_seamless_loop(looping_samples + selected_mood);
+}
 
 //void play_note(int segment, float vel) {
 //

@@ -4,23 +4,26 @@
  *  Created on: 2013/12/05
  *      Author: Michael
  */
-
+#include <android/log.h>
+#include <time.h>
 
 #include "gfx/full_screen_element.h"
 #include "hon_type.h"
+#include "gfx_asst.h"
+#include "gfx_gles.h"
+#include "game/moods.h"
 
+//struct vertex fs_quad[] = {
+//	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+//	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+//	{1.0f, 		1.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f},
+//	{-1.0f, 	1.0f, 		0.0f, 		0.0f, 		0.0f,		0.0f},
+//};
+//unsigned short fs_quad_index[] = {
+//  0, 1, 3, 2
+//};
 
-struct vertex fs_quad[] = {
-	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{1.0f, 		1.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{-1.0f, 	1.0f, 		0.0f, 		0.0f, 		0.0f,		0.0f},
-};
-unsigned short fs_quad_index[] = {
-  0, 1, 3, 2
-};
-
-struct full_screen screens[] = {
+struct full_screen_element screens[] = {
 
 		 {"splash", textures + 0, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE },
 		 {"splash_bg", textures + 1, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE },
@@ -28,23 +31,23 @@ struct full_screen screens[] = {
 
 };
 
-int sizeof_fs_quad_elements = sizeof fs_quad/sizeof fs_quad[0];
-int sizeof_fs_quad = sizeof fs_quad;
-
-int sizeof_fs_quad_index_elements = sizeof fs_quad_index/sizeof fs_quad_index[0];
-int sizeof_fs_quad_index = sizeof fs_quad_index;
+//int sizeof_fs_quad_elements = sizeof fs_quad/sizeof fs_quad[0];
+//int sizeof_fs_quad = sizeof fs_quad;
+//
+//int sizeof_fs_quad_index_elements = sizeof fs_quad_index/sizeof fs_quad_index[0];
+//int sizeof_fs_quad_index = sizeof fs_quad_index;
 
 int sizeof_screens_elements = sizeof screens/sizeof screens[0];
 int sizeof_screens = sizeof screens;
 
-void fse_anim(struct full_screen* fs) {
+void fse_anim(struct full_screen_element* fs) {
 
 	fse_alpha_anim(fs);
 	draw_full_screen_image(fs);
 }
 
 
-void fse_alpha_anim(struct full_screen* fs) {
+void fse_alpha_anim(struct full_screen_element* fs) {
 
 	if(fs->is_showing) {
 
@@ -67,7 +70,7 @@ void fse_alpha_anim(struct full_screen* fs) {
 }
 
 
-int fse_fading(struct full_screen* fs) {
+int fse_fading(struct full_screen_element* fs) {
 	int r = FALSE;
 	if (fs->is_showing) {
 		if (fs->fading_in || fs->fading_out) r = TRUE;
@@ -92,8 +95,8 @@ void bg_anim_all() {
 void bg_pulse(struct background* bg) {
 
 	bg->pulse += (float)frame_delta * BG_PULSE_FADE_RATE * bg->pulse_dir;
-	if (bg->pulse_dir == 1.0F && bg_pulse > 1.0) bg->pulse_dir = -1.0F;
-	if (bg->pulse_dir == -1.0F && bg_pulse < 0.2) bg->pulse_dir = 1.0F;
+	if (bg->pulse_dir == 1.0F &&  bg->pulse_dir > 1.0) bg->pulse_dir = -1.0F;
+	if (bg->pulse_dir == -1.0F &&  bg->pulse_dir < 0.2) bg->pulse_dir = 1.0F;
 
 }
 
@@ -120,7 +123,7 @@ int bgs_fading() {
 	int i;
 	for (i=0; i<sizeof_moods_elements; i++) {
 
-		r = is_screen_fading((moods + i)->bg->fs);
+		r = fse_fading((moods + i)->bg->fs);
 	}
 
 	return r;

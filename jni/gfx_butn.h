@@ -23,8 +23,8 @@
 
 //#include "gfx_gles.h"
 
-#include "hon_type.h"
-#include "gfx/vertex.h"
+//#include "hon_type.h"
+//#include "gfx/vertex.h"
 
 #define BTN_W 128
 #define BTN_ALPHA_MAX 1.0F
@@ -45,7 +45,7 @@ enum {
 };
 
 //texture_file;
-
+//struct vertex;
 
 struct texture_file;
 struct vec2;

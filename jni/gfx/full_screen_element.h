@@ -14,7 +14,6 @@
 #define BG_PULSE_FADE_RATE (0.21F/(float)SEC_IN_US)
 
 
-#include "gfx/vertex.h"
 
 struct texture_file;
 
@@ -29,13 +28,16 @@ struct full_screen_element {
 	int is_showing;
 
 };
+struct vertex_rgb;
+
 
 
 struct background {
 
-	struct full_screen* fs;
+	struct full_screen_element* fs;
 
-	struct vertex_rgb colors[4];
+//	struct vertex_rgb* colors[4];
+	struct vertex_rgb* colors[4];
 
 	float pulse;
 	float pulse_size;
@@ -51,22 +53,26 @@ extern int sizeof_backgrounds_elements; // îzóÒÇÃå¬ëÃÇÃêî
 
 
 
-extern struct vertex fs_quad[];
-extern unsigned short fs_quad_index[];
-extern struct full_screen screens[];
+//extern struct vertex fs_quad[];
+//extern unsigned short fs_quad_index[];
 
 
-extern int sizeof_fs_quad_elements;
-extern int sizeof_fs_quad;
-extern int sizeof_fs_quad_index_elements;
-extern int sizeof_fs_quad_index;
+extern struct full_screen_element screens[];
+
+
+//extern int sizeof_fs_quad_elements;
+//extern int sizeof_fs_quad;
+//extern int sizeof_fs_quad_index_elements;
+//extern int sizeof_fs_quad_index;
+
+
 extern int sizeof_screens_array;
 extern int sizeof_screens;
 
 
-void fse_anim(struct full_screen* fs);
-void fse_alpha_anim(struct full_screen* fs);
-int fse_fading(struct full_screen* fs);
+void fse_anim(struct full_screen_element* fs);
+void fse_alpha_anim(struct full_screen_element* fs);
+int fse_fading(struct full_screen_element* fs);
 
 
 void bg_anim_all();

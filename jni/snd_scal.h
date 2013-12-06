@@ -62,7 +62,7 @@ struct scale {
 
 
 
-//void start_loop();
+void start_loop();
 //int cycle_scale();
 
 #endif /* SCALES_H_ */

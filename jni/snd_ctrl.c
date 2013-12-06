@@ -13,13 +13,19 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "snd_ctrl.h"
-#include "snd_asst.h"
-#include "snd_sles.h"
+//#include "snd_ctrl.h"
+//#include "snd_asst.h"
+//#include "snd_sles.h"
 #include "snd_scal.h"
 #include "hon_type.h"
-#include "and_main.h"
-#include "gfx_gles.h"
+
+#include "game/moods.h"
+//#include "and_main.h"
+//#include "gfx_gles.h"
+
+
+
+#include <SLES/OpenSLES.h>
 
 
 #define AMMO_INCREASE_RATE 5//50 // 個のticsを過ごすと、AMMOが1に増やす
@@ -46,9 +52,9 @@
 #define TOTAL_NOTES_PER_PART 32
 #define TOTAL_PARTS 7
 
-#define NS_IN_SEC 1000000000
+//#define NS_IN_SEC 1000000000
 
-
+#define TOTAL_PART_COLORS 8
 
 typedef struct {
 	float pos_x;
@@ -188,6 +194,7 @@ void auto_play();
 void init_part_colors(part* p);
 size_t next_color();
 
+size_t current_part_color();
 //void set_part_colors(part* p);
 //void normalize_part_colors(part* p);
 
@@ -206,7 +213,7 @@ int obtain_random(int modulus) {
 
 
     return (rand() % modulus);
-};
+}
 
 void init_control_loop() {
 
@@ -351,7 +358,7 @@ void record_note(float x, float y, int seg, float vel){
 
 	p->note_info[n].tic = tic;
 
-	LOGD("record_note", "current_part_color %d", current_part_color	);
+	LOGD("record_note", "current_part_color %d", current_part_color());
 	LOGD("record_note", "current_rec_part %d, current_tic %d, current_note %d, color %d",
 			current_rec_part,p->current_tic, p->current_note, p->color);
 
@@ -521,7 +528,7 @@ void auto_play() {
 
 
 		if (chord_count == chord_interval) {
-			int success = cycle_scale();
+			int success = cycle_mood();
 			chord_count = 0;
 			chord_interval = MIN_CHORD_TIME + obtain_random(3000);
 			LOGD("auto_play", "chord_interval %d", chord_interval);
@@ -546,7 +553,7 @@ void init_all_parts() {
 	current_rec_part = 0;
 
 
-	total_tic_counter = 0;
+	int total_tic_counter = 0;
 
 	int i;
 	int total_parts = TOTAL_PARTS;
@@ -721,8 +728,19 @@ void count_part_ttl(part* p) {
 
 }
 
-// 有るパートのノートのvel全部増やす・減るのための関数
-void factor_part_vel(part* p, float factor) {
+//// 有るパートのノートのvel全部増やす・減るのための関数
+//void factor_part_vel(part* p, float factor) {
+//	int j;
+//	int total_notes = p->current_note;
+//
+//	for (j = 0; j < total_notes; j++) {
+//					note* n = (p->note_info) + j;
+//				 	n->vel = n->vel*factor;
+//	}
+//}
+
+
+void factor_part_vel(part* p, float factor){
 	int j;
 	int total_notes = p->current_note;
 
@@ -731,8 +749,6 @@ void factor_part_vel(part* p, float factor) {
 				 	n->vel = n->vel*factor;
 	}
 }
-
-
 
 
 //void shutdown_audio_delay() {

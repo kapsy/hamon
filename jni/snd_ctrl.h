@@ -11,9 +11,9 @@
 #define SND_CTRL_H_
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <time.h>
 
 
 

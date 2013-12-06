@@ -35,5 +35,7 @@ extern int selected_mood;
 extern int sizeof_moods_elements;
 
 
+int init_mood();
+int cycle_mood();
 
 #endif /* MOODS_H_ */

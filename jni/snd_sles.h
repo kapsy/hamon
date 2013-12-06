@@ -11,8 +11,8 @@
 
 
 // for native audio
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
+//#include <SLES/OpenSLES.h>
+//#include <SLES/OpenSLES_Android.h>
 //void load_all_buffers(AAssetManager* mgr);
 
 
@@ -76,6 +76,6 @@ void pause_all_voices();
 
 
 
-int total_tic_counter;
+extern int total_tic_counter;
 
 #endif /* SND_SLES_H_ */

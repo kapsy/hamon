@@ -8,20 +8,17 @@
 #ifndef GFX_INIT_H_
 #define GFX_INIT_H_
 
-//full_screen* fs;
-
-struct background;
-struct full_screen;
-
 #include <EGL/egl.h>
 #include <GLES/gl.h>
-#include "gfx_asst.h"
-#include "hon_type.h"
 
 
-#define TOTAL_PART_COLORS 8
+struct texture_type;
 
 
+//#define TOTAL_PART_COLORS 8
+
+struct full_screen_element;
+struct background;
 
 typedef struct {
 	EGLNativeWindowType nativeWin;
@@ -73,7 +70,7 @@ void kill_all_touch_shapes();
 
 //size_t cycle_color();
 
-void start_xfade_bgs();
+//void start_xfade_bgs();
 int bg_fading();
 
 void get_start_time();
@@ -82,7 +79,7 @@ void get_elapsed_time(unsigned long* t);
 void gles_term_display(screen_settings* e);
 int create_gl_texture(struct texture_type *tt);
 
-void draw_full_screen_image(struct full_screen* fs);
+void draw_full_screen_image(struct full_screen_element* fs);
 void draw_background(struct background* bg);
 
 float gl_to_scr(float gl, int is_x);

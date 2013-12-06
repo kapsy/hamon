@@ -5,6 +5,11 @@
  *      Author: Michael
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
 #include <jni.h>
 #include <errno.h>
 
@@ -17,28 +22,29 @@
 #include <android/storage_manager.h>
 #include <android/window.h>
 
-#include <math.h>
-#include <time.h>
-#include "snd_sles.h"
-#include "snd_scal.h"
-#include "snd_asst.h"
-#include "snd_ctrl.h"
+
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
+#include <EGL/egl.h>
+#include <GLES/gl.h>
 
 
-
-#include "gfx_gles.h"
 #include "and_main.h"
 #include "hon_type.h"
+#include "snd_sles.h"
+#include "snd_asst.h"
+
+#include "snd_sles.h"
+#include "game/moods.h"
+#include "snd_scal.h"
+#include "snd_ctrl.h"
+#include "gfx/vertex.h"
+#include "gfx_gles.h"
+#include "gfx/full_screen_element.h"
+#include "gfx_butn.h"
 
 
 
-
-
-//#include "gfx_butn.h"
-#include "gfx/fullscreene.h"
-
-
-#include "and_main.h"
 /**
  * Our saved state data.
  */
@@ -296,7 +302,7 @@ void touch_branching(float x, float y) {
 	case TOUCH_EVENT_BUTTON_0:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_0");
 
-		int s = cycle_scale();
+		int s = cycle_mood();
 		break;
 	case TOUCH_EVENT_BUTTON_1:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_1");

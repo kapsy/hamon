@@ -8,18 +8,27 @@
 #ifndef VERTEX_H_
 #define VERTEX_H_
 
-#include <GLES/gl.h>
+//#include <GLES/gl.h>
+//
+//
+//struct vertex{
+//    GLfloat x, y, z;
+//    GLfloat r, g, b;
+//};
+//
+//struct vertex_rgb{
+//	GLfloat r, g, b;
+//};
 
 
 struct vertex{
-    GLfloat x, y, z;
-    GLfloat r, g, b;
+    float x, y, z;
+    float r, g, b;
 };
 
 struct vertex_rgb{
-	GLfloat r, g, b;
+	float r, g, b;
 };
-
 
 struct vec2{
 

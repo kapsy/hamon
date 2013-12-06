@@ -9,19 +9,16 @@
 
 
 #include <EGL/egl.h>
-//#include <GLES/gl.h>
+#include <GLES/gl.h>
 #include <GLES2/gl2.h>
 
-
-#include <android/bitmap.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include <android/bitmap.h>
+#include <android/log.h>
 
 #include "hon_type.h"
-
-
 #include "gfx_asst.h"
 
 

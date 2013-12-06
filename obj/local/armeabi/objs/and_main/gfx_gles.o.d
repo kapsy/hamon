@@ -1,11 +1,17 @@
 obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdint.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/_types.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/_types.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h \
  C:/Android/android-ndk-r8d/sources/android/native_app_glue/android_native_app_glue.h \
@@ -50,8 +56,6 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_activity.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h \
@@ -62,20 +66,15 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
- jni/gfx/vertex.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- jni/and_main.h jni/gfx_gles.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
- jni/gfx_asst.h jni/hon_type.h jni/gfx_butn.h jni/gfx/fullscreene.h \
- jni/gfx/vertex.h jni/gfx/background.h jni/game/moods.h
+ jni/gfx/vertex.h jni/hon_type.h jni/gfx/full_screen_element.h \
+ jni/gfx/full_screen_quad.h jni/and_main.h jni/gfx_gles.h jni/gfx_asst.h \
+ jni/gfx_butn.h jni/game/moods.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h:
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h:
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
 
@@ -84,6 +83,18 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdint.h:
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/_types.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/_types.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2platform.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES2/gl2ext.h:
 
@@ -173,10 +184,6 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/inp
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h:
-
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h:
@@ -199,28 +206,18 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:
 
 jni/gfx/vertex.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+jni/hon_type.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+jni/gfx/full_screen_element.h:
+
+jni/gfx/full_screen_quad.h:
 
 jni/and_main.h:
 
 jni/gfx_gles.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
-
 jni/gfx_asst.h:
 
-jni/hon_type.h:
-
 jni/gfx_butn.h:
-
-jni/gfx/fullscreene.h:
-
-jni/gfx/vertex.h:
-
-jni/gfx/background.h:
 
 jni/game/moods.h:

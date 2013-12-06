@@ -25,8 +25,8 @@ LOCAL_SRC_FILES += snd_ctrl.c
 LOCAL_SRC_FILES += gfx_gles.c
 LOCAL_SRC_FILES += gfx_asst.c
 LOCAL_SRC_FILES += gfx_butn.c
-LOCAL_SRC_FILES += gfx/fullscreene.c
-LOCAL_SRC_FILES += gfx/background.c
+LOCAL_SRC_FILES += gfx/full_screen_quad.c
+LOCAL_SRC_FILES += gfx/full_screen_element.c
 LOCAL_SRC_FILES += game/moods.c
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM -lGLESv2
 # for native audio

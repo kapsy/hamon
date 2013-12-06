@@ -7,7 +7,9 @@
  */
 // OpenSL ES management
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <assert.h>
 #include <jni.h>
 #include <string.h>
@@ -25,7 +27,8 @@
 #include <unistd.h>  // sleep()を定義
 #include <pthread.h>
 //#include <time.h>
-
+#include <android/log.h>
+#include <time.h>
 
 
 //#include "game/moods.h"

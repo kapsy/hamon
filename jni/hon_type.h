@@ -8,8 +8,8 @@
 #ifndef HON_TYPE_H_
 #define HON_TYPE_H_
 
-#include <android/log.h>
-#include <time.h>
+//#include <android/log.h>
+//#include <time.h>
 
 #define TRUE 1
 #define FALSE 0

@@ -45,11 +45,11 @@ obj/local/armeabi/objs/and_main/snd_asst.o: jni/snd_asst.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/asset_manager.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/asset_manager_jni.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/time.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h \
- jni/snd_asst.h jni/hon_type.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h
+ jni/snd_asst.h jni/hon_type.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/assert.h:
 
@@ -143,14 +143,14 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/ass
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/asset_manager_jni.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h:
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/time.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h:
 
 jni/snd_asst.h:
 
 jni/hon_type.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:

@@ -5,8 +5,20 @@
  *      Author: Michael
  */
 
+#include <android/log.h>
+#include <time.h>
 
+//#include <GLES/gl.h>
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+
+
+#include "gfx_gles.h"
+#include "gfx/vertex.h"
+#include "hon_type.h"
+#include "gfx_asst.h"
 #include "gfx_butn.h"
+
 
 
 //int show_buttons = FALSE;
@@ -14,7 +26,8 @@
 //int btn_fading_out = FALSE;
 
 
-button buttons[] = {
+
+struct button buttons[] = {
 		{textures + 2, textures + 5,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
@@ -29,7 +42,7 @@ button buttons[] = {
 				TOUCH_EVENT_BUTTON_2, FALSE, FALSE, FALSE, BTN_FADE_RATE}
 };
 
-vertex btn_quad[] = {
+struct vertex btn_quad[] = {
 	{0.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f}, //0, 0
 	{0.25f, 	0.0f, 		0.0f, 		1.0f, 		0.0f, 		0.0f}, //0,1
 	{0.25f, 	0.25f, 	0.0f, 		1.0f,		1.0f, 		0.0f},
@@ -66,7 +79,7 @@ void calc_btn_quad_verts(int bm_w, int bm_h) {
 	int i;
 
 	for (i = 0; i < sizeof_button_array; i++) {
-		button* b = buttons + i;
+		struct button* b = buttons + i;
 
 		b->gl_x = -1.0F + (i * gl_w);
 
@@ -93,7 +106,7 @@ int get_touch_response(float x, float y) {
 
 	int i;
 	for (i = 0; i < sizeof_button_array; i++) {
-		button* b = buttons + i;
+		struct button* b = buttons + i;
 
 		LOGD("get_touch_response", "b->touch_bl.x: %f, b->touch_bl.y: %f", b->touch_bl.x, b->touch_bl.y);
 		LOGD("get_touch_response", "b->touch_tr.x: %f, b->touch_tr.y: %f", b->touch_tr.x, b->touch_tr.y);
@@ -123,7 +136,7 @@ int get_touch_response(float x, float y) {
 }
 
 
-void btn_anim(button* b, int i) {
+void btn_anim(struct button* b, int i) {
 //	LOGD("btn_anim", "btn_anim called");
 
 	if (b->fading_in) {
@@ -180,7 +193,7 @@ void set_btn_fading(int b) {
 }
 void set_index_fading(int i) {
 	if (i < sizeof_button_array) {
-		button* b = buttons + i;
+		struct button* b = buttons + i;
 		if (!b->fading_in)
 			b->fading_in = TRUE;
 	}
