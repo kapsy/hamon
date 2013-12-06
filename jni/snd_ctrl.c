@@ -13,15 +13,36 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-//#include "snd_ctrl.h"
-//#include "snd_asst.h"
-//#include "snd_sles.h"
+#include "snd_ctrl.h"
+
+
+
 #include "snd_scal.h"
 #include "hon_type.h"
 
+
+
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
+#include "snd_asst.h"
+#include "snd_sles.h"
+
+
+
 #include "game/moods.h"
-//#include "and_main.h"
-//#include "gfx_gles.h"
+#include "and_main.h"
+
+
+
+
+
+
+
+
+
+#include <android/log.h>
+#include <android_native_app_glue.h>
+#include "gfx_gles.h"
 
 
 
@@ -165,13 +186,13 @@ size_t chord_interval = 0;
 //static int fading_out_exit = FALSE;
 //static size_t exit_fade_counter = 0;
 
-extern size_t screen_width;
+/*extern size_t screen_width;
 extern size_t screen_height;
 extern size_t screen_height_reduced;
 extern size_t screen_margin_y;
-extern size_t screen_margin_x;
+extern size_t screen_margin_x;*/
 
-extern SLpermille segment_pan_map[TOTAL_NOTES];
+//extern SLpermille segment_pan_map[TOTAL_NOTES];
 
 //float curent_part_rgb[3];
 
@@ -553,7 +574,7 @@ void init_all_parts() {
 	current_rec_part = 0;
 
 
-	int total_tic_counter = 0;
+//	int total_tic_counter = 0;
 
 	int i;
 	int total_parts = TOTAL_PARTS;
@@ -694,12 +715,14 @@ void play_all_parts() {
 
 					enqueue_one_shot(get_scale_sample(n->seg), float_to_slmillibel(n->vel, 1.0F), get_seg_permille(n->seg));
 
-//				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d",
-//						total_tic_counter, i, n->tic, p->current_tic);
+//				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
 
 					activate_touch_shape(n->pos_x, n->pos_y, p->color, &n->vel);
 //					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
-					LOGI("play_all_parts", "n->vel %f", n->vel);
+					LOGI("play_all_parts", "part: %d, note: %d, n->vel %f", i, j, n->vel);
+//					LOGI("play_all_parts", "part (i): %d", i);
+//					LOGI("play_all_parts", "note, (j): %d", i);
+
 
 				}
 			}

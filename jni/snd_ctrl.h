@@ -40,5 +40,6 @@ void init_auto_vals();
 //float* get_part_rgb();
 size_t current_part_color();
 
+//extern int total_tic_counter;
 
 #endif /* SND_CTRL_H_ */

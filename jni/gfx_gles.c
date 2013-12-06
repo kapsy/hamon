@@ -337,80 +337,6 @@ typedef struct {
 struct vertex solid_circle_vertex[CIRCLE_SEGMENTS+1];
 unsigned short solid_circle_index[CIRCLE_SEGMENTS+2];
 
-
-
-//extern int selected_scale;
-//extern int sles_init_called;
-
-//float alpha_fade_rate = 0.11f / (float)SEC_IN_US;
-//
-//typedef struct {
-//	int fading_in;
-//	int fading_out;
-//	int selected_scale;
-//	float alpha;
-//} bg_def;
-//
-//bg_def bgs [] = {
-//		{TRUE, 	FALSE,	0, 	0.0F},
-//		{FALSE, FALSE,	0, 	0.0F}
-//};
-
-//int curr_bg = 0;
-//int bgs_size = sizeof(bgs)/sizeof(bgs[0]);
-
-//vertex bg_quad[] = {
-//	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-//	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.2f, 		0.0f},
-//	{1.0f, 		1.0f, 		0.0f, 		0.95f,		0.0f, 		0.35f},
-//	{-1.0f, 	1.0f, 		0.0f, 		0.25f,		0.0f, 		0.25f},
-//};
-
-// wtf???
-//int seiseki[2][3] = {{72, 67, 84}, {67, 92, 71}};
-
-
-//vertex_rgb quad_colors[5][4] = {
-//		{
-//			{0.0f, 		0.0f, 		0.0f},
-//			{0.0f, 		0.0f, 		0.0f},
-//			{0.95f,	0.0f, 		0.35f},
-//			{0.25f,	0.0f, 		0.25f}
-//		},
-//		{
-//
-//			{1.0f, 		0.0f, 		0.0f},
-//			{1.0f, 		0.0f, 		0.0f},
-//			{1.0f, 		0.0f, 		0.35f},
-//			{1.0f, 		0.0f, 		0.25f}
-//		},
-//		{
-//			{0.2f, 		0.3f, 		0.0f},
-//			{0.2f, 		0.3f, 		0.0f},
-//			{1.0f, 		0.0f, 		0.0f},
-//			{1.0f, 		0.0f, 		0.0f}
-//		},
-//		{
-//			{0.0f, 	 	0.1f, 		0.0f},
-//			{0.0f, 		0.6f, 		0.0f},
-//			{0.0f, 		0.2f, 		0.35f},
-//			{0.0f, 		0.2f, 		0.05f}
-//		},
-//		{
-//			{0.0f, 	 	0.5f, 		0.0f},
-//			{0.0f, 		0.3f, 		0.0f},
-//			{1.0f, 		0.2f, 		0.3f},
-//			{0.0f, 		1.0f, 		1.0f}
-//		}
-//};
-
-//unsigned short bg_quad_index[] = {
-//  0, 1, 3, 2
-//};
-
-
-
-
 shader_params_main    g_sp_m;
 screen_settings  g_sc;
 
@@ -453,8 +379,8 @@ GLuint btn_ibo;
 GLuint g_prog_main;
 //GLuint g_program_purp;
 GLuint quad_col_1;
-//GLuint bg_cols [sizeof_moods_elements];
-GLuint bg_cols [5];
+GLuint bg_cols [TOTAL_MOODS];
+//GLuint bg_cols [5];
 
 
 
@@ -867,6 +793,17 @@ int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 //  0, 1, 3, 2
 //};
 
+struct vertex_rgb mood_test[] = {
+		{ 0.0f, 	0.0f, 		0.0f },
+		{ 0.0f, 	0.0f, 		0.0f },
+		{ 0.95f, 	0.0f, 		0.35f },
+		{ 0.25f, 	0.0f, 		0.25f },
+};
+
+
+
+
+
 // GPU上のバッファオブジェクトにデータを転送
 void create_gl_buffers()
 {
@@ -923,13 +860,34 @@ void create_gl_buffers()
 	//		},
 
 
+//	int i;
+//	for (i=0; i<TOTAL_SCALES; i++) {
+//		glGenBuffers(1, &bg_cols[i]);
+//		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
+//		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
+//	}
+
+
+
+//	int i;
+//	for (i=0; i<sizeof_moods_elements; i++) {
+//		glGenBuffers(1, &bg_cols[i]);
+//		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
+////		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
+//		glBufferData(GL_ARRAY_BUFFER, sizeof((moods +i)->bg->colors), (moods +i)->bg->colors, GL_STATIC_DRAW);
+//	}
+
+
 	int i;
-	for (i=0; i<sizeof_moods_elements; i++) {
+	for (i = 0; i < TOTAL_MOODS; i++) {
 		glGenBuffers(1, &bg_cols[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
 //		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
-		glBufferData(GL_ARRAY_BUFFER, sizeof((moods +i)->bg->colors), (moods +i)->bg->colors, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(mood_test), mood_test, GL_STATIC_DRAW);
 	}
+
+
+
 
 	LOGD("create_gl_buffers", "pi_create_buffer() finished");
 }
@@ -1131,20 +1089,20 @@ void draw_button() {
 
 void draw_gameplay() {
 
-//	glUniform1f(g_sp_m.scale, global_scale);
-//	glUniform1f(g_sp_m.alpha, 0.8);
-//	glUniform1f(g_sp_m.rgb[0], 1.0);
-//	glUniform1f(g_sp_m.rgb[1], 1.0);
-//	glUniform1f(g_sp_m.rgb[2], 1.0);
+	glUniform1f(g_sp_m.scale, global_scale);
+	glUniform1f(g_sp_m.alpha, 0.8);
+	glUniform1f(g_sp_m.rgb[0], 1.0);
+	glUniform1f(g_sp_m.rgb[1], 1.0);
+	glUniform1f(g_sp_m.rgb[2], 1.0);
 //
-//	glUseProgram(g_prog_main);
+	glUseProgram(g_prog_main);
 //
 //	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
 //	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
 //	glEnableVertexAttribArray(g_sp_m.aposition);
 //
 //
-//	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
 //	draw_all_backgrounds();
 
 	glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
@@ -1159,10 +1117,11 @@ void draw_gameplay() {
 	glEnableVertexAttribArray(0);
 //		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 
-	draw_touch_ripples();
+
+
+//	draw_touch_ripples();
 	draw_touch_shapes();
 
-//	draw_touch_no_ammo();
 
 
 
@@ -1362,6 +1321,25 @@ void draw_background(struct background* bg) {
 //		glUniform1f(g_sp_m.rgb[0], 1.0);
 //		glUniform1f(g_sp_m.rgb[1], 1.0);
 //		glUniform1f(g_sp_m.rgb[2], 1.0);
+
+
+
+//	LOGD("draw_background", "draw_background called()");
+
+	LOGD("draw_background", "bg->fs->title: %s", bg->fs->title);
+	LOGD("draw_background", "bg->fs->alpha: %f", bg->fs->alpha);
+
+	LOGD("draw_background", "bg->fs->fading_in: %d", bg->fs->fading_in);
+	LOGD("draw_background", "bg->fs->is_showing: %d", bg->fs->is_showing);
+
+//	LOGD("draw_background", "draw_background called()");
+//
+//	LOGD("draw_background", "draw_background called()");
+//
+//	LOGD("draw_background", "draw_background called()");
+//
+//	LOGD("draw_background", "draw_background called()");
+
 	glUseProgram(g_prog_main);
 
 	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
@@ -1390,10 +1368,26 @@ void draw_background(struct background* bg) {
 
 
 
+
+
+
 void draw_touch_ripples() {
 	int i;
 
 	pthread_mutex_lock(&mutex);
+
+
+
+//	glUseProgram(g_prog_main);
+//
+//	glUniform1f(g_sp_m.scale, global_scale);
+//	glUniform1f(g_sp_m.alpha, 0.8);
+//	glUniform1f(g_sp_m.rgb[0], 1.0);
+//	glUniform1f(g_sp_m.rgb[1], 1.0);
+//	glUniform1f(g_sp_m.rgb[2], 1.0);
+
+
+
 
 	for (i=0; i<TOUCH_SHAPES_MAX; i++) {
 

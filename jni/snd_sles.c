@@ -728,6 +728,12 @@ void init_seg_pan_map() {
 // 書き直すべき
 int enqueue_one_shot(struct sample_def * s, SLmillibel vol, SLpermille pan) {
 
+
+	LOGI("play_all_parts", "enqueue_one_shot");
+
+
+	LOGD("enqueue_one_shot", "vol: %d", vol);
+
 //	voice* v = get_next_free_voice();
 
 	// この方法は一番いいと思う。最古なボイズを選ぶとボイス全体の数が少ないのに、

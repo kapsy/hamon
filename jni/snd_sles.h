@@ -76,6 +76,6 @@ void pause_all_voices();
 
 
 
-extern int total_tic_counter;
+//extern int total_tic_counter;
 
 #endif /* SND_SLES_H_ */

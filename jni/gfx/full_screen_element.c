@@ -23,6 +23,14 @@
 //  0, 1, 3, 2
 //};
 
+
+
+
+
+
+
+
+
 struct full_screen_element screens[] = {
 
 		 {"splash", textures + 0, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE },
@@ -85,6 +93,8 @@ void bg_anim_all() {
 	int i;
 
 	for(i=0; i<sizeof_moods_elements; i++) {
+
+		LOGD("draw_background", "i: %d", i);
 		struct background* bg = (moods + i)->bg;
 		bg_pulse(bg);
 		fse_alpha_anim(bg->fs);

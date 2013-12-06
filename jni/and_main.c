@@ -28,7 +28,7 @@
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 
-
+#include <stddef.h>
 #include "and_main.h"
 #include "hon_type.h"
 #include "snd_sles.h"

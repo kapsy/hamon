@@ -27,6 +27,14 @@ struct full_screen_element {
 	int fading_out;
 	int is_showing;
 
+//
+//	//	struct vertex_rgb* colors[4];
+//		struct vertex_rgb* colors[4];
+//
+//		float pulse;
+//		float pulse_size;
+//		float pulse_dir; // ³Œ·”g‚Ì‚Ù‚¤‚ª‚¢‚¢‚Ì‚©‚à
+
 };
 struct vertex_rgb;
 
