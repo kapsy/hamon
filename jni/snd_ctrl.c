@@ -49,6 +49,9 @@
 #include <SLES/OpenSLES.h>
 
 
+#include "gfx/touch_circle.h"
+
+
 #define AMMO_INCREASE_RATE 5//50 // ŒÂ‚Ìtics‚ð‰ß‚²‚·‚ÆAAMMO‚ª1‚É‘‚â‚·
 //#define AMMO_INCREASE_RATE 50//50 // ŒÂ‚Ìtics‚ð‰ß‚²‚·‚ÆAAMMO‚ª1‚É‘‚â‚·
 #define AMMO_MAX 5
@@ -717,7 +720,7 @@ void play_all_parts() {
 
 //				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
 
-					activate_touch_shape(n->pos_x, n->pos_y, p->color, &n->vel);
+					activate_touch_circle(n->pos_x, n->pos_y, p->color, &n->vel);
 //					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
 					LOGI("play_all_parts", "part: %d, note: %d, n->vel %f", i, j, n->vel);
 //					LOGI("play_all_parts", "part (i): %d", i);

@@ -70,7 +70,8 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
  jni/gfx_gles.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
+ jni/gfx/touch_circle.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -225,3 +226,5 @@ jni/gfx_gles.h:
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
+
+jni/gfx/touch_circle.h:

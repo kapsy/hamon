@@ -37,4 +37,11 @@ struct vec2{
 
 };
 
+
+typedef struct {
+	float r, g, b;
+} rgb;
+
+
+
 #endif /* VERTEX_H_ */

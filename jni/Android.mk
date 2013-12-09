@@ -22,12 +22,18 @@ LOCAL_SRC_FILES += snd_scal.c
 LOCAL_SRC_FILES += snd_sles.c
 LOCAL_SRC_FILES += snd_asst.c
 LOCAL_SRC_FILES += snd_ctrl.c
+
+LOCAL_SRC_FILES += gfx/shaders.c
+
 LOCAL_SRC_FILES += gfx_gles.c
 LOCAL_SRC_FILES += gfx_asst.c
 LOCAL_SRC_FILES += gfx_butn.c
 LOCAL_SRC_FILES += gfx/full_screen_quad.c
 LOCAL_SRC_FILES += gfx/full_screen_element.c
 LOCAL_SRC_FILES += game/moods.c
+
+LOCAL_SRC_FILES += gfx/frame_delta.c
+LOCAL_SRC_FILES += gfx/touch_circle.c
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM -lGLESv2
 # for native audio
 LOCAL_LDLIBS    += -lOpenSLES

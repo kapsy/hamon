@@ -43,14 +43,10 @@
 #include "gfx/full_screen_element.h"
 #include "gfx_butn.h"
 
-//#include "snd_sles.h"
-//#include "game/moods.h"
-//#include "snd_scal.h"
-//#include "snd_ctrl.h"
-//#include "gfx/vertex.h"
-//#include "gfx_gles.h"
-//#include "gfx/full_screen_element.h"
-//#include "gfx_butn.h"
+#include "gfx/frame_delta.h"
+
+#include <pthread.h>
+#include "gfx/touch_circle.h"
 
 
 /**
@@ -365,7 +361,7 @@ void trigger_note(float x, float y) {
 
 		//play_note(seg, vel);
 
-		activate_touch_shape(x, y, current_part_color(), &vel);
+		activate_touch_circle(x, y, current_part_color(), &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
 
@@ -558,7 +554,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-        	kill_all_touch_shapes();
+        	kill_all_touch_circles();
         	draw_frame();
         	e->animating = 1;
 
@@ -575,7 +571,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-        	kill_all_touch_shapes();
+        	kill_all_touch_circles();
         	draw_frame();
         	e->animating = 0;
         	if (sles_init_called)wake_from_paused = TRUE;
@@ -832,7 +828,13 @@ void android_main(struct android_app* state) {
 			calc_frame_delta_time();
 			get_elapsed_time(&elapsed_time);
 
-//			calc_frame_rate();
+			calc_frame_rate();
+
+
+//		    LOGD("android_main", "frame_delta %d", frame_delta);
+
+
+
 			draw_frame();
 
 
