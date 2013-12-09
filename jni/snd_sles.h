@@ -49,7 +49,7 @@ void init_all_voices();
 
 
 
-struct sample_def* get_scale_sample(int seg);
+//struct sample_def* get_scale_sample(int seg);
 
 int enqueue_seamless_loop(struct sample_def * samp);
 //int enqueue_one_shot(sample_def * samp, float vel);

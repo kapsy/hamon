@@ -33,6 +33,7 @@ struct scale {
 
 
 
+struct sample_def* get_scale_sample(int seg);
 
 
 

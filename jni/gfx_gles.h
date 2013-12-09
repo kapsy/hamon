@@ -17,7 +17,7 @@ struct texture_type;
 
 //#define TOTAL_PART_COLORS 8
 
-struct full_screen_element;
+struct full_scr_el;
 struct background;
 
 typedef struct {
@@ -58,7 +58,10 @@ extern unsigned long frame_delta;
 
 //EGLBoolean pi_SurfaceCreate(ANativeWindow* nw);
 EGLBoolean create_window_surface(ANativeWindow* nw);
-void draw_main();
+//void draw_main();
+
+void draw_frame();
+
 int gles_init();
 void calc_frame_delta_time();
 void calc_frame_rate();
@@ -79,8 +82,14 @@ void get_elapsed_time(unsigned long* t);
 void gles_term_display(screen_settings* e);
 int create_gl_texture(struct texture_type *tt);
 
-void draw_full_screen_image(struct full_screen_element* fs);
+//void draw_full_screen_image(struct full_screen_element* fs);
+
+void draw_full_screen_image(struct full_scr_el* fs);
 void draw_background(struct background* bg);
+
+
+//void draw_background_fse(struct full_scr_el* fs);
+//void draw_background_fse();
 
 float gl_to_scr(float gl, int is_x);
 

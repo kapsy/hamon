@@ -26,13 +26,8 @@
 // for threading
 #include <unistd.h>  // sleep()を定義
 #include <pthread.h>
-//#include <time.h>
 #include <android/log.h>
 #include <time.h>
-
-
-//#include "game/moods.h"
-
 
 
 #include "snd_sles.h"

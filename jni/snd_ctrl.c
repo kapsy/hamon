@@ -17,7 +17,6 @@
 
 
 
-#include "snd_scal.h"
 #include "hon_type.h"
 
 
@@ -25,10 +24,11 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include "snd_asst.h"
+#include "snd_scal.h"
 #include "snd_sles.h"
 
 
-
+#include "gfx/vertex.h"
 #include "game/moods.h"
 #include "and_main.h"
 

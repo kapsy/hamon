@@ -30,7 +30,7 @@ obj/local/armeabi/objs/and_main/gfx/full_screen_element.o: \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
- jni/game/moods.h
+ jni/gfx/vertex.h jni/game/moods.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -95,5 +95,7 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplat
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h:
+
+jni/gfx/vertex.h:
 
 jni/game/moods.h:

@@ -8,6 +8,9 @@
 #ifndef MOODS_H_
 #define MOODS_H_
 
+
+//#include "gfx/vertex.h"
+
 //#include "gfx/background.h"
 
 //#include "snd_scal.h"
@@ -21,7 +24,10 @@ struct background;
 struct mood {
 
 	char* title;
-	struct background* bg;
+//	struct background* bg;
+
+	struct vertex_rgb* colors;
+	int color_index;
 
 
 	struct scale* scale;
@@ -31,9 +37,15 @@ struct mood {
 };
 
 
+
+
+
 extern struct mood moods[];
 extern int selected_mood;
 extern int sizeof_moods_elements;
+
+extern int sizeof_mood_colors_set;
+
 
 
 int init_mood();

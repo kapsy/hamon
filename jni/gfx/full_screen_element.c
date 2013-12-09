@@ -11,51 +11,39 @@
 #include "hon_type.h"
 #include "gfx_asst.h"
 #include "gfx_gles.h"
+
+#include "gfx/vertex.h"
 #include "game/moods.h"
 
-//struct vertex fs_quad[] = {
-//	{-1.0f, 	-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-//	{1.0f, 		-1.0f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-//	{1.0f, 		1.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f},
-//	{-1.0f, 	1.0f, 		0.0f, 		0.0f, 		0.0f,		0.0f},
-//};
-//unsigned short fs_quad_index[] = {
-//  0, 1, 3, 2
-//};
 
-
-
-
-
-
-
-
-
-struct full_screen_element screens[] = {
-
-		 {"splash", textures + 0, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE },
-		 {"splash_bg", textures + 1, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE },
-		 {"help", textures + 0, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE },
-
+struct full_scr_el screens[] = {
+		 {"splash", textures + 0, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, 0.0, 1.0, 1.0 },
+		 {"splash_bg", textures + 1, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, 0.0, 1.0, 1.0 },
+		 {"help", textures + 0, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, 0.0, 1.0, 1.0 },
 };
 
-//int sizeof_fs_quad_elements = sizeof fs_quad/sizeof fs_quad[0];
-//int sizeof_fs_quad = sizeof fs_quad;
-//
-//int sizeof_fs_quad_index_elements = sizeof fs_quad_index/sizeof fs_quad_index[0];
-//int sizeof_fs_quad_index = sizeof fs_quad_index;
+struct full_scr_el backgrounds[] = {
+		 {"new_bg_1", NULL, 0.0F, BG_PULSE_FADE_RATE, TRUE, FALSE, TRUE, 0.0, 1.0, 1.0 },
+		 {"new_bg_2", NULL, 0.0F, BG_PULSE_FADE_RATE, FALSE, FALSE, FALSE, 0.0, 1.0, 1.0 }
+};
+
 
 int sizeof_screens_elements = sizeof screens/sizeof screens[0];
 int sizeof_screens = sizeof screens;
+int sizeof_backgrounds_elements = sizeof backgrounds/sizeof backgrounds[0];
+int sizeof_backgrounds = sizeof backgrounds;
 
-void fse_anim(struct full_screen_element* fs) {
 
-	fse_alpha_anim(fs);
+int selected_background = 0;
+
+void full_scr_anim(struct full_scr_el* fs) {
+
+	full_scr_alpha_anim(fs);
 	draw_full_screen_image(fs);
 }
 
 
-void fse_alpha_anim(struct full_screen_element* fs) {
+void full_scr_alpha_anim(struct full_scr_el* fs) {
 
 	if(fs->is_showing) {
 
@@ -78,7 +66,44 @@ void fse_alpha_anim(struct full_screen_element* fs) {
 }
 
 
-int fse_fading(struct full_screen_element* fs) {
+
+void full_scr_mod(struct full_scr_el* fs) {
+
+	fs->pulse += (float)frame_delta * BG_PULSE_FADE_RATE * fs->pulse_dir;
+	if (fs->pulse_dir == 1.0F &&  fs->pulse > 1.0) fs->pulse_dir = -1.0F;
+	if (fs->pulse_dir == -1.0F &&  fs->pulse < 0.2) fs->pulse_dir = 1.0F;
+	//	LOGD("bg_pulse", "bg->pulse: %f", bg->pulse);
+}
+
+
+void full_scr_xfade() { //ˆê”­‚ÈŠÖ”
+
+	LOGD("bg_xfade", "selected_background: %d", selected_background);
+	struct full_scr_el* fs = backgrounds + selected_background;
+	LOGD("bg_xfade", "fs->title: %s", fs->title);
+
+	fs->fading_out = TRUE;
+	if (selected_background<(sizeof_backgrounds_elements)) selected_background++;
+	if (selected_background==(sizeof_backgrounds_elements)) selected_background = 0;
+	LOGD("bg_xfade", "selected_background: %d", selected_background);
+	fs = backgrounds + selected_background;
+
+	LOGD("bg_xfade", "fs->title: %s", fs->title);
+
+	fs->is_showing = TRUE;
+	fs->fading_in = TRUE;
+
+		int i;
+		for (i=0;i<sizeof_backgrounds_elements;i++) {
+			struct full_scr_el* bgfs = backgrounds+i;
+			LOGD("bg_xfade", "fs->is_showing: %i", bgfs->is_showing);
+			LOGD("bg_xfade", "fs->fading_in: %i", bgfs->fading_in);
+			LOGD("bg_xfade", "fs->fading_out: %i", bgfs->fading_out);
+		}
+}
+
+
+int full_scr_fading(struct full_scr_el* fs) {
 	int r = FALSE;
 	if (fs->is_showing) {
 		if (fs->fading_in || fs->fading_out) r = TRUE;
@@ -89,58 +114,16 @@ int fse_fading(struct full_screen_element* fs) {
 
 
 
-void bg_anim_all() {
-	int i;
-
-	for(i=0; i<sizeof_moods_elements; i++) {
-
-		LOGD("draw_background", "i: %d", i);
-		struct background* bg = (moods + i)->bg;
-		bg_pulse(bg);
-		fse_alpha_anim(bg->fs);
-//		draw_background(bg);
-	}
-}
-
-void bg_pulse(struct background* bg) {
-
-	bg->pulse += (float)frame_delta * BG_PULSE_FADE_RATE * bg->pulse_dir;
-	if (bg->pulse_dir == 1.0F &&  bg->pulse_dir > 1.0) bg->pulse_dir = -1.0F;
-	if (bg->pulse_dir == -1.0F &&  bg->pulse_dir < 0.2) bg->pulse_dir = 1.0F;
-
-}
-
-
-void bg_xfade() { //ˆê”­‚ÈŠÖ”
-
-
-	LOGD("bg_xfade", "selected_mood: %d", selected_mood);
-
-	struct background* bg = (moods+selected_mood)->bg;
-
-	bg->fs->fading_out = TRUE;
-
-	if (selected_mood<(sizeof_moods_elements-1)) bg = (moods+(selected_mood + 1))->bg;
-	if (selected_mood==(sizeof_moods_elements-1)) bg = (moods+0)->bg;
-
-	bg->fs->fading_in = TRUE;
-
-}
-
-int bgs_fading() {
+int all_bgs_fading() {
 
 	int r = FALSE;
 	int i;
-	for (i=0; i<sizeof_moods_elements; i++) {
+	for (i=0; i<sizeof_backgrounds_elements; i++) {
 
-		r = fse_fading((moods + i)->bg->fs);
+		r = full_scr_fading(backgrounds+i);
 	}
 
 	return r;
 }
-
-
-
-
 
 

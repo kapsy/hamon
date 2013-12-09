@@ -73,7 +73,7 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
  jni/and_main.h jni/hon_type.h jni/snd_sles.h jni/snd_asst.h \
- jni/game/moods.h jni/snd_scal.h jni/snd_ctrl.h jni/gfx/vertex.h \
+ jni/gfx/vertex.h jni/game/moods.h jni/snd_scal.h jni/snd_ctrl.h \
  jni/gfx_gles.h jni/gfx/full_screen_element.h jni/gfx_butn.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h:
@@ -230,13 +230,13 @@ jni/snd_sles.h:
 
 jni/snd_asst.h:
 
+jni/gfx/vertex.h:
+
 jni/game/moods.h:
 
 jni/snd_scal.h:
 
 jni/snd_ctrl.h:
-
-jni/gfx/vertex.h:
 
 jni/gfx_gles.h:
 

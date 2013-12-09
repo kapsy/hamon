@@ -34,15 +34,23 @@
 #include "snd_sles.h"
 #include "snd_asst.h"
 
+#include "gfx/vertex.h"
 #include "snd_sles.h"
 #include "game/moods.h"
 #include "snd_scal.h"
 #include "snd_ctrl.h"
-#include "gfx/vertex.h"
 #include "gfx_gles.h"
 #include "gfx/full_screen_element.h"
 #include "gfx_butn.h"
 
+//#include "snd_sles.h"
+//#include "game/moods.h"
+//#include "snd_scal.h"
+//#include "snd_ctrl.h"
+//#include "gfx/vertex.h"
+//#include "gfx_gles.h"
+//#include "gfx/full_screen_element.h"
+//#include "gfx_butn.h"
 
 
 /**
@@ -272,7 +280,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 				LOGD("engine_handle_input", "pointer_index_mask: %d", pointer_index_mask);
 
 //				if (pointer_index_mask == 4) {
-//					int s = cycle_scale();
+//					int s = cycle_mood();
 //				}
 
 

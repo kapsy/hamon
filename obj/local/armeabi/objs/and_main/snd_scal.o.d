@@ -16,6 +16,10 @@ obj/local/armeabi/objs/and_main/snd_scal.o: jni/snd_scal.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/kernel.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
+ jni/gfx/vertex.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
  jni/snd_asst.h jni/snd_scal.h jni/game/moods.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/asset_manager.h:
@@ -51,6 +55,14 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/ker
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h:
+
+jni/gfx/vertex.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
 
 jni/snd_asst.h:
 

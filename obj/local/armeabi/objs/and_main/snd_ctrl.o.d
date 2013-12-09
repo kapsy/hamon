@@ -44,13 +44,17 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
- jni/snd_ctrl.h jni/snd_scal.h jni/hon_type.h \
+ jni/snd_ctrl.h jni/hon_type.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Platform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_Android.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
- jni/snd_asst.h jni/snd_sles.h jni/game/moods.h jni/and_main.h \
+ jni/snd_asst.h jni/snd_scal.h jni/snd_sles.h jni/gfx/vertex.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
+ jni/game/moods.h jni/and_main.h \
  C:/Android/android-ndk-r8d/sources/android/native_app_glue/android_native_app_glue.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/poll.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/poll.h \
@@ -66,10 +70,7 @@ obj/local/armeabi/objs/and_main/snd_ctrl.o: jni/snd_ctrl.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
  jni/gfx_gles.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -163,8 +164,6 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:
 
 jni/snd_ctrl.h:
 
-jni/snd_scal.h:
-
 jni/hon_type.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSLES.h:
@@ -179,7 +178,17 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/SLES/OpenSL
 
 jni/snd_asst.h:
 
+jni/snd_scal.h:
+
 jni/snd_sles.h:
+
+jni/gfx/vertex.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
 
 jni/game/moods.h:
 
@@ -216,9 +225,3 @@ jni/gfx_gles.h:
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:

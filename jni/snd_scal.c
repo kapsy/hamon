@@ -11,6 +11,7 @@
 //#include "snd_sles.h"
 //#include <android/log.h>
 //
+#include "gfx/vertex.h"
 //#include "snd_ctrl.h"
 #include "snd_asst.h"
 #include "snd_scal.h"
@@ -119,7 +120,14 @@ void start_loop() {
 //
 //}
 
+struct sample_def* get_scale_sample(int seg) {
 
+	int sample = (moods+selected_mood)->scale->midimap[seg];
+	sample -= START_NOTE;
+
+	return (oneshot_samples + sample);
+
+}
 
 
 //int cycle_scale() {

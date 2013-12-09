@@ -11,13 +11,16 @@
 #define SPLASH_FADE_RATE (0.4F/(float)SEC_IN_US)
 #define HELP_FADE_RATE (0.4F/(float)SEC_IN_US)
 #define BG_FADE_RATE (0.11F/(float)SEC_IN_US)
-#define BG_PULSE_FADE_RATE (0.21F/(float)SEC_IN_US)
+#define BG_PULSE_FADE_RATE (0.41F/(float)SEC_IN_US)
+//#define BG_PULSE_FADE_RATE (0.21F/(float)SEC_IN_US)
 
 
 
 struct texture_file;
+struct vertex_rgb;
 
-struct full_screen_element {
+
+struct full_scr_el {
 
 	char* title;
 	struct texture_file* main_texture;
@@ -27,65 +30,33 @@ struct full_screen_element {
 	int fading_out;
 	int is_showing;
 
-//
-//	//	struct vertex_rgb* colors[4];
-//		struct vertex_rgb* colors[4];
-//
-//		float pulse;
-//		float pulse_size;
-//		float pulse_dir; // ê≥å∑îgÇÃÇŸÇ§Ç™Ç¢Ç¢ÇÃÇ©Ç‡
-
-};
-struct vertex_rgb;
-
-
-
-struct background {
-
-	struct full_screen_element* fs;
-
-//	struct vertex_rgb* colors[4];
-	struct vertex_rgb* colors[4];
+//	struct vertex_rgb* colors;
 
 	float pulse;
 	float pulse_size;
 	float pulse_dir; // ê≥å∑îgÇÃÇŸÇ§Ç™Ç¢Ç¢ÇÃÇ©Ç‡
-//	int selected_scale;
 
 };
 
 
+extern struct full_scr_el screens[];
+extern struct full_scr_el backgrounds[];
 
-extern int sizeof_backgrounds_elements; // îzóÒÇÃå¬ëÃÇÃêî
+extern int sizeof_backgrounds_elements;
+extern int sizeof_backgrounds;
+extern int selected_background;
 
-
-
-
-//extern struct vertex fs_quad[];
-//extern unsigned short fs_quad_index[];
-
-
-extern struct full_screen_element screens[];
-
-
-//extern int sizeof_fs_quad_elements;
-//extern int sizeof_fs_quad;
-//extern int sizeof_fs_quad_index_elements;
-//extern int sizeof_fs_quad_index;
+void full_scr_anim(struct full_scr_el* fs);
+void full_scr_alpha_anim(struct full_scr_el* fs);
+int full_scr_fading(struct full_scr_el* fs);
+int all_bgs_fading();
 
 
-extern int sizeof_screens_array;
-extern int sizeof_screens;
+void full_scr_mod(struct full_scr_el* fs);
+void full_scr_xfade();
+int full_scr_fading();
 
+void background_anim_all();
 
-void fse_anim(struct full_screen_element* fs);
-void fse_alpha_anim(struct full_screen_element* fs);
-int fse_fading(struct full_screen_element* fs);
-
-
-void bg_anim_all();
-void bg_pulse(struct background* bg);
-void bg_xfade();
-int bgs_fading();
 
 #endif /* FULL_SCREEN_ELEMENT_H_ */

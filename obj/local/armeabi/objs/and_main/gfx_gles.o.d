@@ -67,7 +67,7 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
  jni/gfx/vertex.h jni/hon_type.h jni/gfx/full_screen_element.h \
- jni/gfx/full_screen_quad.h jni/and_main.h jni/gfx_gles.h jni/gfx_asst.h \
+ jni/gfx/full_screen_quad.h jni/gfx_gles.h jni/and_main.h jni/gfx_asst.h \
  jni/gfx_butn.h jni/game/moods.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
@@ -212,9 +212,9 @@ jni/gfx/full_screen_element.h:
 
 jni/gfx/full_screen_quad.h:
 
-jni/and_main.h:
-
 jni/gfx_gles.h:
+
+jni/and_main.h:
 
 jni/gfx_asst.h:
 
