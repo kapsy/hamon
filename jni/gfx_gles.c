@@ -44,7 +44,6 @@
 #include "gfx/shaders.h"
 
 
-#define SPLASH_COUNT_SECS 10
 
 void draw_background_fse();
 void draw_button();
@@ -310,7 +309,8 @@ int gles_init() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+//	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
 
@@ -361,6 +361,55 @@ int gles_init() {
 	return TRUE;
 
 
+}
+
+
+
+//// and_main.c からに取ったコード
+///**
+// * Tear down the EGL context currently associated with the display.
+// */
+//void gles_term_display(ScreenSettings* e) {
+//    if (e->display != EGL_NO_DISPLAY) {
+//        eglMakeCurrent(e->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+//        if (e->context != EGL_NO_CONTEXT) {
+//            eglDestroyContext(e->display, e->context);
+//        }
+//        if (e->surface != EGL_NO_SURFACE) {
+//            eglDestroySurface(e->display, e->surface);
+//        }
+//        eglTerminate(e->display);
+//    }
+//    e->animating = 0;
+//    e->display = EGL_NO_DISPLAY;
+//    e->context = EGL_NO_CONTEXT;
+//    e->surface = EGL_NO_SURFACE;
+//}
+
+
+
+// and_main.c からに取ったコード
+/**
+ * Tear down the EGL context currently associated with the display.
+ */
+void gles_term_display(screen_settings* e) {
+
+	LOGD("gles_term_display", "gles_term_display() called");
+
+    if (e->display != EGL_NO_DISPLAY) {
+        eglMakeCurrent(e->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (e->context != EGL_NO_CONTEXT) {
+            eglDestroyContext(e->display, e->context);
+        }
+        if (e->surface != EGL_NO_SURFACE) {
+            eglDestroySurface(e->display, e->surface);
+        }
+        eglTerminate(e->display);
+    }
+//    e->animating = 0;
+    e->display = EGL_NO_DISPLAY;
+    e->context = EGL_NO_CONTEXT;
+    e->surface = EGL_NO_SURFACE;
 }
 
 
@@ -515,6 +564,60 @@ int create_gl_texture(struct texture_type *tt)
 
 
 
+
+
+void draw_frame() {
+
+//	glViewport(0, 0, g_sc.width, g_sc.height);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+
+	if (screens[0].is_showing) {
+
+		if (elapsed_time > DELAY_BEFORE_SPLASH_BG)
+
+
+
+			full_scr_anim(screens + 1);
+			full_scr_alpha_mod(screens + 1);
+			draw_full_screen_image(screens + 1);
+
+		if (elapsed_time > DELAY_BEFORE_SPLASH)
+
+			full_scr_anim(screens + 0);
+			draw_full_screen_image(screens + 0);
+	}
+
+	if(show_gameplay) {
+
+		draw_background_fse();
+		draw_gameplay();
+
+		 if (!screens[0].fading_out)
+			 draw_button();
+	}
+
+	if(screens[2].is_showing) {
+		full_scr_anim(screens + 2);
+		draw_full_screen_image(screens + 2);
+	}
+
+	eglSwapBuffers(g_sc.display, g_sc.surface);
+
+}
+
+
+void draw_gameplay() {
+	draw_touch_circles();
+
+//		usleep(100000);
+//		usleep(20000);
+}
+
+
+
+
+
 void draw_full_screen_image(struct full_scr_el* fs) {
 
 
@@ -532,7 +635,7 @@ void draw_full_screen_image(struct full_scr_el* fs) {
 	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
 	glUniform1f(g_sp_t.bitmap_ratio, fs->main_texture->tt.bitmap_ratio);
 
-	glUniform1f(g_sp_t.alpha, fs->alpha);
+	glUniform1f(g_sp_t.alpha, fs->alpha_mod);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
@@ -578,95 +681,6 @@ void draw_button() {
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-
-
-void draw_gameplay() {
-	draw_touch_circles();
-
-//		usleep(100000);
-//		usleep(20000);
-}
-
-
-
-
-void draw_frame() {
-
-//	glViewport(0, 0, g_sc.width, g_sc.height);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-
-	if (screens[0].is_showing) {
-		full_scr_anim(screens + 1);
-		full_scr_anim(screens + 0);
-	}
-
-	if(show_gameplay) {
-
-		draw_background_fse();
-		draw_gameplay();
-
-		 if (!screens[0].fading_out)
-			 draw_button();
-	}
-
-	if(screens[2].is_showing) {
-		full_scr_anim(screens + 2);
-	}
-
-	eglSwapBuffers(g_sc.display, g_sc.surface);
-
-}
-
-
-
-
-//// and_main.c からに取ったコード
-///**
-// * Tear down the EGL context currently associated with the display.
-// */
-//void gles_term_display(ScreenSettings* e) {
-//    if (e->display != EGL_NO_DISPLAY) {
-//        eglMakeCurrent(e->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-//        if (e->context != EGL_NO_CONTEXT) {
-//            eglDestroyContext(e->display, e->context);
-//        }
-//        if (e->surface != EGL_NO_SURFACE) {
-//            eglDestroySurface(e->display, e->surface);
-//        }
-//        eglTerminate(e->display);
-//    }
-//    e->animating = 0;
-//    e->display = EGL_NO_DISPLAY;
-//    e->context = EGL_NO_CONTEXT;
-//    e->surface = EGL_NO_SURFACE;
-//}
-
-
-// and_main.c からに取ったコード
-/**
- * Tear down the EGL context currently associated with the display.
- */
-void gles_term_display(screen_settings* e) {
-
-	LOGD("gles_term_display", "gles_term_display() called");
-
-    if (e->display != EGL_NO_DISPLAY) {
-        eglMakeCurrent(e->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-        if (e->context != EGL_NO_CONTEXT) {
-            eglDestroyContext(e->display, e->context);
-        }
-        if (e->surface != EGL_NO_SURFACE) {
-            eglDestroySurface(e->display, e->surface);
-        }
-        eglTerminate(e->display);
-    }
-//    e->animating = 0;
-    e->display = EGL_NO_DISPLAY;
-    e->context = EGL_NO_CONTEXT;
-    e->surface = EGL_NO_SURFACE;
 }
 
 

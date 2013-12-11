@@ -15,17 +15,20 @@
 #include "gfx/vertex.h"
 #include "game/moods.h"
 
+#include "math/trig_sampler.h"
+
 
 struct full_scr_el screens[] = {
-		 {"splash", textures + 0, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, 0.0, 1.0, 1.0 },
-		 {"splash_bg", textures + 1, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, 0.0, 1.0, 1.0 },
-		 {"help", textures + 0, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, 0.0, 1.0, 1.0 },
+		 {"splash", textures + 0, 0.0F, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0 },
+		 {"splash_bg", textures + 1, 0.0F, 0.0F, SPLASH_BG_FADE_RATE, TRUE, FALSE, TRUE, modulators + 0, 0.0, 1.0, 1.0 },
+		 {"help", textures + 0, 0.0F, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0 },
 };
 
 struct full_scr_el backgrounds[] = {
-		 {"new_bg_1", NULL, 0.0F, BG_PULSE_FADE_RATE, TRUE, FALSE, TRUE, 0.0, 1.0, 1.0 },
-		 {"new_bg_2", NULL, 0.0F, BG_PULSE_FADE_RATE, FALSE, FALSE, FALSE, 0.0, 1.0, 1.0 }
+		 {"new_bg_1", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0 },
+		 {"new_bg_2", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0 }
 };
+
 
 
 int sizeof_screens_elements = sizeof screens/sizeof screens[0];
@@ -36,16 +39,18 @@ int sizeof_backgrounds = sizeof backgrounds;
 
 int selected_background = 0;
 
+//int splash_delay = 0;
+
+
 void full_scr_anim(struct full_scr_el* fs) {
 
 	full_scr_alpha_anim(fs);
-	draw_full_screen_image(fs);
+//	draw_full_screen_image(fs);
+	fs->alpha_mod = fs->alpha;
 }
 
 
 void full_scr_alpha_anim(struct full_scr_el* fs) {
-
-//	if(fs->is_showing) {
 
 		if (fs->fading_in && fs->alpha < 1.0) {
 			fs->alpha += (float)frame_delta *  fs->fade_rate;
@@ -62,13 +67,32 @@ void full_scr_alpha_anim(struct full_scr_el* fs) {
 			fs->alpha = 0.0;
 			fs->is_showing = FALSE;
 		}
-//	}
 }
 
 
 
-void full_scr_mod(struct full_scr_el* fs) {
+void full_scr_alpha_mod (struct full_scr_el* fs) {
 
+	struct modulator* m = fs->mod_a;
+
+	cycle_modulator(m);
+	fs->alpha_mod = fs->alpha * (m->mod_cycle[m->curr_samp]);
+
+}
+
+
+float sum_alpha(struct full_scr_el* fs) {
+
+	float a;
+	if (fs->mod_a != NULL)
+		a =  fs->alpha * (fs->mod_a->mod_cycle[fs->mod_a->curr_samp]);
+	else
+		a =  fs->alpha;
+
+	return a;
+}
+
+void full_scr_mod(struct full_scr_el* fs) {
 	fs->pulse += (float)frame_delta * BG_PULSE_FADE_RATE * fs->pulse_dir;
 	if (fs->pulse_dir == 1.0F &&  fs->pulse > 1.0) fs->pulse_dir = -1.0F;
 	if (fs->pulse_dir == -1.0F &&  fs->pulse < 0.2) fs->pulse_dir = 1.0F;

@@ -289,8 +289,8 @@ void open_external_file(struct sample_def* s) {
 
 	FILE* fp;
 
-	s->buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 	//oneshot_samples[samp].buffer_header = (unsigned short*) malloc(HEADER_SIZE);
+	s->buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 
 	LOGD("open_external_file", "filepath: %s", s->file_name);
 

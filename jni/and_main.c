@@ -49,6 +49,12 @@
 #include "gfx/touch_circle.h"
 
 
+#include "math/trig_sampler.h"
+
+
+
+
+
 /**
  * Our saved state data.
  */
@@ -92,23 +98,13 @@ int show_help = FALSE;
 int wake_from_paused = FALSE;
 
 
-//extern int splash_fading_in;
-//extern int splash_fading_out;
 
-//extern int files_loading;
-
-
-
-//long curr_time = 0;
-//unsigned long start_time = 0;
 unsigned long elapsed_time = 0;
 
 // プロトタイプ
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
 void touch_branching(float x, float y);
-
-
 void create_init_sles_thread(struct android_app* state);
 void* init_sles_thread(void* args);
 
@@ -279,19 +275,10 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 //					int s = cycle_mood();
 //				}
 
-
-
-
-
-
-
 				break;
 			}
 			return 1;
-
 		}
-
-
 	}
     return 0;
 }
@@ -503,7 +490,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-
+				init_all_trig_samples();
 				int suc = create_window_surface(e->app->window);
 				LOGD("call_order", "create_window_surface, suc: %d", suc);
 				suc = gles_init();
@@ -835,7 +822,10 @@ void android_main(struct android_app* state) {
 
 
 
+
+
 			draw_frame();
+
 
 
 			if(wake_from_paused)	{
@@ -849,7 +839,7 @@ void android_main(struct android_app* state) {
 
 
 
-			if (!sles_init_called && !screens[0].fading_in&& elapsed_time > (1 * SEC_IN_US)) {
+			if (!sles_init_called && !screens[0].fading_in && elapsed_time > (1 * SEC_IN_US)) {
 
 
 
@@ -863,7 +853,7 @@ void android_main(struct android_app* state) {
 
 			}
 
-			if(sles_init_finished) {
+			if(sles_init_finished && elapsed_time > (12 * SEC_IN_US)) {
 			    LOGD("android_main", "android_main debug B");
 			    LOGD("android_main", "elapsed_time: %d", elapsed_time);
 
@@ -875,23 +865,6 @@ void android_main(struct android_app* state) {
 				show_gameplay = TRUE;
 
 			}
-
-
-
-
-
-
-
-
-
-
-
-
 		}
-
-
-
-
-
 	}
 }

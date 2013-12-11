@@ -75,7 +75,7 @@ obj/local/armeabi/objs/and_main/and_main.o: jni/and_main.c \
  jni/and_main.h jni/hon_type.h jni/snd_sles.h jni/snd_asst.h \
  jni/gfx/vertex.h jni/game/moods.h jni/snd_scal.h jni/snd_ctrl.h \
  jni/gfx_gles.h jni/gfx/full_screen_element.h jni/gfx_butn.h \
- jni/gfx/frame_delta.h jni/gfx/touch_circle.h
+ jni/gfx/frame_delta.h jni/gfx/touch_circle.h jni/math/trig_sampler.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h:
 
@@ -248,3 +248,5 @@ jni/gfx_butn.h:
 jni/gfx/frame_delta.h:
 
 jni/gfx/touch_circle.h:
+
+jni/math/trig_sampler.h:

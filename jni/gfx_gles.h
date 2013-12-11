@@ -13,10 +13,6 @@
 
 
 struct texture_type;
-
-
-//#define TOTAL_PART_COLORS 8
-
 struct full_scr_el;
 struct background;
 
@@ -39,8 +35,6 @@ typedef struct {
 extern screen_settings  g_sc;
 
 extern unsigned long frame_delta;
-
-
 
 
 EGLBoolean create_window_surface(ANativeWindow* nw);
