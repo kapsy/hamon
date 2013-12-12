@@ -10,6 +10,7 @@
 
 #define SPLASH_FADE_RATE (0.4F/(float)SEC_IN_US)
 #define SPLASH_BG_FADE_RATE (0.1F/(float)SEC_IN_US)
+#define SPLASH_FADE_RATE_QUICK (0.42F/(float)SEC_IN_US)
 #define HELP_FADE_RATE (0.4F/(float)SEC_IN_US)
 #define BG_FADE_RATE (0.11F/(float)SEC_IN_US)
 #define BG_PULSE_FADE_RATE (0.41F/(float)SEC_IN_US)

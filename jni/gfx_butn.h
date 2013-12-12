@@ -29,18 +29,23 @@
 #define BTN_W 128
 #define BTN_ALPHA_MAX 1.0F
 #define BTN_ALPHA_MIN 0.0F
-#define BTN_FADE_RATE (0.4F/(float)SEC_IN_US)
+#define BTN_FADE_IN_RATE (2.0F/(float)SEC_IN_US)
+#define BTN_FADE_OUT_RATE (1.5F/(float)SEC_IN_US)
+//#define BTN_FADE_OUT_RATE (0.4F/(float)SEC_IN_US)
 #define BTN_PRESS_FADE_RATE (7.0F/(float)SEC_IN_US)
 #define BTN_PRESS_FADE_RATE_OUT (1.3F/(float)SEC_IN_US)
 //#define BTN_FADE_RATE 1.0f
+
+//#define BTN_TTL 120
 
 enum {
 
 	TOUCH_EVENT_BUTTON_0 = 0,
 	TOUCH_EVENT_BUTTON_1 = 1,
 	TOUCH_EVENT_BUTTON_2 = 2,
-	TOUCH_EVENT_GAME = 3,
-	TOUCH_EVENT_NULL = 4
+	TOUCH_EVENT_INTERACTIVE_ON = 3,
+	TOUCH_EVENT_GAME = 4,
+	TOUCH_EVENT_NULL = 5
 
 };
 
@@ -66,9 +71,11 @@ struct button{
 	int is_touch_anim;
 	int fading_in;
 	int fading_out;
-	float fade_rate;
+	float fade_in_rate;
+	float fade_out_rate;
 
-
+	struct button* fade_in_next;
+	struct button* fade_out_next;
 
 };
 
@@ -85,9 +92,16 @@ extern int sizeof_buttons;
 extern int sizeof_btn_quad;
 extern int sizeof_btn_quad_index;
 
+
+extern int button_fade_in_called;
+extern int button_fade_out_called;
+
+
+
+
 void calc_btn_quad_verts(int bm_w, int bm_h);
 int get_touch_response(float x, float y);
 //void btn_anim(button* b);
-void btn_anim(struct button* b, int index);
+void btn_anim(struct button* b);
 
 #endif /* GFX_BUTN_H_ */

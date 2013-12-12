@@ -60,6 +60,8 @@ void full_scr_alpha_anim(struct full_scr_el* fs) {
 		}
 
 		if (fs->fading_out && fs->alpha > 0.0) {
+
+
 			fs->alpha -= (float)frame_delta * fs->fade_rate;
 		} else if (fs->fading_out && fs->alpha <= 0.0) {
 

@@ -5,6 +5,7 @@
  *      Author: Michael
  */
 
+#include <stddef.h>
 #include <android/log.h>
 #include <time.h>
 
@@ -20,26 +21,24 @@
 #include "gfx_butn.h"
 
 
-
-//int show_buttons = FALSE;
-//int btn_fading_in = FALSE;
-//int btn_fading_out = FALSE;
-
-
+#include "and_main.h"
 
 struct button buttons[] = {
 		{textures + 2, textures + 5,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
-				TOUCH_EVENT_BUTTON_0, FALSE, TRUE, FALSE, BTN_FADE_RATE},
+				TOUCH_EVENT_BUTTON_0, FALSE, TRUE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
+				buttons+1, NULL},
 		{textures + 3, textures + 6,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
-				TOUCH_EVENT_BUTTON_1, FALSE, FALSE, FALSE, BTN_FADE_RATE},
+				TOUCH_EVENT_BUTTON_1, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
+				buttons+2, buttons+0},
 		{textures + 4, textures + 7,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
-				TOUCH_EVENT_BUTTON_2, FALSE, FALSE, FALSE, BTN_FADE_RATE}
+				TOUCH_EVENT_BUTTON_2, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
+				NULL, buttons+1},
 };
 
 struct vertex btn_quad[] = {
@@ -58,12 +57,14 @@ int sizeof_buttons = sizeof buttons;
 int sizeof_btn_quad = sizeof btn_quad;
 int sizeof_btn_quad_index = sizeof btn_quad_index;
 
-double btn_fade_rate = BTN_FADE_RATE;
+int button_fade_in_called = FALSE;
+int button_fade_out_called = FALSE;
 
 
-void set_btn_fading(int b);
+
 void set_index_fading(int i);
-//int buttons_fading();
+void set_btn_fading(struct button* b, int in);
+
 
 
 void calc_btn_quad_verts(int bm_w, int bm_h) {
@@ -97,12 +98,51 @@ void calc_btn_quad_verts(int bm_w, int bm_h) {
 	}
 }
 
+//int get_touch_response(float x, float y) {
+//
+//	LOGD("get_touch_response", "x: %f, y: %f", x, y);
+//
+//
+//	int response = TOUCH_EVENT_GAME;
+//
+//	if (!interactive_mode) {
+//		response = TOUCH_EVENT_INTERACTIVE_ON;
+//	}
+//	else {
+//		int i;
+//		for (i = 0; i < sizeof_button_array; i++) {
+//			struct button* b = buttons + i;
+//
+//			LOGD("get_touch_response", "b->touch_bl.x: %f, b->touch_bl.y: %f", b->touch_bl.x, b->touch_bl.y);
+//			LOGD("get_touch_response", "b->touch_tr.x: %f, b->touch_tr.y: %f", b->touch_tr.x, b->touch_tr.y);
+//	//		11-29 12:26:31.113: D/get_touch_response(30149): x: 67.187500, y: 432.656250
+//	//		11-29 12:26:31.113: D/get_touch_response(30149): b->touch_bl.x: 0.000000, b->touch_bl.y: 480.000000
+//	//		11-29 12:26:31.117: D/get_touch_response(30149): b->touch_tr.x: 128.000000, b->touch_tr.y: 352.000000
+//
+//			if (!b->fading_in && !b->fading_out && !b->is_touch_anim) {
+//				if (x>b->touch_bl.x && x<b->touch_tr.x) {
+//					if (y<b->touch_bl.y && y>b->touch_tr.y) {
+//
+//						b->is_touch_anim = TRUE;
+//
+//						response = b->event_enum;
+//					}
+//				}
+//			}
+//		}
+//	}
+//	return response;
+//}
+
+
+
+
 int get_touch_response(float x, float y) {
 
 	LOGD("get_touch_response", "x: %f, y: %f", x, y);
 
 
-	int response = TOUCH_EVENT_GAME;
+	int res = TOUCH_EVENT_GAME;
 
 	int i;
 	for (i = 0; i < sizeof_button_array; i++) {
@@ -112,49 +152,95 @@ int get_touch_response(float x, float y) {
 		LOGD("get_touch_response", "b->touch_tr.x: %f, b->touch_tr.y: %f", b->touch_tr.x, b->touch_tr.y);
 
 
-//		11-29 12:26:31.113: D/get_touch_response(30149): x: 67.187500, y: 432.656250
-//		11-29 12:26:31.113: D/get_touch_response(30149): b->touch_bl.x: 0.000000, b->touch_bl.y: 480.000000
-//		11-29 12:26:31.117: D/get_touch_response(30149): b->touch_tr.x: 128.000000, b->touch_tr.y: 352.000000
+		if (x > b->touch_bl.x && x < b->touch_tr.x) {
+			if (y < b->touch_bl.y && y > b->touch_tr.y) {
 
-//		if (!buttons_fading()) {
+				if (!button_fade_in_called && !button_fade_out_called) {
+					if (!b->is_touch_anim) {
+						if (!interactive_mode) {
+							res = TOUCH_EVENT_INTERACTIVE_ON;
+							return res;
+						}
+						else {
 
-		if (!b->fading_in && !b->fading_out && !b->is_touch_anim) {
-			if (x>b->touch_bl.x && x<b->touch_tr.x) {
-				if (y<b->touch_bl.y && y>b->touch_tr.y) {
-
-					b->is_touch_anim = TRUE;
-
-					response = b->event_enum;
+							b->is_touch_anim = TRUE;
+							res = b->event_enum;
+							return res;
+						}
+					}
 				}
+
 			}
 		}
-//		else response = TOUCH_EVENT_NULL;
+
 
 	}
 
-	return response;
+
+
+	return res;
 }
 
 
-void btn_anim(struct button* b, int i) {
-//	LOGD("btn_anim", "btn_anim called");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void btn_anim(struct button* b) {
 
 	if (b->fading_in) {
-		LOGD("btn_anim", "b->fading_in");
+//		LOGD("btn_anim", "b->fading_in");
 		if (b->alpha < BTN_ALPHA_MAX) {
-			b->alpha += (float)frame_delta * b->fade_rate;
+			b->alpha += (float)frame_delta * b->fade_in_rate;
 
-			if (b->alpha > 0.57F)	set_index_fading(i+1);
+			if (b->alpha > 0.2F) set_btn_fading(b->fade_in_next, TRUE);
 
-			LOGD("btn_anim", "b->alpha : %f", b->alpha);
+//			LOGD("btn_anim", "b->alpha : %f", b->alpha);
 		}
 		else if (b->alpha >= BTN_ALPHA_MAX) {
 			LOGD("btn_anim", "else if (b->alpha >= BTN_ALPHA_MAX)");
 			b->alpha = BTN_ALPHA_MAX;
 			b->fading_in = FALSE;
-//			set_btn_fading(i+1);
+			LOGD("btn_anim", "b->fading_out: %d", b->fading_out);
+			LOGD("btn_anim", "b->fading_in: %d", b->fading_in);
 		}
 	}
+
+
+	if (b->fading_out) {
+//		LOGD("btn_anim", "b->fading_out");
+		if (b->alpha > BTN_ALPHA_MIN) {
+
+			b->alpha -= (float)frame_delta * b->fade_out_rate;
+
+			if (b->alpha < 0.34F) set_btn_fading(b->fade_out_next, FALSE);
+
+//			LOGD("btn_anim", "b->alpha : %f", b->alpha);
+		}
+		else if (b->alpha <= BTN_ALPHA_MIN) {
+			LOGD("btn_anim", "else if (b->alpha <= BTN_ALPHA_MIN)");
+			b->alpha = BTN_ALPHA_MIN;
+			b->fading_out = FALSE;
+			LOGD("btn_anim", "b->fading_out: %d", b->fading_out);
+			LOGD("btn_anim", "b->fading_in: %d", b->fading_in);
+		}
+	}
+
+
+
 
 //	if (b->fading_out) {
 //		if (b->alpha > BTN_ALPHA_MIN) {
@@ -187,15 +273,26 @@ void btn_anim(struct button* b, int i) {
 	}
 }
 
-void set_btn_fading(int b) {
-	if (b < sizeof_button_array)
-		buttons[b].fading_in = TRUE;
-}
+//void set_btn_fading(int b) {
+//	if (b < sizeof_button_array)
+//		buttons[b].fading_in = TRUE;
+//}
 void set_index_fading(int i) {
 	if (i < sizeof_button_array) {
 		struct button* b = buttons + i;
 		if (!b->fading_in)
 			b->fading_in = TRUE;
+	}
+}
+
+
+void set_btn_fading(struct button* b, int in) {
+
+	if (b != NULL) {
+		if (in && !b->fading_out && !b->fading_in)
+			b->fading_in = TRUE;
+		if (!in && !b->fading_in && !b->fading_out)
+			b->fading_out = TRUE;
 	}
 }
 

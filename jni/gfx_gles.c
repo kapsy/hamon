@@ -589,11 +589,12 @@ void draw_frame() {
 	}
 
 	if(show_gameplay) {
-
-		draw_background_fse();
+//		if (!screens[1].is_showing)
+			draw_background_fse();
 		draw_gameplay();
 
-		 if (!screens[0].fading_out)
+//		 if (!screens[0].fading_out)
+		if (interactive_mode)
 			 draw_button();
 	}
 
@@ -661,7 +662,7 @@ void draw_button() {
 
 		struct button* b = buttons + i;
 
-		btn_anim(b, i);
+		btn_anim(b);
 
 		glUniform1f(g_sp_btn.pos_x, b->gl_x);
 		glUniform1f(g_sp_btn.pos_y, b->gl_y);

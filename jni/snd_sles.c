@@ -48,7 +48,9 @@
 #define VOICE_COUNT 20
 #define LOOPER_COUNT 2
 
-#define SLMILLIBEL_MIN -4000
+//#define SLMILLIBEL_MIN -4000
+#define SLMILLIBEL_MIN -5000
+//#define SLMILLIBEL_MIN -8000
 #define SLMILLIBEL_MAX 0
 
 //#define VEL_SLMILLIBEL_MIN -1500
@@ -662,8 +664,12 @@ void pause_all_voices() {
 // 自動的なフェードのための関数
 void voice_volume_factor(voice* v) {
 
-//	v->sl_volume = (1.0F - (v->vol_fade_factor * v->vol_auto_factor)) * SLMILLIBEL_MIN;
 	v->sl_volume = (1.0F - (v->vol_fade_factor * v->sample->vol_factor)) * SLMILLIBEL_MIN;
+
+//	v->sl_volume = (1.0F - v->vol_fade_factor) * SLMILLIBEL_MIN;
+
+
+
 	LOGD("voice_volume_factor",
 			"v->vol_fade_factor: %f, v->sample->vol_factor: %f, v->sl_volume: %d",
 			v->vol_fade_factor, v->sample->vol_factor, v->sl_volume);

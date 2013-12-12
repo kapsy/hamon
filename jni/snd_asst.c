@@ -54,11 +54,11 @@ struct sample_def silence_chunk = {"no_file_name", 00, NULL, NULL, 0, 0, 1.0F};
 struct sample_def looping_samples[] = {
 
 
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001_n22.wav", 48, NULL, NULL, 0, 0, 0.6F},
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_minor_001_n22.wav", 48, NULL, NULL, 0, 0, 0.6F},
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_004_n22.wav", 48, NULL, NULL, 0, 0, 0.6F},
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cumulonimbus_003_n22.wav", 48, NULL, NULL, 0, 0, 0.6F},
-		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_002_n22.wav", 48, NULL, NULL, 0, 0, 0.6F}
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_major_001_n22.wav", 48, NULL, NULL, 0, 0, 0.8F},
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_minor_001_n22.wav", 48, NULL, NULL, 0, 0, 0.8F},
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_004_n22.wav", 48, NULL, NULL, 0, 0, 0.8F},
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cumulonimbus_003_n22.wav", 48, NULL, NULL, 0, 0, 0.8F},
+		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_002_n22.wav", 48, NULL, NULL, 0, 0, 0.8F}
 
 };
 

@@ -93,15 +93,24 @@ int gfx_initialized = FALSE;
 int sles_init_called = FALSE;
 int sles_init_finished = FALSE;
 int show_gameplay = FALSE;
+int touch_enabled = FALSE; // タッチ操作のため
+int interactive_mode = FALSE;
+
+unsigned long interactive_on_time = 0;
+
+
+//int sles_loop_init_called = FALSE;
+
 int show_help = FALSE;
 
 int wake_from_paused = FALSE;
 
 
-
-unsigned long elapsed_time = 0;
+//
+//unsigned long elapsed_time = 0;
 
 // プロトタイプ
+void first_init(engine* e);
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
 void touch_branching(float x, float y);
@@ -208,7 +217,9 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 
-		if (show_gameplay && !screens[0].fading_out) {
+//		if (show_gameplay && !screens[0].fading_out) {
+
+		if (touch_enabled) {
 
 
 			int p;
@@ -228,24 +239,10 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 //		}
 
 
-//				trigger_note(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
-//				set_parts_active();
 				e->animating = 1;
-//				LOGD("engine_handle_input", "AMotionEvent_getX(event, 0): %f", AMotionEvent_getX(event, 0));
-//				LOGD("engine_handle_input", "AMotionEvent_getY(event, 0): %f", AMotionEvent_getY(event, 0));
-//
-////				LOGD("engine_handle_input", "action, %d", action);
-
-
-
-
 
 
 				break;
-
-
-
-
 
 			case AMOTION_EVENT_ACTION_POINTER_DOWN:
 				LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_POINTER_DOWN");
@@ -294,20 +291,31 @@ void touch_branching(float x, float y) {
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_0");
 
 		int s = cycle_mood();
+		assign_time(&interactive_on_time);
 		break;
 	case TOUCH_EVENT_BUTTON_1:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_1");
 		init_all_parts();
+		assign_time(&interactive_on_time);
 		break;
 	case TOUCH_EVENT_BUTTON_2:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_2");
 
 		screens[2].is_showing = TRUE;
 		screens[2].fading_in = TRUE;
+		assign_time(&interactive_on_time);
 
-//		show_help = TRUE;
-//		splash_fading_in = TRUE;
-//		show_splash = TRUE;
+		break;
+
+	case TOUCH_EVENT_INTERACTIVE_ON:
+		LOGD("touch_branching", "TOUCH_EVENT_INTERACTIVE_ON");
+
+		interactive_mode = TRUE;
+
+		assign_time(&interactive_on_time);
+
+//		LOGD("touch_branching", "interactive_on_time: %u", interactive_on_time);
+
 
 		break;
 
@@ -325,12 +333,30 @@ void touch_branching(float x, float y) {
 	break;
 
 	case TOUCH_EVENT_NULL:
+		LOGD("touch_branching", "TOUCH_EVENT_NULL");
 
 		//do nothing
 
 		break;
 
 }
+
+//void interactive_time() {
+//
+//
+//	if (interactive_mode && interactive_on_time < INTERACTIVE_TTL) {
+//	interactive_on_time++;
+//	} else if (interactive_mode) {
+//		interactive_mode = FALSE;
+//		interactive_on_time = 0;
+//	}
+//
+//
+//
+//
+//}
+
+
 
 
 
@@ -490,20 +516,22 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-				init_all_trig_samples();
-				int suc = create_window_surface(e->app->window);
-				LOGD("call_order", "create_window_surface, suc: %d", suc);
-				suc = gles_init();
-				LOGD("call_order", "init_cmds, suc: %d", suc);
+//				init_all_trig_samples();
+//				int suc = create_window_surface(e->app->window);
+//				LOGD("call_order", "create_window_surface, suc: %d", suc);
+//				suc = gles_init();
+//				LOGD("call_order", "init_cmds, suc: %d", suc);
+//				get_start_time();
+//				get_screen_dimensions(e);
+//				calc_segment_width();
+//				e->animating = TRUE;
 
 
 
+				first_init(e);
 
 
-				get_start_time();
-				get_screen_dimensions(e);
-				calc_segment_width();
-				e->animating = TRUE;
+
 			}
 
 
@@ -591,6 +619,21 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
+// 最初の初期化するための関数
+void first_init(engine* e) {
+
+	init_all_trig_samples();
+	int suc = create_window_surface(e->app->window);
+	LOGD("call_order", "create_window_surface, suc: %d", suc);
+	suc = gles_init();
+	LOGD("call_order", "init_cmds, suc: %d", suc);
+	get_start_time();
+	get_screen_dimensions(e);
+	calc_segment_width();
+	e->animating = TRUE;
+
+}
+
 
 
 
@@ -624,8 +667,8 @@ void init_sles_components(struct android_app* state) {
 //	  ANativeActivity* nativeActivity = state->activity;
 
 //	  internal_path = nativeActivity->externalDataPath;
-//		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
-//		__android_log_print(ANDROID_LOG_DEBUG, "android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
+//		LOGD("android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
+//		LOGD("android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
 
 
 
@@ -637,7 +680,6 @@ void init_sles_components(struct android_app* state) {
 
 	create_sl_engine();
 	init_all_voices();
-	start_loop();
 
 
 	init_random_seed();
@@ -645,6 +687,10 @@ void init_sles_components(struct android_app* state) {
 
 	init_auto_vals();
 	// snd_ctrlのこと
+
+
+
+	start_loop();
 	init_control_loop();
 
 	sles_init_finished = TRUE;
@@ -813,11 +859,9 @@ void android_main(struct android_app* state) {
 		if (e.animating) {
 
 			calc_frame_delta_time();
-			get_elapsed_time(&elapsed_time);
+			update_elapsed_time();
 
-			calc_frame_rate();
-
-
+//			calc_frame_rate();
 //		    LOGD("android_main", "frame_delta %d", frame_delta);
 
 
@@ -830,7 +874,7 @@ void android_main(struct android_app* state) {
 
 			if(wake_from_paused)	{
 
-			    LOGD("android_main", "android_main debug C");
+//			    LOGD("android_main", "android_main debug C");
 				init_sles_gain_focus(state);
 
 				wake_from_paused = FALSE;
@@ -853,18 +897,115 @@ void android_main(struct android_app* state) {
 
 			}
 
+
+//			if(!screens[1].fading_out && elapsed_time > (11 * SEC_IN_US)) {
+//				screens[1].fading_in = FALSE;
+//				screens[1].fade_rate = SPLASH_FADE_RATE_QUICK;
+//				screens[1].fading_out = TRUE;
+//			}
+
+
 			if(sles_init_finished && elapsed_time > (12 * SEC_IN_US)) {
+
 			    LOGD("android_main", "android_main debug B");
 			    LOGD("android_main", "elapsed_time: %d", elapsed_time);
+
+
+//				start_loop();
+//				init_control_loop();
+
+
 
 				sles_init_finished = FALSE;
 
 
+				screens[0].fading_in = FALSE;
 				screens[0].fading_out = TRUE;
-//				splash_fading_out = TRUE;
+
+				screens[1].fading_in = FALSE;
+				screens[1].fade_rate = SPLASH_FADE_RATE_QUICK;
+//				screens[1].fade_rate = SPLASH_FADE_RATE;
+				screens[1].fading_out = TRUE;
+
+
 				show_gameplay = TRUE;
+				reset_arb_time();
 
 			}
+
+
+
+
+			if (!touch_enabled && show_gameplay && !screens[0].fading_out && comp_arb_time(18 * SEC_IN_US)) {
+
+			    LOGD("android_main", "android_main debug D");
+			    LOGD("android_main", "elapsed_time: %d", elapsed_time);
+			    LOGD("android_main", "arbitrary_time: %d", arbitrary_time);
+				touch_enabled = TRUE;
+
+			}
+
+
+
+
+
+			if (show_gameplay && interactive_mode) {
+
+
+				if (compare_times(interactive_on_time, INTERACTIVE_TTL)) {
+
+
+
+
+//					interactive_mode = FALSE;
+					if (!buttons[2].fading_out && !button_fade_out_called) {
+						button_fade_out_called = TRUE;
+						buttons[2].fading_out = TRUE;
+
+					}
+
+
+
+					if (buttons[0].alpha <= 0.0F) {
+						buttons[0].fading_out = FALSE;
+						buttons[0].fading_in = TRUE;
+
+						interactive_mode = FALSE;
+						button_fade_out_called = FALSE;
+
+
+						int i;
+						for (i = 0; i < sizeof_button_array; i++) {
+							LOGD("touch_branching", "buttons[%d].fading_in: %d", i, buttons[i].fading_in);
+							LOGD("touch_branching", "buttons[%d].fading_out: %d", i, buttons[i].fading_out);
+						}
+
+
+
+					}
+				}
+			}
+
+
+//			if (!sles_loop_init_called && show_gameplay && !screens[0].fading_out) {
+//
+//			    LOGD("android_main", "android_main debug C");
+//
+////			    touch_enabled = true;
+//
+//			    sles_loop_init_called = TRUE;
+//
+//			}
+
+
+
+
+
+
+
+
+
+
 		}
 	}
 }

@@ -62,8 +62,13 @@
 
 // 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
+#define  SILENCE_BEFORE_AUTO_PLAY_INIT 120
 
 #define ONE_SHOT_RND 180 // この値が変わるといいな
+#define ONE_SHOT_RND_INIT 10 // この値が変わるといいな
+
+
+#define TOTAL_START_SHOTS 2
 
 #define MIN_CHORD_TIME 1000 // 2000のほうがいいのかも
 #define CHORD_CHANGE_RND 2000 // 3500の方へ
@@ -163,12 +168,15 @@ static int current_rec_part = 0;
 static size_t tics_per_part = 1500; // 3000; // 5000;
 //static size_t tic_increment = 0;
 
+
+static int start_shots = 0;
+
 size_t ammo_current = AMMO_MAX;
 size_t ammo_max = AMMO_MAX;
 size_t ammo_increase_counter;
 
 // 自動的な再生
-size_t not_active_count = 0;
+size_t not_active_count = SILENCE_BEFORE_AUTO_PLAY_INIT;
 int parts_active = FALSE;
 
 size_t chord_change_count = 0;
@@ -267,7 +275,7 @@ void join_control_loop() {
 }
 
 void init_auto_vals() {
-	one_shot_interval = obtain_random(ONE_SHOT_RND);
+	one_shot_interval = obtain_random(ONE_SHOT_RND_INIT);
 	rest_interval = MIN_REST_TIME + obtain_random(AUTO_PLAY_REST_RND);
 	chord_interval = MIN_CHORD_TIME + obtain_random(CHORD_CHANGE_RND);
 
@@ -299,7 +307,10 @@ void* timing_loop(void* args) {
 //		general_tic_counter();
 		vol_automation();
 		increase_ammo();
-		auto_play();
+		if (show_gameplay) auto_play();
+
+
+
 
 //		shutdown_audio_delay();
 
@@ -535,7 +546,14 @@ void auto_play() {
 
 			one_shot_count = 0;
 //			one_shot_interval = 5+obtain_random(500);
-			one_shot_interval = 5+obtain_random(390);
+
+			if (start_shots < TOTAL_START_SHOTS) {
+				one_shot_interval = 5+obtain_random(50);
+				start_shots++;
+			} else {
+				one_shot_interval = 5+obtain_random(390);
+			}
+
 			LOGD("auto_play", "one_shot_interval %d", one_shot_interval);
 		}
 
@@ -573,7 +591,8 @@ void init_all_parts() {
 	// 録音したノートをレセットするため
 
 	parts_active = FALSE;
-	not_active_count = 0;
+	if (touch_enabled) not_active_count = 0;
+	else not_active_count = SILENCE_BEFORE_AUTO_PLAY_INIT;
 	current_rec_part = 0;
 
 
