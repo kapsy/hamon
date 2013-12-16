@@ -17,12 +17,12 @@ extern int sles_init_called;
 extern int show_gameplay;
 extern int touch_enabled;
 
-extern int interactive_mode;
+extern int buttons_activated;
 
 
 extern int show_help;
 
-extern unsigned long interactive_on_time;
+extern unsigned long buttons_activated_time;
 
 
 extern size_t screen_width;

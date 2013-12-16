@@ -47,6 +47,7 @@
 
 #include <pthread.h>
 #include "gfx/touch_circle.h"
+#include "gfx/tex_circle.h"
 
 
 #include "math/trig_sampler.h"
@@ -94,9 +95,9 @@ int sles_init_called = FALSE;
 int sles_init_finished = FALSE;
 int show_gameplay = FALSE;
 int touch_enabled = FALSE; // É^ÉbÉ`ëÄçÏÇÃÇΩÇﬂ
-int interactive_mode = FALSE;
+int buttons_activated = FALSE;
 
-unsigned long interactive_on_time = 0;
+unsigned long buttons_activated_time = 0;
 
 
 //int sles_loop_init_called = FALSE;
@@ -291,30 +292,47 @@ void touch_branching(float x, float y) {
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_0");
 
 		int s = cycle_mood();
-		assign_time(&interactive_on_time);
+		assign_time(&buttons_activated_time);
 		break;
 	case TOUCH_EVENT_BUTTON_1:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_1");
 		init_all_parts();
-		assign_time(&interactive_on_time);
+		assign_time(&buttons_activated_time);
 		break;
 	case TOUCH_EVENT_BUTTON_2:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_2");
 
-		screens[2].is_showing = TRUE;
-		screens[2].fading_in = TRUE;
-		assign_time(&interactive_on_time);
+
+
+
+
+
+		buttons[0].fade_out_end = &all_btns_fade_end_deactivate_show_help;
+
+//		screens[2].is_showing = TRUE;
+//		screens[2].fading_in = TRUE;
+//		assign_time(&buttons_activated_time);
 
 		break;
 
 	case TOUCH_EVENT_INTERACTIVE_ON:
 		LOGD("touch_branching", "TOUCH_EVENT_INTERACTIVE_ON");
 
-		interactive_mode = TRUE;
+		buttons[0].fading_in = TRUE;
+		buttons_activated = TRUE;
 
-		assign_time(&interactive_on_time);
+		assign_time(&buttons_activated_time);
 
 //		LOGD("touch_branching", "interactive_on_time: %u", interactive_on_time);
+
+
+		break;
+
+	case TOUCH_EVENT_HELP:
+
+
+		screens[2].fading_out = TRUE;
+
 
 
 		break;
@@ -374,7 +392,8 @@ void trigger_note(float x, float y) {
 
 		//play_note(seg, vel);
 
-		activate_touch_circle(x, y, current_part_color(), &vel);
+//		activate_touch_circle(x, y, current_part_color(), &vel);
+		activate_tex_circle(x, y, current_part_color(), &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
 
@@ -949,42 +968,18 @@ void android_main(struct android_app* state) {
 
 
 
-			if (show_gameplay && interactive_mode) {
+			if (show_gameplay && buttons_activated) {
 
-
-				if (compare_times(interactive_on_time, INTERACTIVE_TTL)) {
-
-
-
-
-//					interactive_mode = FALSE;
-					if (!buttons[2].fading_out && !button_fade_out_called) {
-						button_fade_out_called = TRUE;
+				if (compare_times(buttons_activated_time, INTERACTIVE_TTL)) {
+					if (!all_buttons_busy_fading) {
 						buttons[2].fading_out = TRUE;
-
-					}
-
-
-
-					if (buttons[0].alpha <= 0.0F) {
-						buttons[0].fading_out = FALSE;
-						buttons[0].fading_in = TRUE;
-
-						interactive_mode = FALSE;
-						button_fade_out_called = FALSE;
-
-
-						int i;
-						for (i = 0; i < sizeof_button_array; i++) {
-							LOGD("touch_branching", "buttons[%d].fading_in: %d", i, buttons[i].fading_in);
-							LOGD("touch_branching", "buttons[%d].fading_out: %d", i, buttons[i].fading_out);
-						}
-
-
-
 					}
 				}
 			}
+
+
+
+
 
 
 //			if (!sles_loop_init_called && show_gameplay && !screens[0].fading_out) {

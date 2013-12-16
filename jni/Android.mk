@@ -35,6 +35,7 @@ LOCAL_SRC_FILES += game/moods.c
 LOCAL_SRC_FILES += gfx/frame_delta.c
 LOCAL_SRC_FILES += gfx/touch_circle.c
 LOCAL_SRC_FILES += math/trig_sampler.c
+LOCAL_SRC_FILES += gfx/tex_circle.c
 LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM -lGLESv2
 # for native audio
 LOCAL_LDLIBS    += -lOpenSLES

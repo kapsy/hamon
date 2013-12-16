@@ -897,6 +897,8 @@ void buffer_chunk_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) 
 void buffer_chunk_timer_callback(SLAndroidSimpleBufferQueueItf buffer_queue, void* v) {
 //	__android_log_write(ANDROID_LOG_DEBUG, "buffer_chunk_timer_callback", "buffer_chunk_timer_callback() called");
 //total_tic_counter++;
+
+
 	part_tic_counter();
 
 

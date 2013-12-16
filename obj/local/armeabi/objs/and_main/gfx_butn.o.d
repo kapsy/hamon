@@ -28,7 +28,8 @@ obj/local/armeabi/objs/and_main/gfx_butn.o: jni/gfx_butn.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
  jni/gfx_gles.h jni/gfx/vertex.h jni/hon_type.h jni/gfx_asst.h \
- jni/gfx_butn.h jni/and_main.h
+ jni/gfx_butn.h jni/and_main.h jni/math/trig_sampler.h \
+ jni/gfx/full_screen_element.h jni/snd_ctrl.h jni/gfx/frame_delta.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -97,3 +98,11 @@ jni/gfx_asst.h:
 jni/gfx_butn.h:
 
 jni/and_main.h:
+
+jni/math/trig_sampler.h:
+
+jni/gfx/full_screen_element.h:
+
+jni/snd_ctrl.h:
+
+jni/gfx/frame_delta.h:

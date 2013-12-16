@@ -69,7 +69,7 @@ obj/local/armeabi/objs/and_main/gfx_gles.o: jni/gfx_gles.c \
  jni/gfx/vertex.h jni/hon_type.h jni/gfx/full_screen_element.h \
  jni/gfx/full_screen_quad.h jni/gfx_gles.h jni/and_main.h jni/gfx_asst.h \
  jni/gfx_butn.h jni/game/moods.h jni/gfx/frame_delta.h \
- jni/gfx/touch_circle.h jni/gfx/shaders.h
+ jni/gfx/touch_circle.h jni/gfx/shaders.h jni/gfx/tex_circle.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -228,3 +228,5 @@ jni/gfx/frame_delta.h:
 jni/gfx/touch_circle.h:
 
 jni/gfx/shaders.h:
+
+jni/gfx/tex_circle.h:

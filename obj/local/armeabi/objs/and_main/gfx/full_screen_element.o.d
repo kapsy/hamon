@@ -21,7 +21,7 @@ obj/local/armeabi/objs/and_main/gfx/full_screen_element.o: \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h \
- jni/gfx/full_screen_element.h jni/hon_type.h jni/gfx_asst.h \
+ jni/hon_type.h jni/gfx/full_screen_element.h jni/gfx_asst.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
@@ -30,7 +30,7 @@ obj/local/armeabi/objs/and_main/gfx/full_screen_element.o: \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
- jni/gfx/vertex.h jni/game/moods.h jni/math/trig_sampler.h
+ jni/gfx/vertex.h jni/game/moods.h jni/math/trig_sampler.h jni/snd_ctrl.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -74,9 +74,9 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h:
 
-jni/gfx/full_screen_element.h:
-
 jni/hon_type.h:
+
+jni/gfx/full_screen_element.h:
 
 jni/gfx_asst.h:
 
@@ -101,3 +101,5 @@ jni/gfx/vertex.h:
 jni/game/moods.h:
 
 jni/math/trig_sampler.h:
+
+jni/snd_ctrl.h:

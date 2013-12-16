@@ -23,22 +23,38 @@
 
 #include "and_main.h"
 
+
+#include "math/trig_sampler.h"
+#include "gfx/full_screen_element.h"
+
+
+#include "snd_ctrl.h"
+
+#include "gfx/frame_delta.h"
+
+
 struct button buttons[] = {
 		{textures + 2, textures + 5,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_0, FALSE, TRUE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
-				buttons+1, NULL},
+				buttons+1, NULL,
+				&all_btns_fade_start, NULL, NULL, &all_btns_fade_end_deactivate,
+				&touch_anim_start, &touch_anim_finish},
 		{textures + 3, textures + 6,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_1, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
-				buttons+2, buttons+0},
+				buttons+2, buttons+0,
+				NULL, NULL, NULL, NULL,
+				&touch_anim_start, &touch_anim_finish},
 		{textures + 4, textures + 7,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_2, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
-				NULL, buttons+1},
+				NULL, buttons+1,
+				NULL, &all_btns_fade_end, &all_btns_fade_start, NULL,
+				&touch_anim_start, &touch_anim_finish_help},
 };
 
 struct vertex btn_quad[] = {
@@ -57,10 +73,9 @@ int sizeof_buttons = sizeof buttons;
 int sizeof_btn_quad = sizeof btn_quad;
 int sizeof_btn_quad_index = sizeof btn_quad_index;
 
-int button_fade_in_called = FALSE;
-int button_fade_out_called = FALSE;
-
-
+//int all_buttons_fading_in = FALSE;
+//int all_buttons_fading_out = FALSE;
+int all_buttons_busy_fading = FALSE;
 
 void set_index_fading(int i);
 void set_btn_fading(struct button* b, int in);
@@ -98,41 +113,6 @@ void calc_btn_quad_verts(int bm_w, int bm_h) {
 	}
 }
 
-//int get_touch_response(float x, float y) {
-//
-//	LOGD("get_touch_response", "x: %f, y: %f", x, y);
-//
-//
-//	int response = TOUCH_EVENT_GAME;
-//
-//	if (!interactive_mode) {
-//		response = TOUCH_EVENT_INTERACTIVE_ON;
-//	}
-//	else {
-//		int i;
-//		for (i = 0; i < sizeof_button_array; i++) {
-//			struct button* b = buttons + i;
-//
-//			LOGD("get_touch_response", "b->touch_bl.x: %f, b->touch_bl.y: %f", b->touch_bl.x, b->touch_bl.y);
-//			LOGD("get_touch_response", "b->touch_tr.x: %f, b->touch_tr.y: %f", b->touch_tr.x, b->touch_tr.y);
-//	//		11-29 12:26:31.113: D/get_touch_response(30149): x: 67.187500, y: 432.656250
-//	//		11-29 12:26:31.113: D/get_touch_response(30149): b->touch_bl.x: 0.000000, b->touch_bl.y: 480.000000
-//	//		11-29 12:26:31.117: D/get_touch_response(30149): b->touch_tr.x: 128.000000, b->touch_tr.y: 352.000000
-//
-//			if (!b->fading_in && !b->fading_out && !b->is_touch_anim) {
-//				if (x>b->touch_bl.x && x<b->touch_tr.x) {
-//					if (y<b->touch_bl.y && y>b->touch_tr.y) {
-//
-//						b->is_touch_anim = TRUE;
-//
-//						response = b->event_enum;
-//					}
-//				}
-//			}
-//		}
-//	}
-//	return response;
-//}
 
 
 
@@ -142,7 +122,17 @@ int get_touch_response(float x, float y) {
 	LOGD("get_touch_response", "x: %f, y: %f", x, y);
 
 
+
+
+
 	int res = TOUCH_EVENT_GAME;
+
+	if (screens[2].is_showing) {
+		res = TOUCH_EVENT_HELP;
+		return res;
+
+	}
+
 
 	int i;
 	for (i = 0; i < sizeof_button_array; i++) {
@@ -155,9 +145,11 @@ int get_touch_response(float x, float y) {
 		if (x > b->touch_bl.x && x < b->touch_tr.x) {
 			if (y < b->touch_bl.y && y > b->touch_tr.y) {
 
-				if (!button_fade_in_called && !button_fade_out_called) {
+
+				if (!all_buttons_busy_fading) {
+
 					if (!b->is_touch_anim) {
-						if (!interactive_mode) {
+						if (!buttons_activated) {
 							res = TOUCH_EVENT_INTERACTIVE_ON;
 							return res;
 						}
@@ -169,15 +161,9 @@ int get_touch_response(float x, float y) {
 						}
 					}
 				}
-
 			}
 		}
-
-
 	}
-
-
-
 	return res;
 }
 
@@ -204,6 +190,13 @@ void btn_anim(struct button* b) {
 	if (b->fading_in) {
 //		LOGD("btn_anim", "b->fading_in");
 		if (b->alpha < BTN_ALPHA_MAX) {
+
+
+			if(b->fade_in_start != NULL) (b->fade_in_start)();
+
+
+
+
 			b->alpha += (float)frame_delta * b->fade_in_rate;
 
 			if (b->alpha > 0.2F) set_btn_fading(b->fade_in_next, TRUE);
@@ -211,11 +204,13 @@ void btn_anim(struct button* b) {
 //			LOGD("btn_anim", "b->alpha : %f", b->alpha);
 		}
 		else if (b->alpha >= BTN_ALPHA_MAX) {
-			LOGD("btn_anim", "else if (b->alpha >= BTN_ALPHA_MAX)");
+//			LOGD("btn_anim", "else if (b->alpha >= BTN_ALPHA_MAX)");
 			b->alpha = BTN_ALPHA_MAX;
 			b->fading_in = FALSE;
-			LOGD("btn_anim", "b->fading_out: %d", b->fading_out);
-			LOGD("btn_anim", "b->fading_in: %d", b->fading_in);
+//			LOGD("btn_anim", "b->fading_out: %d", b->fading_out);
+//			LOGD("btn_anim", "b->fading_in: %d", b->fading_in);
+
+			if(b->fade_in_end != NULL) (b->fade_in_end)();
 		}
 	}
 
@@ -224,32 +219,30 @@ void btn_anim(struct button* b) {
 //		LOGD("btn_anim", "b->fading_out");
 		if (b->alpha > BTN_ALPHA_MIN) {
 
+
+			if(b->fade_out_start != NULL) (b->fade_out_start)();
+
+
 			b->alpha -= (float)frame_delta * b->fade_out_rate;
-
 			if (b->alpha < 0.34F) set_btn_fading(b->fade_out_next, FALSE);
-
 //			LOGD("btn_anim", "b->alpha : %f", b->alpha);
 		}
 		else if (b->alpha <= BTN_ALPHA_MIN) {
-			LOGD("btn_anim", "else if (b->alpha <= BTN_ALPHA_MIN)");
+//			LOGD("btn_anim", "else if (b->alpha <= BTN_ALPHA_MIN)");
 			b->alpha = BTN_ALPHA_MIN;
 			b->fading_out = FALSE;
-			LOGD("btn_anim", "b->fading_out: %d", b->fading_out);
-			LOGD("btn_anim", "b->fading_in: %d", b->fading_in);
+//			LOGD("btn_anim", "b->fading_out: %d", b->fading_out);
+//			LOGD("btn_anim", "b->fading_in: %d", b->fading_in);
+
+
+
+			if(b->fade_out_end!= NULL) (b->fade_out_end)();
 		}
 	}
 
 
 
 
-//	if (b->fading_out) {
-//		if (b->alpha > BTN_ALPHA_MIN) {
-//			b->alpha -= BTN_FADE_RATE;
-//		} else if (b->alpha <= BTN_ALPHA_MIN) {
-//			b->alpha = BTN_ALPHA_MIN;
-//			b->fading_out = FALSE;
-//		}
-//	}
 
 	if (b->is_touch_anim) {
 
@@ -263,20 +256,34 @@ void btn_anim(struct button* b) {
 
 		if (b->pressed_peak) {
 			b->alpha_pt -= (float)frame_delta * BTN_PRESS_FADE_RATE_OUT;
+
+//			b->alpha_pt *= (frame_delta_ratio * 0.98);
+//			b->alpha_pt *= 0.96;
+
+//			LOGD("btn_anim", "frame_delta_ratio: %f", frame_delta_ratio);
+//			LOGD("btn_anim", "b->alpha_pt: %f", b->alpha_pt);
+
+			if(b->alpha_pt < 0.3F){if(b->touch_anim_finish!= NULL) (b->touch_anim_finish)();}
+
 		}
 
-		if (b->alpha_pt <= 0.0F && b->pressed_peak) {
+		if (b->alpha_pt <= 0.05F && b->pressed_peak) {
+
+
 			b->pressed_peak = FALSE;
 			b->is_touch_anim = FALSE;
 			b->alpha_pt = 0.0F;
+
+
+
 		}
 	}
+
+
+
+
 }
 
-//void set_btn_fading(int b) {
-//	if (b < sizeof_button_array)
-//		buttons[b].fading_in = TRUE;
-//}
 void set_index_fading(int i) {
 	if (i < sizeof_button_array) {
 		struct button* b = buttons + i;
@@ -296,15 +303,102 @@ void set_btn_fading(struct button* b, int in) {
 	}
 }
 
-//int buttons_fading() {
-//	int r = FALSE;
-//	int i;
-//	for (i = 0; i < sizeof_button_array; i++) {
-//		button* b = buttons + i;
-//		if (b->fading_in || b->fading_out) r = TRUE;
+
+
+void all_btns_fade_start() {
+	if (!all_buttons_busy_fading) {
+		all_buttons_busy_fading = TRUE;
+		LOGD("all_btns_fade_status", "all_buttons_busy_fading = TRUE");
+	}
+}
+
+void all_btns_fade_end() {
+	if (all_buttons_busy_fading) {
+		all_buttons_busy_fading = FALSE;
+		LOGD("all_btns_fade_status", "all_buttons_busy_fading = FALSE");
+	}
+}
+
+
+
+
+//void all_btns_fade_start_help() {
+//	if (!all_buttons_busy_fading) {
+//		int i;
+//		for (i = 0; i < sizeof_button_array; i++) {
+//			struct button* b = buttons + i;
+//
+//			b->fade_out_rate = BTN_FADE_IN_RATE;
+//		}
+//
+//		all_buttons_busy_fading = TRUE;
+//		LOGD("all_btns_fade_status", "all_buttons_busy_fading = TRUE");
 //	}
-//	return r;
 //}
+
+
+
+void all_btns_fade_end_deactivate() {
+	if (all_buttons_busy_fading) {
+		all_buttons_busy_fading = FALSE;
+		buttons_activated = FALSE;
+
+		LOGD("all_btns_fade_status", "all_buttons_busy_fading = FALSE, buttons_activated = FALSE");
+
+//		int i;
+//		for (i = 0; i < sizeof_button_array; i++) {
+//			buttons[i].fading_in = FALSE;
+//			buttons[i].fading_out = FALSE;
+//			LOGD("all_btns_fade_status", "buttons[%d].fadiSng_in: %d", i, buttons[i].fading_in);
+//			LOGD("all_btns_fade_status", "buttons[%d].fading_out: %d", i, buttons[i].fading_out);
+//		}
+	}
+}
+
+void all_btns_fade_end_deactivate_show_help() {
+	if (all_buttons_busy_fading) {
+		all_buttons_busy_fading = FALSE;
+		buttons_activated = FALSE;
+
+
+
+
+
+
+		screens[2].is_showing = TRUE;
+		screens[2].fading_in = TRUE;
+		buttons[0].fade_out_end = &all_btns_fade_end_deactivate;
+
+		LOGD("all_btns_fade_status", "all_buttons_busy_fading = FALSE, buttons_activated = FALSE");
+
+	}
+}
+
+
+
+void touch_anim_start() {
+
+}
+
+
+void touch_anim_finish() {
+
+}
+
+void touch_anim_finish_help() {
+
+//	screens[2].is_showing = TRUE;
+//	screens[2].fading_in = TRUE;
+
+
+
+
+	playback_paused = TRUE;
+	buttons[2].fading_out = TRUE;
+//	all_btns_fade_end_deactivate_show_help();
+}
+
+
 
 
 

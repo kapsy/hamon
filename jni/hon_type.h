@@ -48,4 +48,7 @@
 #define PI 3.14159265358979
 
 
+
+typedef void (*func_ptr)();
+
 #endif /* HON_TYPE_H_ */

@@ -9,9 +9,9 @@
 #define FULL_SCREEN_ELEMENT_H_
 
 #define SPLASH_FADE_RATE (0.4F/(float)SEC_IN_US)
-#define SPLASH_BG_FADE_RATE (0.1F/(float)SEC_IN_US)
+#define SPLASH_BG_FADE_RATE (0.36F/(float)SEC_IN_US) //(0.1F (0.3F
 #define SPLASH_FADE_RATE_QUICK (0.42F/(float)SEC_IN_US)
-#define HELP_FADE_RATE (0.4F/(float)SEC_IN_US)
+#define HELP_FADE_RATE (0.8F/(float)SEC_IN_US)
 #define BG_FADE_RATE (0.11F/(float)SEC_IN_US)
 #define BG_PULSE_FADE_RATE (0.41F/(float)SEC_IN_US)
 //#define BG_PULSE_FADE_RATE (0.21F/(float)SEC_IN_US)
@@ -49,6 +49,11 @@ struct full_scr_el {
 	float pulse_size;
 	float pulse_dir; // ê≥å∑îgÇÃÇŸÇ§Ç™Ç¢Ç¢ÇÃÇ©Ç‡
 
+	func_ptr fade_in_start;
+	func_ptr fade_out_end;
+
+
+
 };
 
 
@@ -72,6 +77,6 @@ void full_scr_xfade();
 int full_scr_fading();
 
 void background_anim_all();
-
+void help_screen_end();
 
 #endif /* FULL_SCREEN_ELEMENT_H_ */

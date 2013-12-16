@@ -7,8 +7,8 @@
 #include <android/log.h>
 #include <time.h>
 
-#include "gfx/full_screen_element.h"
 #include "hon_type.h"
+#include "gfx/full_screen_element.h"
 #include "gfx_asst.h"
 #include "gfx_gles.h"
 
@@ -18,15 +18,22 @@
 #include "math/trig_sampler.h"
 
 
+#include "snd_ctrl.h"
+
 struct full_scr_el screens[] = {
-		 {"splash", textures + 0, 0.0F, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0 },
-		 {"splash_bg", textures + 1, 0.0F, 0.0F, SPLASH_BG_FADE_RATE, TRUE, FALSE, TRUE, modulators + 0, 0.0, 1.0, 1.0 },
-		 {"help", textures + 0, 0.0F, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0 },
+		 {"splash", textures + 0, 0.0F, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0,
+				 NULL, NULL},
+		 {"splash_bg", textures + 1, 0.0F, 0.0F, SPLASH_BG_FADE_RATE, TRUE, FALSE, TRUE, modulators + 0, 0.0, 1.0, 1.0,
+				 NULL, NULL},
+		 {"help", textures + 0, 0.0F, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0,
+				 NULL, &help_screen_end},
 };
 
 struct full_scr_el backgrounds[] = {
-		 {"new_bg_1", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0 },
-		 {"new_bg_2", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0 }
+		 {"new_bg_1", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0,
+				 NULL, NULL},
+		 {"new_bg_2", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0,
+				 NULL, NULL},
 };
 
 
@@ -68,6 +75,9 @@ void full_scr_alpha_anim(struct full_scr_el* fs) {
 			fs->fading_out = FALSE;
 			fs->alpha = 0.0;
 			fs->is_showing = FALSE;
+
+			if (fs->fade_out_end != NULL) (fs->fade_out_end)();
+
 		}
 }
 
@@ -152,4 +162,13 @@ int all_bgs_fading() {
 	return r;
 }
 
+// ---------- ポインターの関数
 
+void help_screen_end() {
+
+	LOGD("help_screen_end", "help_screen_end() called");
+	playback_paused = FALSE;
+
+
+
+}

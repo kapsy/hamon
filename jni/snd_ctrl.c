@@ -32,24 +32,16 @@
 #include "game/moods.h"
 #include "and_main.h"
 
-
-
-
-
-
-
-
-
 #include <android/log.h>
 #include <android_native_app_glue.h>
 #include "gfx_gles.h"
 
-
-
 #include <SLES/OpenSLES.h>
-
-
 #include "gfx/touch_circle.h"
+#include "gfx/tex_circle.h"
+
+
+
 
 
 #define AMMO_INCREASE_RATE 5//50 // 個のticsを過ごすと、AMMOが1に増やす
@@ -107,6 +99,7 @@ typedef struct {
 
 //	size_t ammo_remaining;
 
+
 	size_t play_count;
 	size_t plays_ttl;
 	float fade_out_factor;
@@ -124,10 +117,9 @@ typedef struct {
 
 
 //	int been_used; // この～パートは当時に使用してる
-
-
-
 }part;
+
+
 
 
 
@@ -168,6 +160,7 @@ static int current_rec_part = 0;
 static size_t tics_per_part = 1500; // 3000; // 5000;
 //static size_t tic_increment = 0;
 
+int playback_paused = FALSE;
 
 static int start_shots = 0;
 
@@ -307,7 +300,7 @@ void* timing_loop(void* args) {
 //		general_tic_counter();
 		vol_automation();
 		increase_ammo();
-		if (show_gameplay) auto_play();
+		if (show_gameplay && !playback_paused) auto_play();
 
 
 
@@ -411,40 +404,30 @@ size_t current_part_color() {
 // ticを全部進めないといけない
 void part_tic_counter() {
 
-	int i;
-	for (i = 0; i < TOTAL_PARTS; i++) {
-		part* p = (parts + i);
+	if (!playback_paused) {
 
-//		if (p->is_alive) {
+		int i;
+		for (i = 0; i < TOTAL_PARTS; i++) {
+			part* p = (parts + i);
+				if (p->current_tic >= p->total_tics && p->is_recording) {
+									p->is_recording = FALSE;
+									p->current_tic = 0;
+									LOGI("part_tic_counter", "(p->current_tic >= p->total_tics && p->is_recording)");
+									init_part(parts + get_free_part(), TRUE);
 
-			if (p->current_tic >= p->total_tics && p->is_recording) {
-
-								p->is_recording = FALSE;
-								p->current_tic = 0;
-
-
-								LOGI("part_tic_counter", "(p->current_tic >= p->total_tics && p->is_recording)");
-								init_part(parts + get_free_part(), TRUE);
-
-			} else if (p->current_tic >= p->total_tics && !p->is_recording && p->is_alive) {
-
-
-//				__android_log_print(ANDROID_LOG_DEBUG, "tic_counter", "p->current_tic:  %d, p->total_tics: %d i: %d", p->current_tic, p->total_tics, i);
-								count_part_ttl(p);
-								p->current_tic = 0;
-
-			} else if (p->current_tic < p->total_tics && p->is_recording && p->current_note > 0) {
-								p->current_tic++;
-
-			} else if (p->current_tic < p->total_tics && !p->is_recording && p->is_alive) {
-								p->current_tic++;
-
-			}
-
-//		}
+				} else if (p->current_tic >= p->total_tics && !p->is_recording && p->is_alive) {
+									count_part_ttl(p);
+									p->current_tic = 0;
+				} else if (p->current_tic < p->total_tics && p->is_recording && p->current_note > 0) {
+									p->current_tic++;
+				} else if (p->current_tic < p->total_tics && !p->is_recording && p->is_alive) {
+									p->current_tic++;
+				}
+		}
 	}
-
 }
+
+
 
 //int cycle_rec_part() {
 //
@@ -739,7 +722,8 @@ void play_all_parts() {
 
 //				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
 
-					activate_touch_circle(n->pos_x, n->pos_y, p->color, &n->vel);
+					activate_tex_circle(n->pos_x, n->pos_y, p->color, &n->vel);
+//					activate_touch_circle(n->pos_x, n->pos_y, p->color, &n->vel);
 //					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
 					LOGI("play_all_parts", "part: %d, note: %d, n->vel %f", i, j, n->vel);
 //					LOGI("play_all_parts", "part (i): %d", i);

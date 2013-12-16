@@ -43,12 +43,15 @@
 #include "gfx/touch_circle.h"
 #include "gfx/shaders.h"
 
+#include "gfx/tex_circle.h"
+
 
 
 void draw_background_fse();
 void draw_button();
 void draw_gameplay();
 void draw_touch_circles();
+void draw_tex_circles();
 void create_gl_buffers();
 int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc);
 
@@ -123,6 +126,12 @@ GLuint fs_quad_ibo;
 
 GLuint btn_vbo;
 GLuint btn_ibo;
+
+GLuint tex_circ_vbo;
+GLuint tex_circ_ibo;
+shader_params_tex gles_sp_tex_circ;
+GLuint gles_prog_tex_circ;
+
 
 
 GLuint g_prog_main;
@@ -269,8 +278,12 @@ int gles_init() {
 	frames = 0;
 	frame_delta_avg_init();
 
-	init_touch_circles();
-	calc_circle_vertex();
+//	init_touch_circles();
+//	calc_circle_vertex();
+
+	calc_tex_circle_vertex();
+	init_tex_circles();
+
 
 
 //	calc_button_coords();
@@ -281,6 +294,11 @@ int gles_init() {
 
 	res = init_shaders(&g_prog_splash, v_shdr_splash, f_shdr_splash);
 	if (!res)	return 0;
+
+
+	res = init_shaders(&gles_prog_tex_circ, v_shdr_main, f_shdr_button);
+	if (!res)	return 0;
+
 
 //	res = init_shaders(&g_prog_button, v_shdr_splash, f_shdr_button);
 //	if (!res)	return 0;
@@ -341,6 +359,25 @@ int gles_init() {
 
 
 
+//	gles_sp_tex_circ
+
+	gles_sp_tex_circ.display = glGetUniformLocation(g_prog_splash, "display");
+	gles_sp_tex_circ.bitmap_ratio = glGetUniformLocation(g_prog_splash, "bitmap_ratio");
+	gles_sp_tex_circ.alpha = glGetUniformLocation(g_prog_splash, "alpha");
+
+	gles_sp_tex_circ.position = glGetAttribLocation(g_prog_splash, "vPosition");
+//	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
+
+	gles_sp_tex_circ.pos_x = glGetUniformLocation(g_prog_button, "pos_x");
+	gles_sp_tex_circ.pos_y = glGetUniformLocation(g_prog_button, "pos_y");
+	gles_sp_tex_circ.tex = glGetAttribLocation(g_prog_button, "atex");
+	gles_sp_tex_circ.alpha = glGetUniformLocation(g_prog_button, "alpha");
+	gles_sp_tex_circ.position = glGetAttribLocation(g_prog_button, "aposition");
+	gles_sp_tex_circ.scale = glGetUniformLocation(g_prog_button, "scale");
+
+
+
+
 	if(!sles_init_called) {
 		int i;
 
@@ -356,6 +393,16 @@ int gles_init() {
 //		LOGD("gles_init", "sizeof textures: %d", sizeof textures);
 //		LOGD("gles_init", "sizeof textures[0]: %d", sizeof textures[0]);
 	}
+
+
+
+
+//	init_tex_circles();
+
+//	create_gl_tex_circles();
+
+
+
 
 	LOGD("init_cmds", "init_cmds() finished");
 	return TRUE;
@@ -486,6 +533,20 @@ int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 void create_gl_buffers()
 {
 
+
+	// VBOの生成
+	glGenBuffers(1, &tex_circ_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, tex_circ_vbo);
+	// データの転送
+	glBufferData(GL_ARRAY_BUFFER, sizeof_tex_circle_v, tex_circle_v, GL_STATIC_DRAW);
+
+	// インデックスバッファの作成
+	glGenBuffers(1, &tex_circ_ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tex_circ_ibo);
+	// データの転送
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof_tex_circle_i, tex_circle_i, GL_STATIC_DRAW);
+
+
 	// VBOの生成
 	glGenBuffers(1, &btn_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, btn_vbo);
@@ -562,6 +623,29 @@ int create_gl_texture(struct texture_type *tt)
   return 1;
 }
 
+//void create_gl_tex_circles() {
+////	int i;
+////	struct texture_type* tt = &(textures + 2)->tt;
+////
+////	for (i = 0; i < sizeof_tex_circles_e; i++) {
+////		struct tex_circle* tc = (tex_circles + i);
+////
+////		glGenTextures(1, &tc->t_name);
+////		glBindTexture(GL_TEXTURE_2D, tc->t_name);
+////
+////		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+////
+////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+////
+////		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tt->BmpWidth, tt->BmpHeight, 0,
+////				GL_RGBA, GL_UNSIGNED_BYTE, tt->TexData);
+////
+////	}
+//
+//}
 
 
 
@@ -594,7 +678,7 @@ void draw_frame() {
 		draw_gameplay();
 
 //		 if (!screens[0].fading_out)
-		if (interactive_mode)
+		if (buttons_activated)
 			 draw_button();
 	}
 
@@ -609,7 +693,8 @@ void draw_frame() {
 
 
 void draw_gameplay() {
-	draw_touch_circles();
+//	draw_touch_circles();
+	draw_tex_circles();
 
 //		usleep(100000);
 //		usleep(20000);
@@ -729,6 +814,74 @@ void draw_background_fse() {
 
 	}
 }
+
+
+
+
+void draw_tex_circles() {
+
+//	glUseProgram(g_prog_main);
+	glUseProgram(gles_prog_tex_circ);
+	glBindBuffer(GL_ARRAY_BUFFER, tex_circ_vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tex_circ_ibo);
+	glEnableVertexAttribArray(gles_sp_tex_circ.position);
+	glEnableVertexAttribArray(gles_sp_tex_circ.tex);
+
+	// 頂点情報のサイズ、オフセットを指定
+	glVertexAttribPointer(gles_sp_tex_circ.position, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
+	glVertexAttribPointer(gles_sp_tex_circ.tex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
+
+	glEnableVertexAttribArray(0);
+//		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
+	pthread_mutex_lock(&frame_mutex);
+	int i;
+//	for (i=0; i<sizeof_t_circles_e; i++) {
+//
+//		struct touch_circle* ts = t_ripples + (t_circle_draw_order[i]);
+//		if (ts->is_alive) {
+//			glUniform1f(g_sp_m.pos_x, ts->pos_x);
+//			glUniform1f(g_sp_m.pos_y, ts->pos_y);
+//			glUniform1f(g_sp_m.rgb[0], 1.0);
+//			glUniform1f(g_sp_m.rgb[1], 1.0);
+//			glUniform1f(g_sp_m.rgb[2], 1.0);
+//			t_ripple_alpha_size(ts);
+//			glUniform1f(g_sp_m.alpha, ts->alpha);
+//			glUniform1f(g_sp_m.scale, ts->scale);
+//			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
+//		}
+//	}
+
+	for (i = 0; i < sizeof_tex_circles_e; i++) {
+
+		struct tex_circle* ts = tex_circles + (tex_circle_draw_order[i]);
+		if (ts->is_alive) {
+			glUniform1f(gles_sp_tex_circ.pos_x, ts->pos_x);
+			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
+//			glUniform1f(g_sp_m.rgb[0], 1.0);
+//			glUniform1f(g_sp_m.rgb[1], 1.0);
+//			glUniform1f(g_sp_m.rgb[2], 1.0);
+//			glUniform1f(gles_sp_tex_circ.rgb[0], ts->rgb[0]);
+//			glUniform1f(gles_sp_tex_circ.rgb[1], ts->rgb[1]);
+//			glUniform1f(gles_sp_tex_circ.rgb[2], ts->rgb[2]);
+			tex_circle_alpha_size(ts);
+			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);
+			glUniform1f(gles_sp_tex_circ.scale, ts->scale);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, ts->tex->tt.texname);
+//			glBindTexture(GL_TEXTURE_2D, ts->t_name);
+			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+		}
+	}
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	pthread_mutex_unlock(&frame_mutex);
+}
+
+
+
+
+
 
 
 

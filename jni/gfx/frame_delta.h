@@ -11,6 +11,8 @@
 
 
 extern unsigned long frame_delta;
+//extern float frame_delta_ratio;
+
 
 extern unsigned long elapsed_time;
 

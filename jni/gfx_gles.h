@@ -15,6 +15,7 @@
 struct texture_type;
 struct full_scr_el;
 struct background;
+struct tex_circle;
 
 typedef struct {
 	EGLNativeWindowType nativeWin;
@@ -44,6 +45,8 @@ int gles_init();
 
 void gles_term_display(screen_settings* e);
 int create_gl_texture(struct texture_type *tt);
+//void create_gl_texture_circle(struct tex_circle* tc);
+//void create_gl_tex_circles();
 
 void draw_full_screen_image(struct full_scr_el* fs);
 void draw_background(struct background* bg);

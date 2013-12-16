@@ -150,9 +150,10 @@ void calc_frame_delta_time() {
 //	LOGI("calc_delta_time", "frame_delta after frame_delta_avg_calc(): %u", frame_delta);
 
 
-//	frame_delta_ratio = 17000/(float) frame_delta;
-//	if (frame_delta_ratio >= 1.0) frame_delta_ratio = 1.0;
 
+//	frame_delta_ratio = 18000.0F/(float) frame_delta;
+//	if (frame_delta_ratio >= 1.0) frame_delta_ratio = 1.0;
+//		LOGI("calc_delta_time", "frame_delta_ratio: %f", frame_delta_ratio);
 
 	curr_time = new_time;
 

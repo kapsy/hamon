@@ -15,6 +15,8 @@
 #define CIRCLE_SEGMENTS 24
 
 
+
+
 struct touch_circle {
 	int is_alive;
 	int fading_in;
