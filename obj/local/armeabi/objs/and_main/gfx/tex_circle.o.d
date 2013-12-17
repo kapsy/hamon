@@ -73,7 +73,7 @@ obj/local/armeabi/objs/and_main/gfx/tex_circle.o: jni/gfx/tex_circle.c \
  jni/hon_type.h jni/gfx/tex_circle.h jni/gfx/frame_delta.h jni/gfx_gles.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h \
- jni/gfx_asst.h
+ jni/gfx_asst.h jni/game/moods.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
 
@@ -230,3 +230,5 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:
 
 jni/gfx_asst.h:
+
+jni/game/moods.h:

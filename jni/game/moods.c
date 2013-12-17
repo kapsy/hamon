@@ -158,10 +158,10 @@ struct scale scales[] = {
 struct mood moods[] = {
 
 		{
-				"major", (mood_colors + 0), 0, (scales + 0)
+				"major", (mood_colors + 0), &(struct vertex_rgb) {1.0f, 0.0f, 1.0f}, 0, (scales + 0)
 		},
 		{
-				"minor", (mood_colors + 1), 1, (scales + 1)
+				"minor", (mood_colors + 1), &(struct vertex_rgb) {0.0f, 1.0f, 0.0f}, 1, (scales + 1)
 		}
 
 };

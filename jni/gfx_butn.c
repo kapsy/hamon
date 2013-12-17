@@ -34,27 +34,33 @@
 
 
 struct button buttons[] = {
+
 		{textures + 2, textures + 5,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_0, FALSE, TRUE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
 				buttons+1, NULL,
 				&all_btns_fade_start, NULL, NULL, &all_btns_fade_end_deactivate,
-				&touch_anim_start, &touch_anim_finish},
+				&touch_anim_start, &touch_anim_finish,
+				&(struct vertex_rgb) {1.0f, 1.0f, 1.0f}},
+
 		{textures + 3, textures + 6,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_1, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
 				buttons+2, buttons+0,
 				NULL, NULL, NULL, NULL,
-				&touch_anim_start, &touch_anim_finish},
+				&touch_anim_start, &touch_anim_finish,
+				&(struct vertex_rgb) {1.0f, 1.0f, 1.0f}},
+
 		{textures + 4, textures + 7,
 				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_2, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
 				NULL, buttons+1,
 				NULL, &all_btns_fade_end, &all_btns_fade_start, NULL,
-				&touch_anim_start, &touch_anim_finish_help},
+				&touch_anim_start, &touch_anim_finish_help,
+				&(struct vertex_rgb) {1.0f, 1.0f, 1.0f}},
 };
 
 struct vertex btn_quad[] = {

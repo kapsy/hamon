@@ -59,6 +59,7 @@ enum {
 
 struct texture_file;
 struct vec2;
+struct vertex_rgb;
 
 struct button{
 	struct texture_file* main_texture;
@@ -92,7 +93,7 @@ struct button{
 	func_ptr touch_anim_start;
 	func_ptr touch_anim_finish;
 
-
+	struct vertex_rgb* rgb;
 
 	// int button_busy;
 

@@ -13,12 +13,15 @@
 #define TEX_TO_W_RATIO 0.3f
 
 
+struct vertex_rgb;
+
 struct tex_circle {
 	int is_alive;
 	int fading_in;
 	float pos_x;
 	float pos_y;
-	float rgb[3];
+//	float rgb[3];
+	struct vertex_rgb* rgb;
 	float alpha;
 	float alpha_max;
 	float alpha_delta_factor;

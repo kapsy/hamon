@@ -26,13 +26,14 @@ struct mood {
 	char* title;
 //	struct background* bg;
 
-	struct vertex_rgb* colors;
-	int color_index;
+	struct vertex_rgb* rgb_bg;
+	struct vertex_rgb* rgb_circ;
+
+	int color_index; //GLES ‚Ì‚½‚ß
 
 
 	struct scale* scale;
-////touch color?
-//	//touch texture?
+
 
 };
 

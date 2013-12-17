@@ -34,6 +34,8 @@
 #include "gfx_gles.h"
 #include "gfx_asst.h"
 
+#include "game/moods.h"
+
 
 
 #define TEXC_SHRINK_RATE (0.1/(float)SEC_IN_US)
@@ -101,7 +103,12 @@ void init_tex_circles() {
 		tex_ripples[i].is_alive = FALSE;
 		tex_circle_draw_order[i] = i;
 
-
+		tex_circles[i].rgb = (moods + selected_mood)->rgb_circ;
+		tex_ripples[i].rgb = (moods + selected_mood)->rgb_circ;
+//
+//		ts->rgb->r = (moods + selected_mood)->rgb_circ->r;
+//		ts->rgb->g = (moods + selected_mood)->rgb_circ->g;
+//		ts->rgb->b = (moods + selected_mood)->rgb_circ->b;
 
 
 	}
@@ -140,9 +147,17 @@ void activate_tex_circle(float x, float y, size_t col, float* vel) {
 	LOGI("activate_touch_circle", "x: %f ts->pos_x: %f", x, ts->pos_x);
 	LOGI("activate_touch_circle", "y: %f ts->pos_y: %f", y, ts->pos_y);
 
-	ts->rgb[0] = part_colors_test[col].r;
-	ts->rgb[1] = part_colors_test[col].g;
-	ts->rgb[2] = part_colors_test[col].b;
+//	ts->rgb[0] = part_colors_test[col].r;
+//	ts->rgb[1] = part_colors_test[col].g;
+//	ts->rgb[2] = part_colors_test[col].b;
+
+
+	ts->rgb = (moods + selected_mood)->rgb_circ;
+
+	LOGD("activate_touch_circle", "selected_mood: %d", selected_mood);
+
+//	ts->rgb->g = (moods + selected_mood)->rgb_circ->g;
+//	ts->rgb->b = (moods + selected_mood)->rgb_circ->b;
 
 
 	ts->alpha = 0.0F; // TODO
@@ -158,9 +173,15 @@ void activate_tex_circle(float x, float y, size_t col, float* vel) {
 	struct tex_circle* tr = tex_ripples + (tex_circle_draw_order[sizeof_tex_circles_e -1]);
 	tr->pos_x = ((x/(float)g_sc.width)*2)-1;
 	tr->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
-	ts->rgb[0] = part_colors_test[col].r;
-	ts->rgb[1] = part_colors_test[col].g;
-	ts->rgb[2] = part_colors_test[col].b;
+//	ts->rgb[0] = part_colors_test[col].r;
+//	ts->rgb[1] = part_colors_test[col].g;
+//	ts->rgb[2] = part_colors_test[col].b;
+
+//	tr->rgb->r = (moods + selected_mood)->rgb_circ->r;
+//	tr->rgb->g = (moods + selected_mood)->rgb_circ->g;
+//	tr->rgb->b = (moods + selected_mood)->rgb_circ->b;
+	tr->rgb = (moods + selected_mood)->rgb_circ;
+
 	tr->alpha = 0.0F; // TODO
 
 	tr->scale = *vel * *vel * 1.7; // TODO Šù‚ÉŒvŽZ‚·‚ê‚Î‚¢‚¢‚Ì‚©‚à

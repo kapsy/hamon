@@ -128,7 +128,7 @@ const char f_shdr_button[] =
 
 		"varying	vec3 vtex;\n"
 
-
+"uniform vec3 rgb;\n"
 
 
 
@@ -144,13 +144,17 @@ const char f_shdr_button[] =
 //		"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(128.0, 128.0));\n"
 
 //		"tex2 = vec2(vtex.x, vtex.y);\n"
-		"    gl_FragColor = texture2D(sTexture, vec2(vtex.x, vtex.y))  * vec4(1.0,0.0,1.0, alpha);\n"
-
-//		"    gl_FragColor = texture2D(sTexture, tex2);\n"
 
 
-//		"    gl_FragColor = texture2D(sTexture, (vec2(gl_FragCoord) + vec2(((display.y * bitmap_ratio) - display.x) / 2.0, 0.0)) / "
-//		"vec2(display.y * (bitmap_ratio), display.y)   ) * vec4(1.0,1.0,1.0, alpha);\n"
+
+
+//		"    gl_FragColor = texture2D(sTexture, vec2(vtex.x, vtex.y))  * vec4(1.0,0.0,1.0, alpha);\n"
+
+
+		"    gl_FragColor = texture2D(sTexture, vec2(vtex.x, vtex.y))  * vec4(rgb.x,rgb.y,rgb.z,alpha);\n"
+
+
+
 
 	"}\n";
 

@@ -16,9 +16,9 @@ struct vertex{
     GLfloat r, g, b;
 };
 
-struct vertex_rgb{
-	GLfloat r, g, b;
-};
+//struct vertex_rgb{
+//	GLfloat r, g, b;
+//};
 
 
 //struct vertex{
@@ -26,9 +26,9 @@ struct vertex_rgb{
 //    float r, g, b;
 //};
 //
-//struct vertex_rgb{
-//	float r, g, b;
-//};
+struct vertex_rgb{
+	float r, g, b;
+};
 
 struct vec2{
 

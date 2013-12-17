@@ -99,6 +99,8 @@ typedef struct {
 
 	GLint 		display;
 	GLint			bitmap_ratio;
+
+	GLint 		rgb;
 } shader_params_tex;
 
 
@@ -356,7 +358,7 @@ int gles_init() {
 	g_sp_btn.alpha = glGetUniformLocation(g_prog_button, "alpha");
 	g_sp_btn.position = glGetAttribLocation(g_prog_button, "aposition");
 	g_sp_btn.scale = glGetUniformLocation(g_prog_button, "scale");
-
+	g_sp_btn.rgb = glGetUniformLocation(g_prog_button, "rgb");
 
 
 //	gles_sp_tex_circ
@@ -374,6 +376,7 @@ int gles_init() {
 	gles_sp_tex_circ.alpha = glGetUniformLocation(g_prog_button, "alpha");
 	gles_sp_tex_circ.position = glGetAttribLocation(g_prog_button, "aposition");
 	gles_sp_tex_circ.scale = glGetUniformLocation(g_prog_button, "scale");
+	gles_sp_tex_circ.rgb = glGetUniformLocation(g_prog_button, "rgb");
 
 
 
@@ -595,7 +598,7 @@ void create_gl_buffers()
 		glGenBuffers(1, &bg_cols[i]);
 		glBindBuffer(GL_ARRAY_BUFFER, bg_cols[i]);
 //		glBufferData(GL_ARRAY_BUFFER, (sizeof(quad_colors))/4, quad_colors[i], GL_STATIC_DRAW);
-		glBufferData(GL_ARRAY_BUFFER, sizeof_mood_colors_set,  (moods +i)->colors, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof_mood_colors_set,  (moods +i)->rgb_bg, GL_STATIC_DRAW);
 	}
 
 
@@ -744,10 +747,12 @@ void draw_button() {
 	glVertexAttribPointer(g_sp_btn.tex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
 	glEnableVertexAttribArray(0);
 
+
 	int i;
 	for (i = 0; i < sizeof_button_array; i++) {
 
 		struct button* b = buttons + i;
+		glUniform3f(g_sp_btn.rgb, b->rgb->r, b->rgb->g, b->rgb->b);
 
 		btn_anim(b);
 
@@ -835,6 +840,7 @@ void draw_tex_circles() {
 
 	glEnableVertexAttribArray(0);
 //		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
+
 	pthread_mutex_lock(&frame_mutex);
 	int i;
 	for (i=0; i<sizeof_tex_circles_e; i++) {
@@ -843,9 +849,13 @@ void draw_tex_circles() {
 		if (ts->is_alive) {
 			glUniform1f(gles_sp_tex_circ.pos_x, ts->pos_x);
 			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
-//			glUniform1f(gles_sp_tex_circ.rgb[0], 1.0);
-//			glUniform1f(gles_sp_tex_circ.rgb[1], 1.0);
-//			glUniform1f(gles_sp_tex_circ.rgb[2], 1.0);
+
+//			printf( "%d\n",info.kinfo[0]->k_id);
+//			printf( "%s\n",info.kinfo[0]->k_name);
+
+			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb->g, ts->rgb->b);
+
+
 			tex_ripple_alpha_size(ts);
 			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);
 			glUniform1f(gles_sp_tex_circ.scale, ts->scale);
@@ -862,19 +872,15 @@ void draw_tex_circles() {
 		if (ts->is_alive) {
 			glUniform1f(gles_sp_tex_circ.pos_x, ts->pos_x);
 			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
-//			glUniform1f(g_sp_m.rgb[0], 1.0);
-//			glUniform1f(g_sp_m.rgb[1], 1.0);
-//			glUniform1f(g_sp_m.rgb[2], 1.0);
-//			glUniform1f(gles_sp_tex_circ.rgb[0], ts->rgb[0]);
-//			glUniform1f(gles_sp_tex_circ.rgb[1], ts->rgb[1]);
-//			glUniform1f(gles_sp_tex_circ.rgb[2], ts->rgb[2]);
+
+			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb->g, ts->rgb->b);
+//			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb.g, ts->rgb.b);
 			tex_circle_alpha_size(ts);
 			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);
 			glUniform1f(gles_sp_tex_circ.scale, ts->scale);
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, ts->tex->tt.texname);
-//			glBindTexture(GL_TEXTURE_2D, ts->t_name);
 			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 		}
 	}
