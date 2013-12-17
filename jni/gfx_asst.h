@@ -125,6 +125,7 @@ struct texture_type{
     int  BmpLine;
 //    int  initial_alpha;
     GLuint  texname;
+//	GLint param;
 };
 
 //struct texture_type;
@@ -133,8 +134,10 @@ struct texture_file{
 
 	int size;
 	char* path;
+	GLint param;
 	unsigned char* buffer;
 	struct texture_type tt;
+
 };
 
 

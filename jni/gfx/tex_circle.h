@@ -8,9 +8,9 @@
 #ifndef TEX_CIRCLE_H_
 #define TEX_CIRCLE_H_
 
-#define TEX_CIRCLES_MAX 24
+#define TEX_CIRCLES_MAX 8
 
-#define TEX_TO_W_RATIO 0.5F
+#define TEX_TO_W_RATIO 0.3f
 
 
 struct tex_circle {

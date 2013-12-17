@@ -30,6 +30,24 @@
 
 // スプラッシュ画面のシェーダー
 
+
+
+//const char vShaderSrc[] =
+//  "attribute vec3 aPosition;\n"
+//  "attribute vec2 aTex;\n"
+//  "varying   vec2 vTex;\n"
+//  "uniform   mat4 uVpMatrix;\n"
+//  "uniform   mat4 uModelMatrix;\n"
+//  "\n"
+//  "void main(void) {\n"
+//  "  vTex = aTex;\n"
+//  "  gl_Position = uVpMatrix * uModelMatrix * vec4(aPosition, 1.0);\n"
+//  "}\n";
+
+
+
+
+
 const char v_shdr_splash[] =
 		"attribute vec4 vPosition;\n"
 		"void main()\n"
@@ -95,15 +113,25 @@ const char f_shdr_main[] = // fShaderSrc
 
 
 
+//const char fShaderSrc[] =
+//  "precision mediump float;\n"
+//  "varying   vec2  vTex;\n"
+//  "uniform sampler2D uTexture;\n"
+//  "void main()        \n"
+//  "{                  \n"
+//  "  gl_FragColor = texture2D(uTexture,vec2(vTex.s,vTex.t));\n"
+//  "}                  \n";
 
 
 const char f_shdr_button[] =
 	"precision mediump float;\n"
 
 		"varying	vec3 vtex;\n"
-//		"uniform vec2 tex2;\n"
 
-//	"uniform vec2 uSize;\n"
+
+
+
+
 	"uniform sampler2D sTexture;\n"
 	"uniform float alpha;\n"
 
@@ -116,7 +144,7 @@ const char f_shdr_button[] =
 //		"    gl_FragColor = texture2D(sTexture, vec2(gl_FragCoord) / vec2(128.0, 128.0));\n"
 
 //		"tex2 = vec2(vtex.x, vtex.y);\n"
-		"    gl_FragColor = texture2D(sTexture, vec2(vtex.x, vtex.y))  * vec4(1.0,1.0,1.0, alpha);\n"
+		"    gl_FragColor = texture2D(sTexture, vec2(vtex.x, vtex.y))  * vec4(1.0,0.0,1.0, alpha);\n"
 
 //		"    gl_FragColor = texture2D(sTexture, tex2);\n"
 

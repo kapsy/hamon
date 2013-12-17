@@ -602,7 +602,7 @@ void create_gl_buffers()
 	LOGD("create_gl_buffers", "pi_create_buffer() finished");
 }
 
-int create_gl_texture(struct texture_type *tt)
+int create_gl_texture(struct texture_type *tt, GLint param)
 {
   glGenTextures(1, &tt->texname);
   glBindTexture(GL_TEXTURE_2D, tt->texname);
@@ -614,8 +614,10 @@ int create_gl_texture(struct texture_type *tt)
 //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 //  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, param);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, param);
 
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tt->BmpWidth, tt->BmpHeight, 0,
@@ -835,21 +837,24 @@ void draw_tex_circles() {
 //		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, projectionMatrix);
 	pthread_mutex_lock(&frame_mutex);
 	int i;
-//	for (i=0; i<sizeof_t_circles_e; i++) {
-//
-//		struct touch_circle* ts = t_ripples + (t_circle_draw_order[i]);
-//		if (ts->is_alive) {
-//			glUniform1f(g_sp_m.pos_x, ts->pos_x);
-//			glUniform1f(g_sp_m.pos_y, ts->pos_y);
-//			glUniform1f(g_sp_m.rgb[0], 1.0);
-//			glUniform1f(g_sp_m.rgb[1], 1.0);
-//			glUniform1f(g_sp_m.rgb[2], 1.0);
-//			t_ripple_alpha_size(ts);
-//			glUniform1f(g_sp_m.alpha, ts->alpha);
-//			glUniform1f(g_sp_m.scale, ts->scale);
-//			glDrawElements(GL_TRIANGLE_FAN, CIRCLE_SEGMENTS + 2, GL_UNSIGNED_SHORT, 0);
-//		}
-//	}
+	for (i=0; i<sizeof_tex_circles_e; i++) {
+
+		struct tex_circle* ts = tex_ripples + (tex_circle_draw_order[i]);
+		if (ts->is_alive) {
+			glUniform1f(gles_sp_tex_circ.pos_x, ts->pos_x);
+			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
+//			glUniform1f(gles_sp_tex_circ.rgb[0], 1.0);
+//			glUniform1f(gles_sp_tex_circ.rgb[1], 1.0);
+//			glUniform1f(gles_sp_tex_circ.rgb[2], 1.0);
+			tex_ripple_alpha_size(ts);
+			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);
+			glUniform1f(gles_sp_tex_circ.scale, ts->scale);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, ts->tex->tt.texname);
+			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+		}
+	}
 
 	for (i = 0; i < sizeof_tex_circles_e; i++) {
 

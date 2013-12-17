@@ -40,7 +40,7 @@
 #define TEXC_ALPHA_FADE_IN (3.6/(float)SEC_IN_US)
 #define TEXC_ALPHA_FADE_OUT (0.205/(float)SEC_IN_US)
 
-#define TEXR_GROW_RATE (2.2/(float)SEC_IN_US)
+#define TEXR_GROW_RATE (1.8/(float)SEC_IN_US) //(2.2/(
 #define TEXR_ALPHA_FADE_IN (3.6/(float)SEC_IN_US)
 #define TEXR_ALPHA_FADE_OUT 0.94f
 
@@ -64,12 +64,21 @@ void step_tex_circle_draw_order();
 //unsigned short tex_circle_i[4];
 
 
+//struct vertex tex_circle_v[] = {
+//	{-0.5f, 	-0.5f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
+//	{0.5f, 		-0.5f, 	0.0f, 		1.0f, 		0.0f, 		0.0f}, //0,1
+//	{0.5f, 		0.5f, 		0.0f, 		1.0f,		1.0f, 		0.0f},
+//	{-0.5f, 	0.5f,		0.0f, 		0.0f, 		1.0f,		0.0f},
+//};
+
 struct vertex tex_circle_v[] = {
-	{-0.5f, -0.5f, 	0.0f, 		0.0f, 		0.0f, 		0.0f},
-	{0.5f, 	-0.5f, 	0.0f, 		1.0f, 		0.0f, 		0.0f}, //0,1
-	{0.5f, 	0.5f, 	0.0f, 		1.0f,		1.0f, 		0.0f},
-	{-0.5f, 	0.5f,		0.0f, 		0.0f, 		0.0f,		0.0f},
+	{0.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f, 		0.0f},
+	{0.0f,		0.0f, 		0.0f,		1.0f, 		0.0f, 		0.0f}, //0,1
+	{0.0f, 		0.0f, 		0.0f,		1.0f,		1.0f, 		0.0f},
+	{0.0f, 		0.0f, 		0.0f, 		0.0f, 		1.0f,		0.0f},
 };
+
+
 unsigned short tex_circle_i[] = {
   0, 1, 3, 2
 };
@@ -84,10 +93,10 @@ void init_tex_circles() {
 		tex_circles[i].is_alive = FALSE;
 
 
-//		create_gl_texture_circle(tex_circles + i);
 
-tex_circles[i].tex = (textures + 2);
 
+		tex_circles[i].tex = (textures + 10);
+		tex_ripples[i].tex = (textures + 10);
 
 		tex_ripples[i].is_alive = FALSE;
 		tex_circle_draw_order[i] = i;
@@ -146,21 +155,21 @@ void activate_tex_circle(float x, float y, size_t col, float* vel) {
 
 
 
-//	struct tex_circle* tr = tex_ripples + (tex_circle_draw_order[sizeof_tex_circles_e -1]);
-//	tr->pos_x = ((x/(float)g_sc.width)*2)-1;
-//	tr->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
-////	tr->rgb[0] = part_colors[col].r;
-////	tr->rgb[1] = part_colors[col].g;
-////	tr->rgb[2] = part_colors[col].b;
-//	tr->alpha = 0.0F; // TODO
-//
-//	tr->scale = *vel * *vel * 1.7; // TODO Šù‚ÉŒvŽZ‚·‚ê‚Î‚¢‚¢‚Ì‚©‚à
-//	tr->alpha_max = *vel;
-//
-//	if (tr->alpha_max >= 1.0) tr->alpha_max = 1.0;
-//	tr->alpha_delta_factor = 0.000004F;
-//	tr->fading_in = TRUE;
-//	tr->is_alive = TRUE;
+	struct tex_circle* tr = tex_ripples + (tex_circle_draw_order[sizeof_tex_circles_e -1]);
+	tr->pos_x = ((x/(float)g_sc.width)*2)-1;
+	tr->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
+	ts->rgb[0] = part_colors_test[col].r;
+	ts->rgb[1] = part_colors_test[col].g;
+	ts->rgb[2] = part_colors_test[col].b;
+	tr->alpha = 0.0F; // TODO
+
+	tr->scale = *vel * *vel * 1.7; // TODO Šù‚ÉŒvŽZ‚·‚ê‚Î‚¢‚¢‚Ì‚©‚à
+	tr->alpha_max = *vel;
+
+	if (tr->alpha_max >= 1.0) tr->alpha_max = 1.0;
+	tr->alpha_delta_factor = 0.000004F;
+	tr->fading_in = TRUE;
+	tr->is_alive = TRUE;
 
 	pthread_mutex_unlock(&frame_mutex);
 }
@@ -218,13 +227,16 @@ void kill_all_tex_circles() {
 
 void calc_tex_circle_vertex() {
 
-//	float tex_height = TEX_TO_W_RATIO/g_sc.hw_ratio;
-//	float bot_y = 0.0F - (tex_height/2.0F);
-//	float top_y = 0.0F + (tex_height/2.0F);
-//
-//	tex_circle_v[0].y = bot_y;
-//	tex_circle_v[1].y = bot_y;
-//	tex_circle_v[2].y = top_y;
-//	tex_circle_v[3].y = top_y;
+	float tex_h = TEX_TO_W_RATIO/g_sc.hw_ratio;
+	float y_b = 0.0f - (tex_h/2.0f);
+	float y_t = 0.0f + (tex_h/2.0f);
+
+	float x_l = 0.0f - (TEX_TO_W_RATIO/2.0f);
+	float	x_r = 0.0f + (TEX_TO_W_RATIO/2.0f);
+
+	tex_circle_v[0].x = x_l; 		tex_circle_v[0].y = y_b;
+	tex_circle_v[1].x = x_r; 		tex_circle_v[1].y = y_b;
+	tex_circle_v[2].x = x_r; 		tex_circle_v[2].y = y_t;
+	tex_circle_v[3].x = x_l; 		tex_circle_v[3].y = y_t;
 }
 

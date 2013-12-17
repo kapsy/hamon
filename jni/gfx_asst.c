@@ -167,18 +167,22 @@ GLuint g_program;
 
 
 struct texture_file textures[] = {
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_main_001_480x960.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_bg_001_480x960.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_main_001_480x960.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_bg_001_480x960.bmp", GL_NEAREST},
 
 
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_001_128.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_002_128.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_003_128.bmp"},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_001_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_002_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_003_128.bmp", GL_NEAREST},
 
 
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_001_128.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_002_128.bmp"},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_003_128.bmp"}
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_001_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_002_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_003_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/test_tex_01.bmp", GL_LINEAR},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_001.bmp", GL_LINEAR},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_002_128.bmp", GL_LINEAR}
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_003_64.bmp", GL_LINEAR}
 };
 
 int sizeof_textures_elements = sizeof textures / sizeof textures[0];
@@ -194,7 +198,7 @@ void setup_texture(struct texture_file *tf, float init_alpha) {
 	LOGD("setup_texture", "tf->size: %d", tf->size);
 	check_bitmap(&tf->tt, (void *)tf->buffer);
 	make_texture(&tf->tt, 255);
-	create_gl_texture(&tf->tt);
+	create_gl_texture(&tf->tt, tf->param);
 	tf->tt.alpha = 0.0;
 }
 
