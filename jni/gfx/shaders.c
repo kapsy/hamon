@@ -98,16 +98,17 @@ const char v_shdr_main[] = // vShaderSrc
 const char f_shdr_main[] = // fShaderSrc
 		"precision	mediump float;		\n"
 		"varying		vec3  	vtex;			\n"
-		"uniform 	float		ured;			\n"
-		"uniform 	float		ugrn;			\n"
-		"uniform 	float		ublu;			\n"
-//		"uniform 	vec3		vcol			\n"
+//		"uniform 	float		ured;			\n"
+//		"uniform 	float		ugrn;			\n"
+//		"uniform 	float		ublu;			\n"
+		"uniform 	vec3		rgb;			\n"
 		"uniform	float 		alpha;			\n"
 
 		"void main()        					\n"
 		"	{                  						\n"
 
-		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
+//		"  		gl_FragColor = vec4(ured * vtex.x, ugrn * vtex.y, ublu * vtex.z, alpha);	\n"
+		"  		gl_FragColor = vec4(rgb.x * vtex.x, rgb.y * vtex.y, rgb.z * vtex.z, alpha);	\n"
 
 		"	}   	               						\n";
 

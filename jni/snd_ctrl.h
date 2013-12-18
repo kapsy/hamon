@@ -11,9 +11,8 @@
 #define SND_CTRL_H_
 
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <time.h>
+#define AMMO_MAX 5
+
 
 
 
@@ -40,6 +39,8 @@ void init_auto_vals();
 //float* get_part_rgb();
 size_t current_part_color();
 
+extern size_t ammo_current;
+extern size_t chord_count;
 extern int playback_paused;
 
 //extern int total_tic_counter;

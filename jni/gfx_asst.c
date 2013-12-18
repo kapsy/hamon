@@ -179,9 +179,12 @@ struct texture_file textures[] = {
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_001_128.bmp", GL_NEAREST},
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_002_128.bmp", GL_NEAREST},
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_003_128.bmp", GL_NEAREST},
+
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/test_tex_01.bmp", GL_LINEAR},
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_001.bmp", GL_LINEAR},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_002_128.bmp", GL_LINEAR}
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_002_128.bmp", GL_LINEAR},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_003_128.bmp", GL_LINEAR},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_004_128.bmp", GL_LINEAR}
 //		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_003_64.bmp", GL_LINEAR}
 };
 

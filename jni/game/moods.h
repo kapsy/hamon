@@ -15,7 +15,7 @@
 
 //#include "snd_scal.h"
 
-#define TOTAL_MOODS 2
+#define TOTAL_MOODS 5
 
 struct scale;
 struct background;

@@ -55,7 +55,11 @@ obj/local/armeabi/objs/and_main/snd_sles.o: jni/snd_sles.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h \
  jni/snd_sles.h jni/hon_type.h jni/snd_ctrl.h jni/snd_scal.h \
- jni/snd_asst.h
+ jni/snd_asst.h jni/gfx/vertex.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
+ jni/gfx_butn.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdio.h:
 
@@ -176,3 +180,13 @@ jni/snd_ctrl.h:
 jni/snd_scal.h:
 
 jni/snd_asst.h:
+
+jni/gfx/vertex.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
+
+jni/gfx_butn.h:

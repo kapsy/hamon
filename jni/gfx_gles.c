@@ -78,7 +78,9 @@ typedef struct {
 //	GLint  		uframe;
 	GLint			pos_x;
 	GLint 		pos_y;
-	GLint 		rgb[3];
+//	GLint 		rgb[3];
+	GLint 		rgb;
+
 	GLint			alpha;
 	GLint			scale;
 
@@ -315,16 +317,16 @@ int gles_init() {
 	g_sp_m.aposition = glGetAttribLocation(g_prog_main, "aposition");
 	g_sp_m.atex = glGetAttribLocation(g_prog_main, "atex");
 //	g_sp_m.uframe = glGetUniformLocation(g_prog_main, "uframe");
-
 	g_sp_m.pos_x = glGetUniformLocation(g_prog_main, "pos_x");
 	g_sp_m.pos_y = glGetUniformLocation(g_prog_main, "pos_y");
-
-	g_sp_m.rgb[0] = glGetUniformLocation(g_prog_main, "ured");
-	g_sp_m.rgb[1]  = glGetUniformLocation(g_prog_main, "ugrn");
-	g_sp_m.rgb[2]  = glGetUniformLocation(g_prog_main, "ublu");
-
+	g_sp_m.rgb = glGetUniformLocation(g_prog_main, "rgb");
+//	g_sp_m.rgb[0] = glGetUniformLocation(g_prog_main, "ured");
+//	g_sp_m.rgb[1]  = glGetUniformLocation(g_prog_main, "ugrn");
+//	g_sp_m.rgb[2]  = glGetUniformLocation(g_prog_main, "ublu");
 	g_sp_m.alpha = glGetUniformLocation(g_prog_main, "alpha");
 	g_sp_m.scale = glGetUniformLocation(g_prog_main, "scale");
+
+
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -348,10 +350,8 @@ int gles_init() {
 	g_sp_t.display = glGetUniformLocation(g_prog_splash, "display");
 	g_sp_t.bitmap_ratio = glGetUniformLocation(g_prog_splash, "bitmap_ratio");
 	g_sp_t.alpha = glGetUniformLocation(g_prog_splash, "alpha");
-
 	g_sp_t.position = glGetAttribLocation(g_prog_splash, "vPosition");
 //	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
-
 	g_sp_btn.pos_x = glGetUniformLocation(g_prog_button, "pos_x");
 	g_sp_btn.pos_y = glGetUniformLocation(g_prog_button, "pos_y");
 	g_sp_btn.tex = glGetAttribLocation(g_prog_button, "atex");
@@ -366,10 +366,8 @@ int gles_init() {
 	gles_sp_tex_circ.display = glGetUniformLocation(g_prog_splash, "display");
 	gles_sp_tex_circ.bitmap_ratio = glGetUniformLocation(g_prog_splash, "bitmap_ratio");
 	gles_sp_tex_circ.alpha = glGetUniformLocation(g_prog_splash, "alpha");
-
 	gles_sp_tex_circ.position = glGetAttribLocation(g_prog_splash, "vPosition");
 //	g_sp_t.tex = glGetAttribLocation(g_prog_splash, "aTex");
-
 	gles_sp_tex_circ.pos_x = glGetUniformLocation(g_prog_button, "pos_x");
 	gles_sp_tex_circ.pos_y = glGetUniformLocation(g_prog_button, "pos_y");
 	gles_sp_tex_circ.tex = glGetAttribLocation(g_prog_button, "atex");
@@ -628,31 +626,6 @@ int create_gl_texture(struct texture_type *tt, GLint param)
   return 1;
 }
 
-//void create_gl_tex_circles() {
-////	int i;
-////	struct texture_type* tt = &(textures + 2)->tt;
-////
-////	for (i = 0; i < sizeof_tex_circles_e; i++) {
-////		struct tex_circle* tc = (tex_circles + i);
-////
-////		glGenTextures(1, &tc->t_name);
-////		glBindTexture(GL_TEXTURE_2D, tc->t_name);
-////
-////		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-////
-////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-////		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-////
-////		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tt->BmpWidth, tt->BmpHeight, 0,
-////				GL_RGBA, GL_UNSIGNED_BYTE, tt->TexData);
-////
-////	}
-//
-//}
-
-
 
 
 void draw_frame() {
@@ -725,10 +698,12 @@ void draw_full_screen_image(struct full_scr_el* fs) {
 	glEnableVertexAttribArray(0);
 	glUniform2f(g_sp_t.display, g_sc.width, g_sc.height);
 	glUniform1f(g_sp_t.bitmap_ratio, fs->main_texture->tt.bitmap_ratio);
+//	glUniform3f(g_sp_t.rgb, 1.0f, 1.0f, 1.0f);
 
 	glUniform1f(g_sp_t.alpha, fs->alpha_mod);
 
 	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+
 
 //	glBindTexture(GL_TEXTURE_2D,0);
 //	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -782,9 +757,9 @@ void draw_background_fse() {
 
 	glUniform1f(g_sp_m.scale, global_scale);
 	glUniform1f(g_sp_m.alpha, 0.8);
-	glUniform1f(g_sp_m.rgb[0], 1.0);
-	glUniform1f(g_sp_m.rgb[1], 1.0);
-	glUniform1f(g_sp_m.rgb[2], 1.0);
+//	glUniform1f(g_sp_m.rgb[0], 1.0);
+//	glUniform1f(g_sp_m.rgb[1], 1.0);
+//	glUniform1f(g_sp_m.rgb[2], 1.0);
 
 	glUseProgram(g_prog_main);
 
@@ -801,7 +776,9 @@ void draw_background_fse() {
 			full_scr_mod(fs);
 			full_scr_alpha_anim(fs);
 
-			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[(moods + i)->color_index]);
+//			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[(moods + i)->color_index]);
+			glBindBuffer(GL_ARRAY_BUFFER, bg_cols[(backgrounds + i)->color_index]);
+
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
 			glEnableVertexAttribArray(g_sp_m.atex);
 			glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*) 0);
@@ -809,9 +786,13 @@ void draw_background_fse() {
 			glUniform1f(g_sp_m.pos_x, 0.0);
 			glUniform1f(g_sp_m.pos_y, 0.0);
 
-			glUniform1f(g_sp_m.rgb[0], 0.5 * fs->pulse);
-			glUniform1f(g_sp_m.rgb[1], 1.0);
-			glUniform1f(g_sp_m.rgb[2], 1.0);
+
+			glUniform3f(g_sp_m.rgb, 1.0f, 1.0f, 1.0f);
+
+
+//			glUniform1f(g_sp_m.rgb[0], 0.5 * fs->pulse);
+//			glUniform1f(g_sp_m.rgb[1], 1.0);
+//			glUniform1f(g_sp_m.rgb[2], 1.0);
 
 			glUniform1f(g_sp_m.alpha, fs->alpha);
 			glUniform1f(g_sp_m.scale, 1.0);
@@ -924,9 +905,7 @@ void draw_touch_circles() {
 		if (ts->is_alive) {
 			glUniform1f(g_sp_m.pos_x, ts->pos_x);
 			glUniform1f(g_sp_m.pos_y, ts->pos_y);
-			glUniform1f(g_sp_m.rgb[0], 1.0);
-			glUniform1f(g_sp_m.rgb[1], 1.0);
-			glUniform1f(g_sp_m.rgb[2], 1.0);
+			glUniform3f(g_sp_m.rgb, 1.0f, 1.0f, 1.0f);
 			t_ripple_alpha_size(ts);
 			glUniform1f(g_sp_m.alpha, ts->alpha);
 			glUniform1f(g_sp_m.scale, ts->scale);
@@ -940,9 +919,7 @@ void draw_touch_circles() {
 		if (ts->is_alive) {
 			glUniform1f(g_sp_m.pos_x, ts->pos_x);
 			glUniform1f(g_sp_m.pos_y, ts->pos_y);
-			glUniform1f(g_sp_m.rgb[0], ts->rgb[0]);
-			glUniform1f(g_sp_m.rgb[1], ts->rgb[1]);
-			glUniform1f(g_sp_m.rgb[2], ts->rgb[2]);
+			glUniform3f(g_sp_m.rgb, 1.0f, 1.0f, 1.0f);
 			t_circle_alpha_size(ts);
 			glUniform1f(g_sp_m.alpha, ts->alpha);
 			glUniform1f(g_sp_m.scale, ts->scale);

@@ -22,18 +22,18 @@
 
 struct full_scr_el screens[] = {
 		 {"splash", textures + 0, 0.0F, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0,
-				 NULL, NULL},
+				 NULL, NULL, 0},
 		 {"splash_bg", textures + 1, 0.0F, 0.0F, SPLASH_BG_FADE_RATE, TRUE, FALSE, TRUE, modulators + 0, 0.0, 1.0, 1.0,
-				 NULL, NULL},
+				 NULL, NULL, 0},
 		 {"help", textures + 0, 0.0F, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0,
-				 NULL, &help_screen_end},
+				 NULL, &help_screen_end, 0},
 };
 
 struct full_scr_el backgrounds[] = {
 		 {"new_bg_1", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0,
-				 NULL, NULL},
+				 NULL, NULL, 0},
 		 {"new_bg_2", NULL, 0.0F, 0.0F, BG_PULSE_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0,
-				 NULL, NULL},
+				 NULL, NULL, 1},
 };
 
 
@@ -124,18 +124,20 @@ void full_scr_xfade() { //ˆê”­‚ÈŠÖ”
 	LOGD("bg_xfade", "selected_background: %d", selected_background);
 	fs = backgrounds + selected_background;
 
+	fs->color_index = (moods + selected_mood)->color_index;
+
 	LOGD("bg_xfade", "fs->title: %s", fs->title);
 
 	fs->is_showing = TRUE;
 	fs->fading_in = TRUE;
 
-		int i;
-		for (i=0;i<sizeof_backgrounds_elements;i++) {
-			struct full_scr_el* bgfs = backgrounds+i;
-			LOGD("bg_xfade", "fs->is_showing: %i", bgfs->is_showing);
-			LOGD("bg_xfade", "fs->fading_in: %i", bgfs->fading_in);
-			LOGD("bg_xfade", "fs->fading_out: %i", bgfs->fading_out);
-		}
+//		int i;
+//		for (i=0;i<sizeof_backgrounds_elements;i++) {
+//			struct full_scr_el* bgfs = backgrounds+i;
+//			LOGD("bg_xfade", "fs->is_showing: %i", bgfs->is_showing);
+//			LOGD("bg_xfade", "fs->fading_in: %i", bgfs->fading_in);
+//			LOGD("bg_xfade", "fs->fading_out: %i", bgfs->fading_out);
+//		}
 }
 
 

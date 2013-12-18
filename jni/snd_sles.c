@@ -36,7 +36,8 @@
 #include "snd_scal.h"
 #include "snd_asst.h"
 
-
+#include "gfx/vertex.h"
+#include "gfx_butn.h"
 
 
 
@@ -69,6 +70,8 @@
 #define FADE_FACTOR_CHG_RATE_QUICK 0.1F
 
 
+#define MASTER_VOLUME 1.0f
+#define VEL_SLMILLIBEL_OFFSET -700//-700
 //long elapsed_buffer_tics = 0;
 
 
@@ -139,6 +142,8 @@ static int current_looping_voice = 0;
 
 // 実時間に計算したくないから
 SLpermille segment_pan_map[TOTAL_NOTES];
+
+
 
 
 
@@ -576,31 +581,38 @@ void vol_automation() {
 }
 
 void loop_fade_in(voice* v) {
-//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_in", "loop_fade_in() called");
 
 	if (v->vol_fade_factor < 1.0F) {
+
 		v->vol_fade_factor += FADE_FACTOR_CHG_RATE;
 	}
 
 	if (v->vol_fade_factor >= 1.0F) {
 		v->vol_fade_factor = 1.0F;
 		v->fading_in = FALSE;
-//		__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_in", "v->vol_fade_factor: %f", v->vol_fade_factor);
+
+
+		buttons[0].busy = FALSE;
+
+		LOGD("loop_fade_in", "buttons[0].busy = FALSE");
 	}
 
 }
 
 void loop_fade_out(voice* v) {
-//	__android_log_write(ANDROID_LOG_DEBUG, "loop_fade_out", "loop_fade_out() called");
+
+
 
 	if (v->vol_fade_factor > 0.0F) {
+//		 if (!buttons[0].busy) { buttons[0].busy = TRUE;
+//			LOGD("loop_fade_in", "buttons[0].busy = TRUE"); }
 		v->vol_fade_factor -= FADE_FACTOR_CHG_RATE;
 	}
 
 	if (v->vol_fade_factor <= 0.0F) {
 		v->vol_fade_factor = 0.0F;
 		v->fading_out = FALSE;
-//		__android_log_print(ANDROID_LOG_DEBUG, "loop_fade_out", "v->vol_fade_factor: %f", v->vol_fade_factor);
+
 	}
 
 }
@@ -688,7 +700,13 @@ SLmillibel float_to_slmillibel(float sender_vel, float sender_range) {
 
 	// エラーが発生可能性を確認しなきゃ
 
-	SLmillibel vol = (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
+	//SLmillibel vol = (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
+//	SLmillibel vol = ((sender_vel*MASTER_VOLUME)*(VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
+
+
+//	if(sender_vel > 1.0f) sender_vel = 1.0f;
+
+	SLmillibel vol =  (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN + VEL_SLMILLIBEL_OFFSET;
 // 速度を上げるため、こういう式(VEL_SLMILLIBEL_RANGE/sender_range)を既に計算スべし？
 
 // 0以上なら制御てきに０に設定

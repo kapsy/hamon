@@ -52,7 +52,7 @@ struct full_scr_el {
 	func_ptr fade_in_start;
 	func_ptr fade_out_end;
 
-
+	int color_index;
 
 };
 

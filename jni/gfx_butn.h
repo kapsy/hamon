@@ -30,11 +30,11 @@
 #define BTN_ALPHA_MAX 1.0F
 #define BTN_ALPHA_MIN 0.0F
 #define BTN_FADE_IN_RATE (2.0F/(float)SEC_IN_US)
-#define BTN_FADE_OUT_RATE (1.9F/(float)SEC_IN_US) //(1.5F
+#define BTN_FADE_OUT_RATE (1.7F/(float)SEC_IN_US) //(1.5F
 //#define BTN_FADE_OUT_RATE (0.4F/(float)SEC_IN_US)
 #define BTN_PRESS_FADE_RATE (7.0F/(float)SEC_IN_US)
 //#define BTN_PRESS_FADE_RATE_OUT (1.3F/(float)SEC_IN_US)
-#define BTN_PRESS_FADE_RATE_OUT (1.8F/(float)SEC_IN_US)
+#define BTN_PRESS_FADE_RATE_OUT (1.2F/(float)SEC_IN_US)//(1.8F/(
 //#define BTN_FADE_RATE 1.0f
 
 //#define BTN_TTL 120
@@ -69,6 +69,7 @@ struct button{
 	float alpha;
 	float alpha_pt;
 	int pressed_peak;
+	int busy;
 
 	// bl: x=0, y=max tr: x=max, y=0
 	struct vec2 touch_bl, touch_tr;
@@ -95,7 +96,6 @@ struct button{
 
 	struct vertex_rgb* rgb;
 
-	// int button_busy;
 
 };
 

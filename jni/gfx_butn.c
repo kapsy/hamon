@@ -36,7 +36,7 @@
 struct button buttons[] = {
 
 		{textures + 2, textures + 5,
-				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
+				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_0, FALSE, TRUE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
 				buttons+1, NULL,
@@ -45,16 +45,16 @@ struct button buttons[] = {
 				&(struct vertex_rgb) {1.0f, 1.0f, 1.0f}},
 
 		{textures + 3, textures + 6,
-				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
+				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_1, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
 				buttons+2, buttons+0,
 				NULL, NULL, NULL, NULL,
-				&touch_anim_start, &touch_anim_finish,
+				&touch_anim_start, NULL,
 				&(struct vertex_rgb) {1.0f, 1.0f, 1.0f}},
 
 		{textures + 4, textures + 7,
-				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE,
+				-1.0F, -1.0F, 1.0F, 0.0F, 0.0F, FALSE, FALSE,
 				0.0F, 0.0F, 0.0F, 0.0F,
 				TOUCH_EVENT_BUTTON_2, FALSE, FALSE, FALSE, BTN_FADE_IN_RATE, BTN_FADE_OUT_RATE,
 				NULL, buttons+1,
@@ -128,12 +128,15 @@ int get_touch_response(float x, float y) {
 	LOGD("get_touch_response", "x: %f, y: %f", x, y);
 
 
-
-
-
 	int res = TOUCH_EVENT_GAME;
 
 	if (screens[2].is_showing) {
+
+//		if (!screens[2].fading_in || !screens[2].fading_out)
+//			res = TOUCH_EVENT_HELP;
+//		else
+//			res = TOUCH_EVENT_NULL;
+
 		res = TOUCH_EVENT_HELP;
 		return res;
 
@@ -151,10 +154,11 @@ int get_touch_response(float x, float y) {
 		if (x > b->touch_bl.x && x < b->touch_tr.x) {
 			if (y < b->touch_bl.y && y > b->touch_tr.y) {
 
+				res = TOUCH_EVENT_NULL;
 
 				if (!all_buttons_busy_fading) {
 
-					if (!b->is_touch_anim) {
+					if (!b->is_touch_anim && !b->busy) {
 						if (!buttons_activated) {
 							res = TOUCH_EVENT_INTERACTIVE_ON;
 							return res;
@@ -230,7 +234,7 @@ void btn_anim(struct button* b) {
 
 
 			b->alpha -= (float)frame_delta * b->fade_out_rate;
-			if (b->alpha < 0.34F) set_btn_fading(b->fade_out_next, FALSE);
+			if (b->alpha < 0.45F) set_btn_fading(b->fade_out_next, FALSE);
 //			LOGD("btn_anim", "b->alpha : %f", b->alpha);
 		}
 		else if (b->alpha <= BTN_ALPHA_MIN) {
@@ -269,17 +273,18 @@ void btn_anim(struct button* b) {
 //			LOGD("btn_anim", "frame_delta_ratio: %f", frame_delta_ratio);
 //			LOGD("btn_anim", "b->alpha_pt: %f", b->alpha_pt);
 
-			if(b->alpha_pt < 0.3F){if(b->touch_anim_finish!= NULL) (b->touch_anim_finish)();}
+			if(b->alpha_pt < 0.06F){if(b->touch_anim_finish!= NULL) (b->touch_anim_finish)();}
 
 		}
 
-		if (b->alpha_pt <= 0.05F && b->pressed_peak) {
+		if (b->alpha_pt <= 0.0F && b->pressed_peak) {
 
 
 			b->pressed_peak = FALSE;
 			b->is_touch_anim = FALSE;
 			b->alpha_pt = 0.0F;
 
+//			if(b->touch_anim_finish!= NULL) (b->touch_anim_finish)();
 
 
 		}
@@ -388,6 +393,7 @@ void touch_anim_start() {
 
 
 void touch_anim_finish() {
+	buttons[2].fading_out = TRUE;
 
 }
 

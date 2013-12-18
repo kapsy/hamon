@@ -19,39 +19,43 @@
 
 
 
+//#include "gfx/vertex.h"
+#include "gfx_butn.h"
 
-struct vertex_rgb mood_colors[5][4] = {
-		{
-			{0.0f, 		0.0f, 		0.0f},
-			{0.0f, 		0.0f, 		0.0f},
-			{0.95f,	0.0f, 		0.35f},
-			{0.25f,	0.0f, 		0.25f}
-		},
-		{
-			{0.0f, 		0.0f, 		0.0f},
-			{1.0f, 		1.0f, 		1.0f},
-			{1.0f, 		1.0f, 		0.35f},
-			{0.8f, 		1.0f, 		1.0f}
-		},
-		{
-			{0.2f, 		0.3f, 		0.0f},
-			{0.2f, 		0.3f, 		0.0f},
-			{1.0f, 		0.0f, 		0.0f},
-			{1.0f, 		0.0f, 		0.0f}
-		},
-		{
-			{0.0f, 	 	0.1f, 		0.0f},
-			{0.0f, 		0.6f, 		0.0f},
-			{0.0f, 		0.2f, 		0.35f},
-			{0.0f, 		0.2f, 		0.05f}
-		},
-		{
-			{0.0f, 	 	0.5f, 		0.0f},
-			{0.0f, 		0.3f, 		0.0f},
-			{1.0f, 		0.2f, 		0.3f},
-			{0.0f, 		1.0f, 		1.0f}
-		}
-};
+//struct vertex_rgb mood_colors[5][4] = {
+//		{
+//			{0.0f, 		0.0f, 		0.0f},
+//			{0.0f, 		0.0f, 		0.0f},
+//			{0.95f,	0.0f, 		0.35f},
+//			{0.25f,	0.0f, 		0.25f}
+//		},
+//		{
+//			{0.0f, 		0.0f, 		0.0f},
+//			{1.0f, 		1.0f, 		1.0f},
+//			{1.0f, 		1.0f, 		0.35f},
+//			{0.8f, 		1.0f, 		1.0f}
+//		},
+//		{
+//			{0.2f, 		0.3f, 		0.0f},
+//			{0.2f, 		0.3f, 		0.0f},
+//			{1.0f, 		0.0f, 		0.0f},
+//			{1.0f, 		0.0f, 		0.0f}
+//		},
+//		{
+//			{0.0f, 	 	0.1f, 		0.0f},
+//			{0.0f, 		0.6f, 		0.0f},
+//			{0.0f, 		0.2f, 		0.35f},
+//			{0.0f, 		0.2f, 		0.05f}
+//		},
+//		{
+//			{0.0f, 	 	0.5f, 		0.0f},
+//			{0.0f, 		0.3f, 		0.0f},
+//			{1.0f, 		0.2f, 		0.3f},
+//			{0.0f, 		1.0f, 		1.0f}
+//		}
+//};
+
+
 
 //gathered_t all = {
 //  .both_ptr = &(both_t){
@@ -60,7 +64,8 @@ struct vertex_rgb mood_colors[5][4] = {
 //   }
 //};
 
-int sizeof_mood_colors_set = sizeof mood_colors/ (sizeof mood_colors/sizeof mood_colors[0]);
+
+
 
 //struct full_screen_element fses[] = {
 //		{
@@ -150,20 +155,77 @@ struct scale scales[] = {
 	{
 		.midimap = { 49, 49, 51, 51, 54, 54, 56, 56, 58, 58, 61, 61, 63, 63, 66, 66, 68, 68, 70, 73, 75, 78, 80, 82 },
 		.looping_sample = (looping_samples + 1),
+	},
+	{
+		.midimap = { 48, 48, 49, 49, 51, 51, 53, 53, 54, 54, 58, 58, 60, 61, 63, 65, 66, 70, 72, 73, 75, 77, 78, 82 },
+		.looping_sample = (looping_samples + 2),
+	},
+	{
+		.midimap = { 48, 48, 51, 51, 53, 53, 55, 55, 57, 57, 58, 58, 60, 63, 65, 67, 69, 70, 72, 75, 77, 79, 80, 82 },
+		.looping_sample = (looping_samples + 3),
+	},
+	{
+		.midimap = { 48, 48, 49, 49, 51, 51, 53, 53, 54, 54, 58, 58, 60, 61, 63, 65, 66, 70, 72, 73, 75, 77, 78, 82 },
+		.looping_sample = (looping_samples + 4),
 	}
-
 };
+
+
+struct vertex_rgb mood_colors[5][4] = {
+		{
+			{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
+			{0.55f,	0.12f, 		0.35f},
+			{0.25f,	0.0f, 		0.25f}
+		},
+		{
+				{0.0f, 		0.0f, 		0.0f},
+				{0.0f, 		0.0f, 		0.0f},
+			{0.1f, 		0.5f, 		1.0f},
+			{0.6f, 		0.5f, 			1.0f}
+		},
+		{
+				{0.0f, 		0.0f, 		0.0f},
+				{0.0f, 		0.0f, 		0.0f},
+			{0.8f, 		0.43f, 		0.0f},
+			{1.0f, 		0.43f, 		0.0f}
+		},
+		{
+				{0.0f, 		0.0f, 		0.0f},
+				{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.6f, 		0.45f},
+			{0.0f, 		0.6f, 		0.15f}
+		},
+		{
+				{0.0f, 		0.0f, 		0.0f},
+				{0.0f, 		0.0f, 		0.0f},
+			{1.0f, 		0.2f, 		0.3f},
+			{0.0f, 		1.0f, 		1.0f}
+		}
+};
+
+int sizeof_mood_colors_set = sizeof mood_colors/ (sizeof mood_colors/sizeof mood_colors[0]);
+
+
 
 
 struct mood moods[] = {
 
 		{
-				"major", (mood_colors + 0), &(struct vertex_rgb) {1.0f, 0.0f, 1.0f}, 0, (scales + 0)
+				"major", (mood_colors + 0), &(struct vertex_rgb) {0.7f, 0.2f, 1.0f}, 0, (scales + 0) //purple
 		},
 		{
-				"minor", (mood_colors + 1), &(struct vertex_rgb) {0.0f, 1.0f, 0.0f}, 1, (scales + 1)
+				"minor", (mood_colors + 1), &(struct vertex_rgb) {0.0f, 0.8f, 1.0f}, 1, (scales + 1) // light blue
+		},
+		{
+				"cirrostratus", (mood_colors + 2), &(struct vertex_rgb) {1.0f, 0.71f, 0.0f}, 2, (scales + 2) //sunset orange
+		},
+		{
+				"cumulonimbus", (mood_colors + 3), &(struct vertex_rgb) {0.0f, 1.0f, 0.5f}, 3, (scales + 3) // light green
+		},
+		{
+				"cirrostratus tense", (mood_colors + 4), &(struct vertex_rgb) {1.0f, 0.8f, 1.0f}, 4, (scales + 4) //leave - red-green-blue
 		}
-
 };
 
 
@@ -189,14 +251,17 @@ int cycle_mood() {
 
 
 
-	full_scr_xfade();
 
 
 	if (selected_mood < sizeof_moods_elements) selected_mood += 1;
 	if (selected_mood == sizeof_moods_elements) selected_mood = 0;
+	full_scr_xfade();
 
 	LOGD("cycle_mood", "debug c, selected_mood: %d", selected_mood);
 	int success = enqueue_seamless_loop((moods+selected_mood)->scale->looping_sample);
+	 if (!buttons[0].busy) { buttons[0].busy = TRUE;
+		LOGD("loop_fade_in", "buttons[0].busy = TRUE"); }
+
 	LOGD("cycle_mood", "debug d");
 //	start_xfade_bgs(); // graphics background crossfade
 	return 1;

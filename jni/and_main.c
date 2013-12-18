@@ -291,12 +291,21 @@ void touch_branching(float x, float y) {
 	case TOUCH_EVENT_BUTTON_0:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_0");
 
+
+
+
 		int s = cycle_mood();
+		chord_count = 0;
 		assign_time(&buttons_activated_time);
 		break;
 	case TOUCH_EVENT_BUTTON_1:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_1");
+
+
+
+
 		init_all_parts();
+		ammo_current = AMMO_MAX;
 		assign_time(&buttons_activated_time);
 		break;
 	case TOUCH_EVENT_BUTTON_2:
@@ -304,14 +313,7 @@ void touch_branching(float x, float y) {
 
 
 
-
-
-
 		buttons[0].fade_out_end = &all_btns_fade_end_deactivate_show_help;
-
-//		screens[2].is_showing = TRUE;
-//		screens[2].fading_in = TRUE;
-//		assign_time(&buttons_activated_time);
 
 		break;
 
@@ -323,32 +325,28 @@ void touch_branching(float x, float y) {
 
 		assign_time(&buttons_activated_time);
 
-//		LOGD("touch_branching", "interactive_on_time: %u", interactive_on_time);
-
-
 		break;
 
 	case TOUCH_EVENT_HELP:
 
+//		if (!screens[2].fading_out) screens[2].fading_out = TRUE;
 
-		screens[2].fading_out = TRUE;
 
+		if (!screens[2].fading_in && !screens[2].fading_out) {
+			screens[2].fading_out = TRUE;
+			LOGD("touch_branching", "screens[2].fading_out = TRUE");
 
+		}
 
 		break;
 
 	case TOUCH_EVENT_GAME:
 		LOGD("touch_branching", "TOUCH_EVENT_GAME");
 
+		trigger_note(x, y);
+		set_parts_active();
 
-	trigger_note(x, y);
-	set_parts_active();
-//	e->animating = 1;
-
-
-
-
-	break;
+		break;
 
 	case TOUCH_EVENT_NULL:
 		LOGD("touch_branching", "TOUCH_EVENT_NULL");
@@ -357,7 +355,10 @@ void touch_branching(float x, float y) {
 
 		break;
 
-}
+	}
+
+
+
 
 //void interactive_time() {
 //

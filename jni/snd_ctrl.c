@@ -44,9 +44,8 @@
 
 
 
-#define AMMO_INCREASE_RATE 5//50 // 個のticsを過ごすと、AMMOが1に増やす
-//#define AMMO_INCREASE_RATE 50//50 // 個のticsを過ごすと、AMMOが1に増やす
-#define AMMO_MAX 5
+#define AMMO_INCREASE_RATE 30//50 // 個のticsを過ごすと、AMMOが1に増やす
+//#define AMMO_MAX 5
 // この値は記録した後の再生数を数える
 #define PART_TTL 9
 #define FADE_OUT_POINT 4
@@ -55,26 +54,15 @@
 // 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
 #define  SILENCE_BEFORE_AUTO_PLAY_INIT 120
-
 #define ONE_SHOT_RND 180 // この値が変わるといいな
 #define ONE_SHOT_RND_INIT 10 // この値が変わるといいな
-
-
 #define TOTAL_START_SHOTS 2
-
 #define MIN_CHORD_TIME 1000 // 2000のほうがいいのかも
 #define CHORD_CHANGE_RND 2000 // 3500の方へ
-
 #define MIN_REST_TIME 4000
 #define AUTO_PLAY_REST_RND 4000
-
-
-
 #define TOTAL_NOTES_PER_PART 32
 #define TOTAL_PARTS 7
-
-//#define NS_IN_SEC 1000000000
-
 #define TOTAL_PART_COLORS 8
 
 typedef struct {
@@ -165,7 +153,7 @@ int playback_paused = FALSE;
 static int start_shots = 0;
 
 size_t ammo_current = AMMO_MAX;
-size_t ammo_max = AMMO_MAX;
+//size_t ammo_max = AMMO_MAX;
 size_t ammo_increase_counter;
 
 // 自動的な再生
@@ -323,13 +311,15 @@ void* timing_loop(void* args) {
 
 }
 
-
+//void bump_ammo() {
+//
+//}
 
 void increase_ammo() {
-	if (ammo_increase_counter < AMMO_INCREASE_RATE && ammo_current < ammo_max) {
+	if (ammo_increase_counter < AMMO_INCREASE_RATE && ammo_current < AMMO_MAX) {
 		ammo_increase_counter++;
 	}
-	if (ammo_increase_counter == AMMO_INCREASE_RATE && ammo_current < ammo_max) {
+	if (ammo_increase_counter == AMMO_INCREASE_RATE && ammo_current < AMMO_MAX) {
 		ammo_increase_counter = 0;
 		ammo_current++;
 		LOGD("increase_ammo", "ammo_current %d", ammo_current);
@@ -526,6 +516,8 @@ void auto_play() {
 
 			LOGD("auto_play", "x %f y %f", x, y);
 			trigger_note(x, y);
+			ammo_current++;
+//			increase_ammo();
 
 			one_shot_count = 0;
 //			one_shot_interval = 5+obtain_random(500);

@@ -9,7 +9,7 @@
 #define AND_MAIN_H_
 
 
-#define INTERACTIVE_TTL (4*SEC_IN_US)
+#define INTERACTIVE_TTL (3*SEC_IN_US)
 
 void trigger_note(float x, float y);
 
