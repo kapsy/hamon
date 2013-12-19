@@ -27,9 +27,30 @@ obj/local/armeabi/objs/and_main/gfx_butn.o: jni/gfx_butn.c \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
  C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- jni/gfx_gles.h jni/gfx/vertex.h jni/hon_type.h jni/gfx_asst.h \
- jni/gfx_butn.h jni/and_main.h jni/math/trig_sampler.h \
- jni/gfx/full_screen_element.h jni/snd_ctrl.h jni/gfx/frame_delta.h
+ jni/gfx_gles.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/signal.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/limits.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/limits.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/limits.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/internal_types.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/limits.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/syslimits.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/page.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/string.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/malloc.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/signal.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/signal.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/sigcontext.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/capability.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h \
+ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h \
+ jni/gfx/vertex.h jni/hon_type.h jni/gfx_asst.h jni/gfx_butn.h \
+ jni/and_main.h jni/math/trig_sampler.h jni/gfx/full_screen_element.h \
+ jni/snd_ctrl.h jni/gfx/frame_delta.h
 
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
 
@@ -88,6 +109,46 @@ C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
 C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
 
 jni/gfx_gles.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/signal.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/limits.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/limits.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/limits.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/internal_types.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/limits.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/syslimits.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/page.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/string.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/malloc.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/signal.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/signal.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/sigcontext.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/capability.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h:
+
+C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h:
 
 jni/gfx/vertex.h:
 

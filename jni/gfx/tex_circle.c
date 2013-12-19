@@ -103,13 +103,13 @@ void init_tex_circles() {
 		tex_ripples[i].is_alive = FALSE;
 		tex_circle_draw_order[i] = i;
 
-		tex_circles[i].rgb = (moods + selected_mood)->rgb_circ;
-		tex_ripples[i].rgb = (moods + selected_mood)->rgb_circ;
-//
-//		ts->rgb->r = (moods + selected_mood)->rgb_circ->r;
-//		ts->rgb->g = (moods + selected_mood)->rgb_circ->g;
-//		ts->rgb->b = (moods + selected_mood)->rgb_circ->b;
 
+		(tex_circles + i)->rgb = (struct vertex_rgb*)malloc(sizeof(struct vertex_rgb*));
+		(tex_ripples + i)->rgb = (struct vertex_rgb*)malloc(sizeof(struct vertex_rgb*));
+
+//		tex_circles[i].rgb = (moods + selected_mood)->rgb_circ;
+//		tex_ripples[i].rgb = (moods + selected_mood)->rgb_circ;
+//
 
 	}
 }
@@ -124,17 +124,18 @@ void step_tex_circle_draw_order() {
 	}
 }
 
-rgb part_colors_test[] = {
-	{0.597993F, 1.000000F, 0.658208F},
-	{0.249421F, 0.896186F, 1.000000F},
-	{1.000000F, 0.035373F, 0.319272F},
-	{0.329373F, 0.094343F, 1.000000F},
-	{0.879933F, 0.123191F, 1.000000F},
-	{0.404804F, 0.984234F, 1.000000F},
-	{0.465192F, 0.537905F, 1.000000F},
-	{1.000000F, 0.186882F, 0.480862F}
-};
-void activate_tex_circle(float x, float y, size_t col, float* vel) {
+//rgb part_colors_test[] = {
+//	{0.597993F, 1.000000F, 0.658208F},
+//	{0.249421F, 0.896186F, 1.000000F},
+//	{1.000000F, 0.035373F, 0.319272F},
+//	{0.329373F, 0.094343F, 1.000000F},
+//	{0.879933F, 0.123191F, 1.000000F},
+//	{0.404804F, 0.984234F, 1.000000F},
+//	{0.465192F, 0.537905F, 1.000000F},
+//	{1.000000F, 0.186882F, 0.480862F}
+//};
+//void activate_tex_circle(float x, float y, size_t col, float* vel) {
+void activate_tex_circle(float x, float y, struct vertex_rgb* rgb_p, float* vel) {
 
 	pthread_mutex_lock(&frame_mutex);
 	step_tex_circle_draw_order();
@@ -144,20 +145,40 @@ void activate_tex_circle(float x, float y, size_t col, float* vel) {
 
 	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
 	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
-	LOGI("activate_touch_circle", "x: %f ts->pos_x: %f", x, ts->pos_x);
-	LOGI("activate_touch_circle", "y: %f ts->pos_y: %f", y, ts->pos_y);
-
-//	ts->rgb[0] = part_colors_test[col].r;
-//	ts->rgb[1] = part_colors_test[col].g;
-//	ts->rgb[2] = part_colors_test[col].b;
+//	LOGI("activate_tex_circle", "x: %f ts->pos_x: %f", x, ts->pos_x);
+//	LOGI("activate_tex_circle", "y: %f ts->pos_y: %f", y, ts->pos_y);
 
 
-	ts->rgb = (moods + selected_mood)->rgb_circ;
 
-	LOGD("activate_touch_circle", "selected_mood: %d", selected_mood);
+//	ts->rgb = (moods + selected_mood)->rgb_circ;
 
-//	ts->rgb->g = (moods + selected_mood)->rgb_circ->g;
-//	ts->rgb->b = (moods + selected_mood)->rgb_circ->b;
+
+	struct vertex_rgb* rgb_c = (moods+selected_mood)->rgb_circ;
+	struct vertex_rgb* rgb_m = (moods+selected_mood)->rgb_circ_mask;
+
+
+//	ts->rgb = &(struct vertex_rgb) {
+//		rgb_m->r * rgb_p->r,
+//		rgb_m->g * rgb_p->g,
+//		rgb_m->b * rgb_p->b
+//	};
+
+
+
+
+	ts->rgb->r = rgb_c->r * (1.0f - (rgb_p->r*rgb_m->r));
+	ts->rgb->g = rgb_c->g * (1.0f - (rgb_p->g*rgb_m->g));
+	ts->rgb->b = rgb_c->b * (1.0f - (rgb_p->b*rgb_m->b));
+
+
+//	LOGD("activate_tex_circle", " (moods + selected_mood)->rgb_circ->r: %f, g: %f, b: %f",  (moods + selected_mood)->rgb_circ->r,  (moods + selected_mood)->rgb_circ->g,  (moods + selected_mood)->rgb_circ->b);
+	LOGD("activate_tex_circle", "rgb_p->r: %f, g: %f, b: %f", rgb_p->r, rgb_p->g, rgb_p->b);
+//	LOGD("activate_tex_circle", "ts->rgb->r: %f, g: %f, b: %f", ts->rgb->r, ts->rgb->g, ts->rgb->b);
+
+
+
+//	LOGD("activate_tex_circle", "selected_mood: %d", selected_mood);
+
 
 
 	ts->alpha = 0.0F; // TODO
@@ -173,13 +194,7 @@ void activate_tex_circle(float x, float y, size_t col, float* vel) {
 	struct tex_circle* tr = tex_ripples + (tex_circle_draw_order[sizeof_tex_circles_e -1]);
 	tr->pos_x = ((x/(float)g_sc.width)*2)-1;
 	tr->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
-//	ts->rgb[0] = part_colors_test[col].r;
-//	ts->rgb[1] = part_colors_test[col].g;
-//	ts->rgb[2] = part_colors_test[col].b;
 
-//	tr->rgb->r = (moods + selected_mood)->rgb_circ->r;
-//	tr->rgb->g = (moods + selected_mood)->rgb_circ->g;
-//	tr->rgb->b = (moods + selected_mood)->rgb_circ->b;
 	tr->rgb = (moods + selected_mood)->rgb_circ;
 
 	tr->alpha = 0.0F; // TODO

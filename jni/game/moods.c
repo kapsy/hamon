@@ -181,8 +181,8 @@ struct vertex_rgb mood_colors[5][4] = {
 		{
 				{0.0f, 		0.0f, 		0.0f},
 				{0.0f, 		0.0f, 		0.0f},
-			{0.1f, 		0.5f, 		1.0f},
-			{0.6f, 		0.5f, 			1.0f}
+			{0.1f, 		0.4f, 		0.9f},
+			{0.5f, 		0.4f, 			0.8f}
 		},
 		{
 				{0.0f, 		0.0f, 		0.0f},
@@ -212,19 +212,34 @@ int sizeof_mood_colors_set = sizeof mood_colors/ (sizeof mood_colors/sizeof mood
 struct mood moods[] = {
 
 		{
-				"major", (mood_colors + 0), &(struct vertex_rgb) {0.7f, 0.2f, 1.0f}, 0, (scales + 0) //purple
+				"major", (mood_colors + 0),
+				&(struct vertex_rgb) {0.7f, 0.285f, 1.0f},
+				&(struct vertex_rgb) {1.0f, 1.0f, 0.9f},
+				0, (scales + 0) //purple
 		},
 		{
-				"minor", (mood_colors + 1), &(struct vertex_rgb) {0.0f, 0.8f, 1.0f}, 1, (scales + 1) // light blue
+				"minor", (mood_colors + 1),
+				&(struct vertex_rgb) {0.6f, 0.95f, 1.0f},
+				&(struct vertex_rgb) {1.0f, 0.8f, 0.7f},
+				1, (scales + 1) // light blue
 		},
 		{
-				"cirrostratus", (mood_colors + 2), &(struct vertex_rgb) {1.0f, 0.71f, 0.0f}, 2, (scales + 2) //sunset orange
+				"cirrostratus", (mood_colors + 2),
+				&(struct vertex_rgb) {1.0f, 0.81f, 0.4f},
+				&(struct vertex_rgb) {0.3f, 1.0f, 1.0f},
+				2, (scales + 2) //sunset orange
 		},
 		{
-				"cumulonimbus", (mood_colors + 3), &(struct vertex_rgb) {0.0f, 1.0f, 0.5f}, 3, (scales + 3) // light green
+				"cumulonimbus", (mood_colors + 3),
+				&(struct vertex_rgb) {0.3f, 1.0f, 0.85f},
+				&(struct vertex_rgb) {1.0f, 0.8f, 1.0f},
+				3, (scales + 3) // light green
 		},
 		{
-				"cirrostratus tense", (mood_colors + 4), &(struct vertex_rgb) {1.0f, 0.8f, 1.0f}, 4, (scales + 4) //leave - red-green-blue
+				"cirrostratus tense", (mood_colors + 4),
+				&(struct vertex_rgb) {1.0f, 0.8f, 1.0f},
+				&(struct vertex_rgb) {0.9f, 0.9f, 0.8f},
+				4, (scales + 4) //leave - red-green-blue
 		}
 };
 

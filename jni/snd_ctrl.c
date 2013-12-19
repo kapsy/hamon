@@ -44,7 +44,7 @@
 
 
 
-#define AMMO_INCREASE_RATE 30//50 // 個のticsを過ごすと、AMMOが1に増やす
+#define AMMO_INCREASE_RATE 40//50 // 個のticsを過ごすと、AMMOが1に増やす
 //#define AMMO_MAX 5
 // この値は記録した後の再生数を数える
 #define PART_TTL 9
@@ -61,77 +61,48 @@
 #define CHORD_CHANGE_RND 2000 // 3500の方へ
 #define MIN_REST_TIME 4000
 #define AUTO_PLAY_REST_RND 4000
-#define TOTAL_NOTES_PER_PART 32
+//#define TOTAL_NOTES_PER_PART 32
 #define TOTAL_PARTS 7
 #define TOTAL_PART_COLORS 8
 
-typedef struct {
-	float pos_x;
-	float pos_y;
-	int seg;
-	float vel;
-	int tic;
-
-
-}note;
-
-
-typedef struct {
-
-	note note_info[TOTAL_NOTES_PER_PART];
-	int current_note;
-	int total_tics;
-	int current_tic;
-	int is_recording;
-
-
-//	size_t ammo_remaining;
-
-
-	size_t play_count;
-	size_t plays_ttl;
-	float fade_out_factor;
-
-	int is_alive;
-
-
-//	float red;
-//	float grn;
-//	float blu;
-
-//	float part_rgb[3];
-
-	size_t color;
-
-
-//	int been_used; // この～パートは当時に使用してる
-}part;
+//typedef struct {
+//	float pos_x;
+//	float pos_y;
+//	int seg;
+//	float vel;
+//	int tic;
+//
+//
+//}note;
 
 
 
 
 
-struct {
 
-	// これは問題発生の原因かも
-	struct timeval start_time;
-	struct timeval finish_time;
-	struct timeval proc_time;
 
-	struct timeval sleep_time;
-	//sleep_time.tv_usec = 20000;
-//	sleep_time.tv_usec = 500000;
-	//sleep_time.tv_sec = 2;
-	struct timeval adjusted_sleep_time;
 
-	struct timeval curr_time;
-	struct timezone tzp;
-
-	struct timespec start_time_s;
-	struct timespec finish_time_s;
-
-	struct timespec diff_time_s;
-}timing;
+//struct {
+//
+//	// これは問題発生の原因かも
+//	struct timeval start_time;
+//	struct timeval finish_time;
+//	struct timeval proc_time;
+//
+//	struct timeval sleep_time;
+//	//sleep_time.tv_usec = 20000;
+////	sleep_time.tv_usec = 500000;
+//	//sleep_time.tv_sec = 2;
+//	struct timeval adjusted_sleep_time;
+//
+//	struct timeval curr_time;
+//	struct timezone tzp;
+//
+//	struct timespec start_time_s;
+//	struct timespec finish_time_s;
+//
+//	struct timespec diff_time_s;
+//}timing;
 
 
 
@@ -144,7 +115,7 @@ pthread_attr_t thread_attr;
 
 static int control_loop_running = TRUE;
 
-static int current_rec_part = 0;
+int current_rec_part = 0;
 static size_t tics_per_part = 1500; // 3000; // 5000;
 //static size_t tic_increment = 0;
 
@@ -204,16 +175,12 @@ void factor_part_vel(part* p, float factor);
 void parts_are_active();
 void auto_play();
 
-void init_part_colors(part* p);
-size_t next_color();
+void init_part_color(part* p, int factor);
+//void init_part_colors(part* p);
+//size_t next_color();
+//
+//size_t current_part_color();
 
-size_t current_part_color();
-//void set_part_colors(part* p);
-//void normalize_part_colors(part* p);
-
-
-//void shutdown_audio_delay();
-//void general_tic_counter();
 
 void init_random_seed() {
     srand((unsigned)time( NULL ));
@@ -227,6 +194,9 @@ int obtain_random(int modulus) {
 
     return (rand() % modulus);
 }
+
+//float obtain_random_float()
+
 
 void init_control_loop() {
 
@@ -376,19 +346,19 @@ void record_note(float x, float y, int seg, float vel){
 
 	p->note_info[n].tic = tic;
 
-	LOGD("record_note", "current_part_color %d", current_part_color());
-	LOGD("record_note", "current_rec_part %d, current_tic %d, current_note %d, color %d",
-			current_rec_part,p->current_tic, p->current_note, p->color);
+//	LOGD("record_note", "current_part_color %d", current_part_color());
+//	LOGD("record_note", "current_rec_part %d, current_tic %d, current_note %d, color %d",
+//			current_rec_part,p->current_tic, p->current_note, p->color);
 
 	p->current_note++;
 
 }
 
-size_t current_part_color() {
-
-	return (parts + current_rec_part)->color;
-
-}
+//size_t current_part_color() {
+//
+//	return (parts + current_rec_part)->color;
+//
+//}
 
 // 毎TIC実行しなきゃ //
 // ticを全部進めないといけない
@@ -582,7 +552,12 @@ void init_all_parts() {
 		if (i == 0) init_part(p, TRUE);
 		else init_part(p, FALSE);
 
-		init_part_colors(p);
+		init_part_color(p, i);
+//		init_part_colors(p);
+
+
+
+		LOGD("init_part", "p->rgb->r: %f, g: %f, b: %f", p->rgb->r, p->rgb->g, p->rgb->b);
 	}
 }
 
@@ -605,27 +580,52 @@ void init_part(part* p, int rec) {
 
 }
 
+void init_part_color(part* p, int factor) {
 
+	p->rgb = (struct vertex_rgb*) malloc(sizeof(struct vertex_rgb));
 
-void init_part_colors(part* p) {
+//	p->rgb->r = 1.0f - ((float)obtain_random(50)/100.0f);
+//	p->rgb->g = 1.0f - ((float)obtain_random(60)/100.0f);
+//	p->rgb->b = 1.0f - ((float)obtain_random(60)/100.0f);
 
-p->color = next_color();
+	p->rgb->r = 1.0f;
+	p->rgb->g = 1.0f;
+	p->rgb->b = 1.0f;
+
+	float m = 0.2f;
+
+	while (p->rgb->r >= m && p->rgb->g >= m && p->rgb->b >= m) { // makes sure at least one rand val is under m
+		p->rgb->r = (float) obtain_random(75) / 100.0f;
+		p->rgb->g = (float) obtain_random(75) / 100.0f;
+		p->rgb->b = (float) obtain_random(75) / 100.0f;
+	}
+
+	LOGD("init_part", "init_part_color(): p->rgb->r: %f, g: %f, b: %f", p->rgb->r, p->rgb->g, p->rgb->b);
 
 }
 
-size_t next_color() {
 
-	size_t col = current_part_col;
 
-	if (current_part_col < TOTAL_PART_COLORS) {
-		current_part_col++;
-	}
-	if(current_part_col == TOTAL_PART_COLORS) {
-		current_part_col = 0;
-	}
-	return col;
 
-}
+//void init_part_colors(part* p) {
+//
+//p->color = next_color();
+//
+//}
+//
+//size_t next_color() {
+//
+//	size_t col = current_part_col;
+//
+//	if (current_part_col < TOTAL_PART_COLORS) {
+//		current_part_col++;
+//	}
+//	if(current_part_col == TOTAL_PART_COLORS) {
+//		current_part_col = 0;
+//	}
+//	return col;
+//
+//}
 
 //void set_part_colors(part* p) {
 //
@@ -714,7 +714,7 @@ void play_all_parts() {
 
 //				 	LOGI("play_all_parts", "total_tic_counter: %d: part: %d tic: %d current_tic: %d", total_tic_counter, i, n->tic, p->current_tic);
 
-					activate_tex_circle(n->pos_x, n->pos_y, p->color, &n->vel);
+					activate_tex_circle(n->pos_x, n->pos_y, p->rgb, &n->vel);
 //					activate_touch_circle(n->pos_x, n->pos_y, p->color, &n->vel);
 //					LOGI("play_all_parts", "n->pos_x %f, n->pos_y %f", n->pos_x, n->pos_y);
 					LOGI("play_all_parts", "part: %d, note: %d, n->vel %f", i, j, n->vel);

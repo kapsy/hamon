@@ -154,6 +154,7 @@ unsigned int frames = 0;
 float global_scale = 1.0F;
 
 
+pthread_mutex_t frame_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 EGLBoolean create_window_surface(ANativeWindow* nw) {
 
@@ -805,7 +806,7 @@ void draw_background_fse() {
 
 
 
-
+//int cnt;
 void draw_tex_circles() {
 
 //	glUseProgram(g_prog_main);
@@ -855,6 +856,17 @@ void draw_tex_circles() {
 			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
 
 			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb->g, ts->rgb->b);
+
+//			if (cnt%30==0) {
+//				LOGD("draw_tex_circles", "ts->rgb->r: %f, g: %f, b: %f", ts->rgb->r, ts->rgb->g, ts->rgb->b);
+//
+//			}
+//
+//			cnt++;
+
+
+
+
 //			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb.g, ts->rgb.b);
 			tex_circle_alpha_size(ts);
 			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);

@@ -45,7 +45,7 @@
 #define TR_ALPHA_FADE_OUT 0.94f
 
 
-pthread_mutex_t frame_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t frame_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 struct touch_circle t_circles[TOUCH_CIRCLES_MAX];
 unsigned int t_circle_draw_order[TOUCH_CIRCLES_MAX];

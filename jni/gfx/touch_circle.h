@@ -41,7 +41,7 @@ void t_circle_alpha_size(struct touch_circle* ts);
 void t_ripple_alpha_size(struct touch_circle* tr);
 
 
-extern pthread_mutex_t frame_mutex;
+//extern pthread_mutex_t frame_mutex;
 
 extern struct touch_circle t_circles[];
 extern unsigned int t_circle_draw_order[];

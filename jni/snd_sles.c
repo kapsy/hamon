@@ -704,13 +704,13 @@ SLmillibel float_to_slmillibel(float sender_vel, float sender_range) {
 //	SLmillibel vol = ((sender_vel*MASTER_VOLUME)*(VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
 
 
-//	if(sender_vel > 1.0f) sender_vel = 1.0f;
+	if(sender_vel > 1.0f) sender_vel = 1.0f;
 
 	SLmillibel vol =  (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN + VEL_SLMILLIBEL_OFFSET;
 // 速度を上げるため、こういう式(VEL_SLMILLIBEL_RANGE/sender_range)を既に計算スべし？
 
 // 0以上なら制御てきに０に設定
-if (vol > 0)	vol = 0;
+//if (vol > 0)	vol = 0;
 
 	LOGD("float_to_slmillibel", "v: %d", vol);
 

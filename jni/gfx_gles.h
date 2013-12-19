@@ -7,7 +7,8 @@
 
 #ifndef GFX_INIT_H_
 #define GFX_INIT_H_
-
+#include <unistd.h>  // sleep()‚ð’è‹`
+#include <pthread.h>
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 
@@ -36,7 +37,7 @@ typedef struct {
 extern screen_settings  g_sc;
 
 extern unsigned long frame_delta;
-
+extern pthread_mutex_t frame_mutex;
 
 EGLBoolean create_window_surface(ANativeWindow* nw);
 

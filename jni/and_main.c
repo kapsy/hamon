@@ -394,7 +394,8 @@ void trigger_note(float x, float y) {
 		//play_note(seg, vel);
 
 //		activate_touch_circle(x, y, current_part_color(), &vel);
-		activate_tex_circle(x, y, current_part_color(), &vel);
+//		activate_tex_circle(x, y, current_part_color(), &vel);
+		activate_tex_circle(x, y, (parts + current_rec_part)->rgb, &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
 

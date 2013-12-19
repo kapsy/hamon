@@ -28,6 +28,7 @@ struct mood {
 
 	struct vertex_rgb* rgb_bg;
 	struct vertex_rgb* rgb_circ;
+	struct vertex_rgb* rgb_circ_mask;
 
 	int color_index; //GLES ‚Ì‚½‚ß
 
