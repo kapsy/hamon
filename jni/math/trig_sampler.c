@@ -28,10 +28,8 @@ double deg_per_sample = (double)360.0/(double)SAMPLES_PER_CYCLE;
 //double* hi_res_sin;
 
 struct modulator modulators[] = {
-		{NULL, MOD_SINE, 22050, 5.5F, 0.0F, 0.37}
-//		{NULL, MOD_SINE, 22050, 3.0F, 0.0F, 0.3}
-
-
+		{NULL, MOD_SINE, 22050, 3.45f, 0.2f, 0.0f}
+//		{NULL, MOD_SINE, 22050, 5.5F, 0.37f, 0.0f}
 };
 
 

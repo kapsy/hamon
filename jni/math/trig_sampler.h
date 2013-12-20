@@ -19,10 +19,8 @@ struct modulator {
 	int mod_type;
 	int curr_samp;
 	double period; // time in sec/cycle
-
-//	int us_per_sample;
-	double samples_per_us;
 	float amp;
+	double samples_per_us;
 };
 
 

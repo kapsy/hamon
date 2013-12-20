@@ -21,11 +21,17 @@
 #include "snd_ctrl.h"
 
 struct full_scr_el screens[] = {
-		 {"splash", textures + 0, 0.0F, 0.0F, SPLASH_FADE_RATE, TRUE, FALSE, TRUE, NULL, 0.0, 1.0, 1.0,
+		 {"splash", textures + 0, 0.0F, 0.0F, SPLASH_FADE_RATE,
+				 TRUE, FALSE, FALSE,
+				 NULL, 0.0, 1.0, 1.0,
 				 NULL, NULL, 0},
-		 {"splash_bg", textures + 1, 0.0F, 0.0F, SPLASH_BG_FADE_RATE, TRUE, FALSE, TRUE, modulators + 0, 0.0, 1.0, 1.0,
+		 {"splash_bg", textures + 1, 0.0F, 0.0F, SPLASH_BG_FADE_RATE,
+				 TRUE, FALSE, FALSE,
+				 modulators + 0, 0.0, 1.0, 1.0,
 				 NULL, NULL, 0},
-		 {"help", textures + 0, 0.0F, 0.0F, HELP_FADE_RATE, FALSE, FALSE, FALSE, NULL, 0.0, 1.0, 1.0,
+		 {"help", textures + 0, 0.0F, 0.0F, HELP_FADE_RATE,
+				 FALSE, FALSE, FALSE,
+				 NULL, 0.0, 1.0, 1.0,
 				 NULL, &help_screen_end, 0},
 };
 
@@ -90,6 +96,7 @@ void full_scr_alpha_mod (struct full_scr_el* fs) {
 	cycle_modulator(m);
 	fs->alpha_mod = fs->alpha * (m->mod_cycle[m->curr_samp]);
 
+	LOGD("full_scr_alpha_mod", "m->mod_cycle[m->curr_samp]: %f", m->mod_cycle[m->curr_samp]);
 }
 
 

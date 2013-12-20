@@ -45,7 +45,6 @@
 
 
 #define AMMO_INCREASE_RATE 40//50 // 個のticsを過ごすと、AMMOが1に増やす
-//#define AMMO_MAX 5
 // この値は記録した後の再生数を数える
 #define PART_TTL 9
 #define FADE_OUT_POINT 4
@@ -54,63 +53,23 @@
 // 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
 #define  SILENCE_BEFORE_AUTO_PLAY_INIT 120
-#define ONE_SHOT_RND 180 // この値が変わるといいな
+#define ONE_SHOT_RND 230 // この値が変わるといいな
 #define ONE_SHOT_RND_INIT 10 // この値が変わるといいな
 #define TOTAL_START_SHOTS 2
-#define MIN_CHORD_TIME 1000 // 2000のほうがいいのかも
-#define CHORD_CHANGE_RND 2000 // 3500の方へ
+#define MIN_CHORD_TIME 1800 // 2000のほうがいいのかも
+#define CHORD_CHANGE_RND 4000 // 3500の方へ （2000だった）
 #define MIN_REST_TIME 4000
 #define AUTO_PLAY_REST_RND 4000
 //#define TOTAL_NOTES_PER_PART 32
 #define TOTAL_PARTS 7
 #define TOTAL_PART_COLORS 8
 
-//typedef struct {
-//	float pos_x;
-//	float pos_y;
-//	int seg;
-//	float vel;
-//	int tic;
-//
-//
-//}note;
-
-
-
-
-
-
-
-
-//struct {
-//
-//	// これは問題発生の原因かも
-//	struct timeval start_time;
-//	struct timeval finish_time;
-//	struct timeval proc_time;
-//
-//	struct timeval sleep_time;
-//	//sleep_time.tv_usec = 20000;
-////	sleep_time.tv_usec = 500000;
-//	//sleep_time.tv_sec = 2;
-//	struct timeval adjusted_sleep_time;
-//
-//	struct timeval curr_time;
-//	struct timezone tzp;
-//
-//	struct timespec start_time_s;
-//	struct timespec finish_time_s;
-//
-//	struct timespec diff_time_s;
-//}timing;
-
-
+#define RND_COL_LIMITER 0.2f
 
 
 part parts[TOTAL_PARTS];
 
 pthread_t control_loop;
-
 pthread_attr_t thread_attr;
 
 static int control_loop_running = TRUE;
@@ -138,27 +97,9 @@ size_t chord_change_count = 0;
 size_t one_shot_count = 0;
 size_t rest_count = 0;
 size_t chord_count = 0;
-
 size_t one_shot_interval = 0;
 size_t rest_interval = 0;
 size_t chord_interval = 0;
-
-//size_t general_tic_count = 0;
-//size_t delay_tic_start = 0;
-
-//static int fading_out_exit = FALSE;
-//static size_t exit_fade_counter = 0;
-
-/*extern size_t screen_width;
-extern size_t screen_height;
-extern size_t screen_height_reduced;
-extern size_t screen_margin_y;
-extern size_t screen_margin_x;*/
-
-//extern SLpermille segment_pan_map[TOTAL_NOTES];
-
-//float curent_part_rgb[3];
-
 size_t current_part_col = 0;
 
 
@@ -176,10 +117,7 @@ void parts_are_active();
 void auto_play();
 
 void init_part_color(part* p, int factor);
-//void init_part_colors(part* p);
-//size_t next_color();
-//
-//size_t current_part_color();
+
 
 
 void init_random_seed() {
@@ -195,7 +133,7 @@ int obtain_random(int modulus) {
     return (rand() % modulus);
 }
 
-//float obtain_random_float()
+
 
 
 void init_control_loop() {
@@ -218,8 +156,6 @@ void init_control_loop() {
 void join_control_loop() {
 
 	control_loop_running = FALSE;
-
-
 	pthread_join(control_loop, NULL);
 	pthread_exit(NULL);
 
@@ -260,11 +196,7 @@ void* timing_loop(void* args) {
 		increase_ammo();
 		if (show_gameplay && !playback_paused) auto_play();
 
-
-
-
 //		shutdown_audio_delay();
-
 //		gettimeofday(&timing.curr_time, &timing.tzp);
 //		__android_log_print(ANDROID_LOG_DEBUG, "sound_control_lroop", "gettimeofday: %d %d sleep_time: %d %d",
 //				timing.curr_time.tv_sec, timing.curr_time.tv_usec, timing.adjusted_sleep_time.tv_sec, timing.adjusted_sleep_time.tv_usec);
@@ -272,7 +204,6 @@ void* timing_loop(void* args) {
 //		gettimeofday(&timing.curr_time, &timing.tzp);
 //		__android_log_print(ANDROID_LOG_DEBUG, "timing_loop", "gettimeofday: %d %d",
 //				timing.curr_time.tv_sec, timing.curr_time.tv_usec);
-
 		//if (!control_loop_running) break;
 
 
@@ -306,19 +237,7 @@ int decrease_ammo() { // タッチするときの処理・AMMOを減るため
 	return FALSE;
 }
 
-//int decrease_ammo() { // タッチするときの処理・AMMOを減るため
-//
-//	part* p = (parts + current_rec_part);
-//
-//	if (p->ammo_remaining > 0) {
-//		p->ammo_remaining--;
-//		__android_log_print(ANDROID_LOG_DEBUG, "decrease_ammo", "p->ammo_remaining %d", p->ammo_remaining);
-//
-//		return TRUE;
-//	}
-//	return FALSE;
-//}
-//extern current_part_color;
+
 
 // mainから呼ぶ
 void record_note(float x, float y, int seg, float vel){
@@ -354,11 +273,7 @@ void record_note(float x, float y, int seg, float vel){
 
 }
 
-//size_t current_part_color() {
-//
-//	return (parts + current_rec_part)->color;
-//
-//}
+
 
 // 毎TIC実行しなきゃ //
 // ticを全部進めないといけない
@@ -389,21 +304,6 @@ void part_tic_counter() {
 
 
 
-//int cycle_rec_part() {
-//
-//	if (current_rec_part < TOTAL_PARTS) {
-//
-//		current_rec_part++;
-//
-//	}
-//	if (current_rec_part == TOTAL_PARTS) {
-//		current_rec_part = 0;
-//	}
-//
-//	__android_log_print(ANDROID_LOG_DEBUG, "cycle_rec_part", "current_rec_part  %d", current_rec_part);
-//	return current_rec_part;
-//
-//}
 
 int get_free_part() { // もしかしてget_free_part()
 
@@ -496,7 +396,8 @@ void auto_play() {
 				one_shot_interval = 5+obtain_random(50);
 				start_shots++;
 			} else {
-				one_shot_interval = 5+obtain_random(390);
+//				one_shot_interval = 5+obtain_random(390);
+				one_shot_interval = 5+obtain_random(ONE_SHOT_RND);
 			}
 
 			LOGD("auto_play", "one_shot_interval %d", one_shot_interval);
@@ -517,7 +418,8 @@ void auto_play() {
 		if (chord_count == chord_interval) {
 			int success = cycle_mood();
 			chord_count = 0;
-			chord_interval = MIN_CHORD_TIME + obtain_random(3000);
+//			chord_interval = MIN_CHORD_TIME + obtain_random(3000);
+			chord_interval = MIN_CHORD_TIME + obtain_random(CHORD_CHANGE_RND);
 			LOGD("auto_play", "chord_interval %d", chord_interval);
 		}
 
@@ -584,17 +486,15 @@ void init_part_color(part* p, int factor) {
 
 	p->rgb = (struct vertex_rgb*) malloc(sizeof(struct vertex_rgb));
 
-//	p->rgb->r = 1.0f - ((float)obtain_random(50)/100.0f);
-//	p->rgb->g = 1.0f - ((float)obtain_random(60)/100.0f);
-//	p->rgb->b = 1.0f - ((float)obtain_random(60)/100.0f);
-
 	p->rgb->r = 1.0f;
 	p->rgb->g = 1.0f;
 	p->rgb->b = 1.0f;
 
-	float m = 0.2f;
+//	float m = 0.2f;
 
-	while (p->rgb->r >= m && p->rgb->g >= m && p->rgb->b >= m) { // makes sure at least one rand val is under m
+	while (p->rgb->r >= RND_COL_LIMITER &&
+				p->rgb->g >= RND_COL_LIMITER &&
+				p->rgb->b >= RND_COL_LIMITER) 	{ // makes sure at least one rand val is under m
 		p->rgb->r = (float) obtain_random(75) / 100.0f;
 		p->rgb->g = (float) obtain_random(75) / 100.0f;
 		p->rgb->b = (float) obtain_random(75) / 100.0f;
@@ -604,62 +504,6 @@ void init_part_color(part* p, int factor) {
 
 }
 
-
-
-
-//void init_part_colors(part* p) {
-//
-//p->color = next_color();
-//
-//}
-//
-//size_t next_color() {
-//
-//	size_t col = current_part_col;
-//
-//	if (current_part_col < TOTAL_PART_COLORS) {
-//		current_part_col++;
-//	}
-//	if(current_part_col == TOTAL_PART_COLORS) {
-//		current_part_col = 0;
-//	}
-//	return col;
-//
-//}
-
-//void set_part_colors(part* p) {
-//
-//	int i;
-//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
-//		p->part_rgb[i] = (float)rand()/RAND_MAX;
-//		LOGI("set_part_color", "%f", i, p->part_rgb[i]);
-//	}
-//
-//}
-//
-//void normalize_part_colors(part* p) {
-//	float largest = 0.0;
-//	float ratio;
-//
-//	int i;
-//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
-//		if(p->part_rgb[i] > largest) largest = p->part_rgb[i];
-//	}
-//
-//	ratio = 1.0/largest;
-//
-//	for(i=0;i<sizeof p->part_rgb / sizeof p->part_rgb[0];i++) {
-//		p->part_rgb[i] = (p->part_rgb[i]*ratio);
-//
-//
-////		LOGI("normalize_part_colors", "p->part_rgb[%d] %f", i, p->part_rgb[i]);
-//	}
-//	LOGI("normalize_part_colors", "%fF, %fF, %fF", p->part_rgb[0], p->part_rgb[1], p->part_rgb[2]);
-//}
-
-//float* get_part_rgb() { // 必要ないのかも
-//	return parts[current_rec_part].part_rgb;
-//}
 
 
 void reset_all_notes(part* p) {
@@ -720,8 +564,6 @@ void play_all_parts() {
 					LOGI("play_all_parts", "part: %d, note: %d, n->vel %f", i, j, n->vel);
 //					LOGI("play_all_parts", "part (i): %d", i);
 //					LOGI("play_all_parts", "note, (j): %d", i);
-
-
 				}
 			}
 		}
@@ -772,6 +614,8 @@ void factor_part_vel(part* p, float factor){
 }
 
 
+
+
 //void shutdown_audio_delay() {
 //	if (fading_out_exit) {
 //		exit_fade_counter++;
@@ -782,7 +626,7 @@ void factor_part_vel(part* p, float factor){
 //}
 
 
-//static int current_ammo;
+
 
 
 //// I_GetTime

@@ -35,16 +35,13 @@ struct full_scr_el {
 	float alpha_mod;
 
 	float fade_rate;
+
 	int fading_in;
 	int fading_out;
 	int is_showing;
 
+
 	struct modulator* mod_a;
-
-
-
-//	struct vertex_rgb* colors;
-
 	float pulse;
 	float pulse_size;
 	float pulse_dir; // ³Œ·”g‚Ì‚Ù‚¤‚ª‚¢‚¢‚Ì‚©‚à

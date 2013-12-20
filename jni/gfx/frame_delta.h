@@ -16,7 +16,7 @@ extern unsigned long frame_delta;
 
 extern unsigned long elapsed_time;
 
-extern unsigned long arbitrary_time;
+//extern unsigned long arbitrary_time;
 
 void frame_delta_avg_init();
 void calc_frame_rate();

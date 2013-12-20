@@ -635,21 +635,57 @@ void draw_frame() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 
-	if (screens[0].is_showing) {
+//	if (screens[0].is_showing) {
+//
+//		if (elapsed_time > DELAY_BEFORE_SPLASH_BG)
+//
+//
+//
+//			full_scr_anim(screens + 1);
+//			full_scr_alpha_mod(screens + 1);
+//			draw_full_screen_image(screens + 1);
+//
+//		if (elapsed_time > DELAY_BEFORE_SPLASH)
+//
+//			full_scr_anim(screens + 0);
+//			draw_full_screen_image(screens + 0);
+//	}
 
-		if (elapsed_time > DELAY_BEFORE_SPLASH_BG)
 
 
+	// +++++++++++++++++++++++++
 
-			full_scr_anim(screens + 1);
-			full_scr_alpha_mod(screens + 1);
-			draw_full_screen_image(screens + 1);
 
-		if (elapsed_time > DELAY_BEFORE_SPLASH)
+//	if(screens[0].is_showing) {
+//
+//		if(splash_fading_in) {
+//			full_scr_anim(screens + 1);
+//			full_scr_alpha_mod(screens + 1);
+//			draw_full_screen_image(screens + 1);
+//		}
+//		if(splash_bg_fading_in) {
+//			full_scr_anim(screens + 0);
+//			draw_full_screen_image(screens + 0);
+//
+//		}
+//
+//	}
 
-			full_scr_anim(screens + 0);
-			draw_full_screen_image(screens + 0);
+
+	if (screens[1].is_showing) {
+		full_scr_anim(screens + 1);
+		full_scr_alpha_mod(screens + 1);
+		draw_full_screen_image(screens + 1);
 	}
+	if (screens[0].is_showing) {
+		full_scr_anim(screens + 0);
+		draw_full_screen_image(screens + 0);
+	}
+
+
+
+
+
 
 	if(show_gameplay) {
 //		if (!screens[1].is_showing)
@@ -805,11 +841,9 @@ void draw_background_fse() {
 }
 
 
-
-//int cnt;
 void draw_tex_circles() {
 
-//	glUseProgram(g_prog_main);
+
 	glUseProgram(gles_prog_tex_circ);
 	glBindBuffer(GL_ARRAY_BUFFER, tex_circ_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tex_circ_ibo);
@@ -831,17 +865,11 @@ void draw_tex_circles() {
 		if (ts->is_alive) {
 			glUniform1f(gles_sp_tex_circ.pos_x, ts->pos_x);
 			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
-
-//			printf( "%d\n",info.kinfo[0]->k_id);
-//			printf( "%s\n",info.kinfo[0]->k_name);
-
 			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb->g, ts->rgb->b);
-
 
 			tex_ripple_alpha_size(ts);
 			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);
 			glUniform1f(gles_sp_tex_circ.scale, ts->scale);
-
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, ts->tex->tt.texname);
 			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
@@ -854,31 +882,18 @@ void draw_tex_circles() {
 		if (ts->is_alive) {
 			glUniform1f(gles_sp_tex_circ.pos_x, ts->pos_x);
 			glUniform1f(gles_sp_tex_circ.pos_y, ts->pos_y);
-
 			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb->g, ts->rgb->b);
 
-//			if (cnt%30==0) {
-//				LOGD("draw_tex_circles", "ts->rgb->r: %f, g: %f, b: %f", ts->rgb->r, ts->rgb->g, ts->rgb->b);
-//
-//			}
-//
-//			cnt++;
-
-
-
-
-//			glUniform3f(gles_sp_tex_circ.rgb, ts->rgb->r, ts->rgb.g, ts->rgb.b);
 			tex_circle_alpha_size(ts);
 			glUniform1f(gles_sp_tex_circ.alpha, ts->alpha);
 			glUniform1f(gles_sp_tex_circ.scale, ts->scale);
-
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, ts->tex->tt.texname);
 			glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 		}
 	}
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	pthread_mutex_unlock(&frame_mutex);
 }
 

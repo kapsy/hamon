@@ -42,7 +42,7 @@ typedef struct {
 
 	int is_alive;
 
-	struct vertex_rgb* rgb;
+	struct vertex_rgb* rgb; // FIXME rename rgb_rnd
 
 }part;
 

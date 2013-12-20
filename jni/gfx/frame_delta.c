@@ -38,7 +38,7 @@ float frame_delta_ratio = 1.0; // ratio of delta to ideal fps (60)
 
 
 unsigned long elapsed_time = 0;
-unsigned long arbitrary_time = 0;
+//unsigned long arbitrary_time = 0;
 
 
 
@@ -56,9 +56,9 @@ void get_start_time() {
 }
 
 
-void reset_arb_time() {
-	arbitrary_time = elapsed_time;
-}
+//void reset_arb_time() {
+//	arbitrary_time = elapsed_time;
+//}
 
 void assign_time(unsigned long* l) {
 
@@ -74,12 +74,12 @@ void update_elapsed_time() {
 
 }
 
-int comp_arb_time(long t) {
-	int b = FALSE;
-	if ((curr_time - arbitrary_time) > t) b = TRUE;
-
-	return b;
-}
+//int comp_arb_time(long t) {
+//	int b = FALSE;
+//	if ((curr_time - arbitrary_time) > t) b = TRUE;
+//
+//	return b;
+//}
 
 
 int compare_times(unsigned long t, unsigned long u) {
@@ -88,6 +88,9 @@ int compare_times(unsigned long t, unsigned long u) {
 
 
 	int b = FALSE;
+
+	if(t == 0) return b;
+
 	if ((curr_time - t) > u) b = TRUE;
 
 
