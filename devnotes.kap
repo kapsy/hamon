@@ -930,7 +930,21 @@ X無作為にノートを作る機能・頻繁さを増やす
 
 平成25年12月20日
 x最初の画面の流れ
-無作為のノートの端の周り
+X無作為のノートの端の周り:
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_x_l: 104
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_x_r: 92
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_y_t: 89
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_y_b: 124
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_x_l: 104
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_x_r: 92
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_y_t: 89
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_y_b: 124
+
+テキスチャー問題
+ホームボタンと戻るボタンの処理
+
+
+
 
 新しいムード
 アイコン
@@ -938,8 +952,7 @@ LiteとFullの違いバージョン（ifndefによって）
 説明書みたいな画面
 泡
 
-テキスチャー問題
-ホームボタンと戻るボタンの処理
+
 	
 ＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
 ＋　　やるべきリスト　(優先順位)　＋

@@ -82,10 +82,15 @@ extern screen_settings g_sc;
 typedef void* EGLNativeDisplayType;
 size_t screen_width;
 size_t screen_height;
-size_t screen_height_reduced; // Šù‚ÉŒvŽZ‚µ‚½’lEŽ©“®“IÄ¶‚Ì‚½‚ß‚É‚±‚±‚ÅŒvŽZ
-size_t screen_margin; // ‰~Œ`‚ð’[‚ÉØ‚ê‚È‚¢‚æ‚¤‚É•`‚­‚½‚ß‚Ì’lA‰æ–Êc‚Ì‚Q‚O“
-size_t screen_margin_y;
-size_t screen_margin_x;
+//size_t screen_height_reduced; // Šù‚ÉŒvŽZ‚µ‚½’lEŽ©“®“IÄ¶‚Ì‚½‚ß‚É‚±‚±‚ÅŒvŽZ
+//size_t screen_margin; // ‰~Œ`‚ð’[‚ÉØ‚ê‚È‚¢‚æ‚¤‚É•`‚­‚½‚ß‚Ì’lA‰æ–Êc‚Ì‚Q‚O“
+//size_t screen_margin_y;
+//size_t screen_margin_x;
+size_t screen_margin_x_l;
+size_t screen_margin_x_r;
+size_t screen_margin_y_t;
+size_t screen_margin_y_b;
+
 
 static float touch_segment_width;
 //int gfx_initialized = FALSE;
@@ -394,25 +399,18 @@ void touch_branching(float x, float y) {
 
 void trigger_note(float x, float y) {
 
+	LOGD("trigger_note", "x: %f, y: %f", x, y);
+
 	int seg = find_screen_segment(x);
 	float vel = find_vel_value(y);
 
 	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ðŠm”F‚·‚é‚½‚ß
-
-		//play_note(seg, vel);
-
-//		activate_touch_circle(x, y, current_part_color(), &vel);
-//		activate_tex_circle(x, y, current_part_color(), &vel);
 		activate_tex_circle(x, y, (parts + current_rec_part)->rgb, &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
 
 	} else {
-
-
-
 //		activate_touch_no_ammo(x, y);
-
 	}
 }
 
@@ -481,10 +479,11 @@ static void get_screen_dimensions(engine* e) {
 	screen_width = (int)ANativeWindow_getWidth(e->app->window);
 	screen_height = (int)ANativeWindow_getHeight(e->app->window);
 
-	screen_height_reduced = screen_height * 0.8F;
 
-	screen_margin_y = screen_height * 0.16F;
-	screen_margin_x = screen_height * 0.1F;
+	screen_margin_x_l = screen_width*0.13f;
+	screen_margin_x_r = screen_width*0.110f;
+	screen_margin_y_t = screen_height*0.186f;
+	screen_margin_y_b = screen_height*0.26f;
 
 /*
 	if (ANativeWindow_lock(e->app->window, &buffer, NULL) < 0) {
@@ -498,7 +497,13 @@ static void get_screen_dimensions(engine* e) {
 
 	LOGD("get_screen_dimensions", "ANativeWindow_getWidth: %d", screen_width);
 	LOGD("get_screen_dimensions", "ANativeWindow_getHeight: %d", screen_height);
-	LOGD("get_screen_dimensions", "screen_height_reduced: %d", screen_height_reduced);
+
+	LOGD("get_screen_dimensions", "screen_margin_x_l: %d", screen_margin_x_l);
+	LOGD("get_screen_dimensions", "screen_margin_x_r: %d", screen_margin_x_r);
+	LOGD("get_screen_dimensions", "screen_margin_y_t: %d", screen_margin_y_t);
+	LOGD("get_screen_dimensions", "screen_margin_y_b: %d", screen_margin_y_b);
+
+//	LOGD("get_screen_dimensions", "screen_height_reduced: %d", screen_height_reduced);
 
 }
 

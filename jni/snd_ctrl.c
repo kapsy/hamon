@@ -52,8 +52,8 @@
 
 // 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
-#define  SILENCE_BEFORE_AUTO_PLAY_INIT 120
-#define ONE_SHOT_RND 230 // この値が変わるといいな
+#define SILENCE_BEFORE_AUTO_PLAY_INIT 115
+#define ONE_SHOT_RND 200//90//230 // この値が変わるといいな
 #define ONE_SHOT_RND_INIT 10 // この値が変わるといいな
 #define TOTAL_START_SHOTS 2
 #define MIN_CHORD_TIME 1800 // 2000のほうがいいのかも
@@ -71,6 +71,8 @@ part parts[TOTAL_PARTS];
 
 pthread_t control_loop;
 pthread_attr_t thread_attr;
+
+size_t one_shot_rnd[] = {110, 160, 230, 300, 400};
 
 static int control_loop_running = TRUE;
 
@@ -356,6 +358,8 @@ void parts_are_active() {
 }
 
 void set_parts_active() {
+	LOGD("set_parts_active", "set_parts_active()");
+
 	parts_active = TRUE;
 	not_active_count = 0;
 	chord_change_count = 0;
@@ -380,14 +384,27 @@ void auto_play() {
 //			float x = (float) (obtain_random(screen_width));
 //			float y = (float) ((obtain_random(screen_height - (screen_margin*2.0F))) + screen_margin);
 
-			float x = (float) ((obtain_random(screen_width - (screen_margin_x * 2.0F))) + screen_margin_x);
-			float y = (float) ((obtain_random(screen_height - (screen_margin_y * 2.0F))) + screen_margin_y);
+//			float x = (float) ((obtain_random(screen_width - (screen_margin_x * 2.0F))) + screen_margin_x);
+//			float y = (float) ((obtain_random(screen_height - (screen_margin_y * 2.0F))) + screen_margin_y);
+
+
+//			size_t x_range = (screen_width - (screen_margin_x_l + screen_margin_x_r));
+//			size_t y_range = (screen_height - (screen_margin_y_t + screen_margin_y_b));
+//
+//			LOGD("auto_play", "x_range: %d", x_range);
+//			LOGD("auto_play", "y_range: %d", y_range);
+
+
+			float x = (float) ((obtain_random(screen_width - (screen_margin_x_l + screen_margin_x_r))) + screen_margin_x_l);
+			float y = (float) ((obtain_random(screen_height - (screen_margin_y_t + screen_margin_y_b))) + screen_margin_y_t);
+
+
 
 
 			LOGD("auto_play", "x %f y %f", x, y);
 			trigger_note(x, y);
-			ammo_current++;
-//			increase_ammo();
+			ammo_current++; //
+
 
 			one_shot_count = 0;
 //			one_shot_interval = 5+obtain_random(500);
