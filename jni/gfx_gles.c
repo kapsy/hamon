@@ -380,7 +380,7 @@ int gles_init() {
 
 
 
-	if(!sles_init_called) {
+	if(!sles_init_called) { //why???
 		int i;
 
 

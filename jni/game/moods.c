@@ -7,7 +7,7 @@
 
 #include <android/log.h>
 #include <time.h>
-#include "game\moods.h"
+#include "game/moods.h"
 #include "snd_asst.h"
 #include "hon_type.h"
 #include "snd_scal.h"
@@ -258,7 +258,7 @@ int init_mood() {
 
 int cycle_mood() {
 
-	// ‚±‚±‚ÅƒtƒF[ƒh‚ğ‚µ‚Ä‚È‚¢‚©‚ğŠm”F‚µ‚È‚«‚á
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½tï¿½Fï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if(current_voice_fading() || all_bgs_fading()) {
 		LOGD("cycle_mood", "current_voice_fading() || bg_fading()");
 		return 0;

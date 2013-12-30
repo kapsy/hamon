@@ -1,0 +1,1069 @@
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+＊　　このプロジェクトの目標は？　　＊
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
+x・NativeActivityに先に作ったOpenSLコードを実行できるアプリを作る
+XPolyphonicサンプル機械を作るってこと（４ボイス）
+ｘOpenGLES２．０の機能を使用しなきゃ
+ｘBloomの大体の機能を真似しないと
+
+Freemium式の売り方で売る
+Freemium機能を使う
+OBB機能
+ファイルどうンロード管理・これは大切
+
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+＊　　　　　　最終期限は　　　　　　＊
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
+８月２日まで・再生と絵を書く機能が終了します
+９月１６日までFreemium機能だいたい終了した
+９月下旬に開発・Engadget・CDN等
+
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+＊　　　　　　　開発日記　 　　　　　＊
+＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊
+
+2013年6月2日
+
+XGitHubにアップロード
+Xコード掃除
+X長いファイルを試してみる
+	X15個の40秒ループを同時に再生することができた
+
+X28個の声のうちに24/4に分けたらなんでも再生することができるかも
+	0から3は連続ループを再生するため
+	4から27は一発の音のため
+	
+X複数のPIDってどういう意味？IMEにもうこういうことがあったから、あまり心配しなくていいかも
+Xマルチタッチ
+
+2013年6月4日
+Xタッチマップを修復せよ
+X36個のサンプルを作って、アプリに実行することを試してみよ
+X複数のファイル・音
+X今夜：タイムアウトの問題
+
+
+2013年6月6日
+X解決しました！
+
+XファイルIOは駄目
+x取り敢えず、Assetに戻ってきたら、4個のファイルを作ったら
+Xマルチタッチ
+
+        size_t pointerCount =  AMotionEvent_getPointerCount(event);
+
+        this->updateUptime();
+
+        for (size_t i = 0; i < pointerCount; i++) {
+            size_t pointerId = AMotionEvent_getPointerId(event, i);
+            size_t action = AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK;
+            size_t pointerIndex = i;
+        
+            if (action == AMOTION_EVENT_ACTION_POINTER_DOWN || action == AMOTION_EVENT_ACTION_POINTER_UP) {
+                pointerIndex = (AMotionEvent_getAction(event) & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+                pointerId = AMotionEvent_getPointerId(event, pointerIndex);
+            }
+
+
+2013年6月7日
+X連続的な音
+
+2013年6月8日
+バグ：
+Xマルチタッチのバグ
+Xフィアルパス問題
+ｘ今はZIPとOBBをしないほうがいいと思うだが、いつか必要かもな
+xループ音を作る
+Xy軸によって音の大きさ
+
+
+2013年6月9日
+X音階を変わる機能
+
+XSLES関数を書き直す　*poly_sampler[current_looping_voice]　を消去して
+
+X二重フェードを防ぐためのコード
+クリックの問題（フェード）？？？はっきり言えばわかんない
+x音の大きさの問題を解決しなきゃ　値は200以上と再生する音の大きさがちょっと変になる
+
+2013年6月11日
+X"The normal linux sleep functions (usleep, etc) will block the thread that calls them. 
+It's up to you which thread that is - hopefully not the UI one."
+X時間差はNDKとは関係がないかも
+
+2013年6月12日
+	配列の最大の欠点は、要素数をプログラム中で変更出来ないことです。
+	malloc関数を使ったら、必ずfree関数を呼び出します。
+
+	プログラムが終了する直前では、free関数を使わなくても、
+	プログラム終了と同時にメモリが解放されるからです。
+
+2013年6月13日
+Xループ機能
+X？正確なタイミング問題
+
+
+2013年6月14日
+X録音、曲を鳴らす機能など・そうするためTIC機能が必要かも（DOOMと同じように）
+
+今これからの計画
+Xパートの長さを無作為変える機能
+XGitで保存、Branch
+
+
+2013年6月16日
+Xタイミングを試してみ
+X結果が出た
+
+START
+1-2 	7682
+1-next	266314
+
+MIDDLE
+1-2	7683
+1-next	266314
+
+END
+1-2	7682
+1-next 	266314
+
+X聞くだけで128のBUFFER_SIZEによって、そんなに変化はないかも。正確なタイミング。
+X正確なタイミングですね。安心して、この方向に勧めてくれ！
+Xサンプル的な正確なタイミング機能を作ろ
+
+
+Xボイズ１の問題
+Xボイス最大限の問題
+
+
+2013年6月17日
+X最後のバッファー問題
+Xバッファーの順位によって録音する機能
+
+パート①、１−２
+初期
+113465
+中期
+113454
+最後
+113457
+
+パート①、②、２−１
+初期
+494137
+中期
+494114
+終期
+494110？わかりにくい
+
+2013年6月18日
+X個人的なGitHubが必要
+Xタイマー機能
+X先のほうが一番分かりやすい...
+Xいや、グローバル・ループが絶対必要だ・自動的な再生機能などのため
+
+2013年6月19日
+XAMMO機能を作る前に、一般的なタイマーを作ろ
+XAMMO機能
+
+XAMMOはパートの変数
+X先のほうが良かったのかも
+
+Xis_activeっていう変数が必要かもな
+Xやっぱりis_activeが必要かも・・・分かりやすいし、将来に再生機能を伸びたいなら伸びる
+
+
+2013年6月20日
+
+X再生中の音を全部消去する機能？フェードアウト機能？TTL?・TTLだけでいいかもフェードアウトは必要ないかも。
+ｘパートの最大限を超える場合にはどうするべき・答えがないと進めない！！！
+ｘいま考えれば、TTLあまり好きじゃない。悪くないけど、ちょっと思ったより「ゲーム」なことになっちゃう。で、TTL無しのほうが...
+
+GLをする前にやらなきゃいけないこと：
+X・フェード
+X・（と同時にボリューム機能）
+X・パートのループ機能
+
+平成25年6月21日
+x TTLはパートのヘンス・init()するときに無作為に・・・
+X・自動的再生（何も再生してないとき）
+X 自動再生機能・無作為的な（簡単かも）・何も鳴らせない状態だけだったら
+X音を自動的に再生。自動的な機能
+
+2013年6月22日
+X音階を作ろ！
+x自動的に音階を変える機能
+
+
+2013年6月23日
+Xコードを無作為的に生み出すことを修復しないと
+XTTLを数える問題　正確な表現なので、特に問題ないと思う
+
+ｘscale_loop_16_cumulonimbus_002の高音を切り詰めて
+ｘ音量は1dB大きすぎ。
+
+Xもう一度、scale_loop_16_cirrostratus_002を作ってみよ
+X安心を与える背景な音を作りたい。
+Xint midimap[21];　が合ってるかもな - TOTAL_SEGMENTS やっぱ24個のほうが良かったのかも
+
+2013年6月24日
+Xパラメーターを設定・今のままでいいかもな
+X画面の大きさを計るって機能
+Xノートを再生するところの範囲を切り詰め
+X同じノートを二度と再生を防ぐ機能??必要？必要ないかも
+X浮動小数点型なボリューム操作機能
+
+
+平成25年6月25日
+
+Xアプリ終了時の管理しなきゃ
+X・フェードアウト機能
+
+
+2013年6月26日
+
+X時々何も再生しないで！(not_active_count = 0;)
+
+
+2013年6月27日
+
+
+2013年6月28日
+きょうの目標：
+Xパン機能・無作為で消えさんスべき？タッチしたところから？
+Xパンが欲しければ、サンプルで録音して方がいいのかも
+
+X無音問題・ノートを鳴らす機能を無効すると、必ず、if (rest_count == rest_interval) {
+
+
+2013年7月2日
+XOpenGL入門を早く終末してやれ！
+
+2013年7月4日
+xやった！できました。OpenGL ES２
+
+2013年7月5日
+
+
+これからやるべき：
+
+X元の方法に戻す：
+XScreenSettingsとengine別々
+Xinit()の順番を徹底的に調べる
+
+apad:
+07-05 18:39:27.622: D/call_order(11974): android_main e.app = state
+07-05 18:39:27.622: D/call_order(11974): while started
+07-05 18:39:27.622: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.622: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.662: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.692: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:27.702: D/call_order(11974): APP_CMD_INIT_WINDOW
+07-05 18:39:27.702: D/call_order(11974): (e->app->window != NULL && !gfx_initialized))
+07-05 18:39:27.822: D/call_order(11974): (!gfx_initialized)
+07-05 18:39:32.722: D/call_order(11974): init_sles_components() finished
+07-05 18:39:32.722: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:32.722: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:32.772: D/call_order(11974): while ((ident=ALooper_pollAll...
+07-05 18:39:32.782: D/call_order(11974): APP_CMD_INIT_WINDOW
+
+
+07-05 18:47:30.199: D/call_order(1823): android_main e.app = state
+07-05 18:47:30.199: D/call_order(1823): while started
+07-05 18:47:30.199: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.199: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.250: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.273: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.277: D/call_order(1823): APP_CMD_INIT_WINDOW
+07-05 18:47:30.277: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:30.277: D/call_order(1823): (e->app->window != NULL && !gfx_initialized))
+07-05 18:47:30.898: D/call_order(1823): (!gfx_initialized)
+07-05 18:47:47.753: D/call_order(1823): init_sles_components() finished
+07-05 18:47:47.773: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:47.777: D/call_order(1823): while ((ident=ALooper_pollAll...
+07-05 18:47:47.777: D/call_order(1823): APP_CMD_INIT_WINDOW
+
+07-05 20:01:27.369: E/(15494): void __egl_platform_dequeue_buffer(egl_surface*):1080 [EGL-ERROR] failed to dequeue buffer from native window (0x1ee3ca0); err = -19, buf = 0x0
+
+hontouniiioto:
+07-05 21:45:32.086: D/engine_handle_cmd(20740): APP_CMD_START
+07-05 21:45:32.156: D/engine_handle_cmd(20740): APP_CMD_INIT_WINDOW
+07-05 21:45:32.256: D/engine_handle_cmd(20740): APP_CMD_GAINED_FOCUS
+07-05 21:45:32.286: D/engine_handle_cmd(20740): APP_CMD_TERM_WINDOW
+07-05 21:45:32.296: D/engine_handle_cmd(20740): APP_CMD_INIT_WINDOW
+
+hontouniiioto: (ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);)
+07-05 21:51:24.576: D/engine_handle_cmd(21153): APP_CMD_START
+07-05 21:51:24.896: D/engine_handle_cmd(21153): APP_CMD_INIT_WINDOW
+07-05 21:51:24.896: D/engine_handle_cmd(21153): APP_CMD_GAINED_FOCUS
+
+native-activity(sample)
+07-05 21:52:33.186: I/native-activity(21246): APP_CMD_START
+07-05 21:52:33.216: I/native-activity(21246): APP_CMD_INIT_WINDOW
+07-05 21:52:33.336: I/native-activity(21246): APP_CMD_GAINED_FOCUS
+
+Xこのコマンド：
+ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
+XをAPP_CMD_INIT_WINDOWからAPP_CMD_STARTに移動した
+
+そうして：
+07-05 22:03:34.875: D/engine_handle_cmd(22178): APP_CMD_START
+07-05 22:03:34.975: D/engine_handle_cmd(22178): APP_CMD_INIT_WINDOW
+07-05 22:03:40.445: D/engine_handle_cmd(22178): APP_CMD_GAINED_FOCUS
+
+2013年7月6日
+xコード掃除
+
+
+
+
+
+
+07-07 12:20:38.383: I/pi_draw(24404): delta_time: 0 12682
+07-07 12:20:38.403: I/pi_draw(24404): delta_time: 0 20895
+07-07 12:20:38.413: I/pi_draw(24404): delta_time: 0 10667
+07-07 12:20:38.433: I/pi_draw(24404): delta_time: 0 13258
+07-07 12:20:38.453: I/pi_draw(24404): delta_time: 0 21405
+07-07 12:20:38.473: I/pi_draw(24404): delta_time: 0 18593
+07-07 12:20:38.483: I/pi_draw(24404): delta_time: 0 10773
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 20099
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 5409
+07-07 12:20:38.523: I/pi_draw(24404): delta_time: 0 14301
+07-07 12:20:38.543: I/pi_draw(24404): delta_time: 0 18369
+07-07 12:20:38.553: I/pi_draw(24404): delta_time: 0 9403
+07-07 12:20:38.563: I/pi_draw(24404): delta_time: 0 13387
+07-07 12:20:38.583: I/pi_draw(24404): delta_time: 0 19050
+07-07 12:20:38.593: I/pi_draw(24404): delta_time: 0 11196
+07-07 12:20:38.603: I/pi_draw(24404): delta_time: 0 14056
+07-07 12:20:38.623: I/pi_draw(24404): delta_time: 0 16267
+07-07 12:20:38.643: I/pi_draw(24404): delta_time: 0 17043
+07-07 12:20:38.653: I/pi_draw(24404): delta_time: 0 12077
+07-07 12:20:38.673: I/pi_draw(24404): delta_time: 0 24995
+07-07 12:20:38.693: I/pi_draw(24404): delta_time: 0 17285
+07-07 12:20:38.723: I/pi_draw(24404): delta_time: 0 29876
+07-07 12:20:38.733: I/pi_draw(24404): delta_time: 0 11995
+07-07 12:20:38.763: I/pi_draw(24404): delta_time: 0 30144
+07-07 12:20:38.783: I/pi_draw(24404): delta_time: 0 15056
+07-07 12:20:38.793: I/pi_draw(24404): delta_time: 0 15393
+07-07 12:20:38.813: I/pi_draw(24404): delta_time: 0 17410
+07-07 12:20:38.843: I/pi_draw(24404): delta_time: 0 28109
+07-07 12:20:38.853: I/pi_draw(24404): delta_time: 0 8568
+07-07 12:20:38.863: I/pi_draw(24404): delta_time: 0 7577
+07-07 12:20:38.883: I/pi_draw(24404): delta_time: 0 25298
+07-07 12:20:38.903: I/pi_draw(24404): delta_time: 0 19028
+07-07 12:20:38.923: I/pi_draw(24404): delta_time: 0 22194
+07-07 12:20:38.933: I/pi_draw(24404): delta_time: 0 10336
+07-07 12:20:38.943: I/pi_draw(24404): delta_time: 0 11625
+07-07 12:20:38.973: I/pi_draw(24404): delta_time: 0 25339
+07-07 12:20:38.993: I/pi_draw(24404): delta_time: 0 18462
+07-07 12:20:39.013: I/pi_draw(24404): delta_time: 0 26393
+07-07 12:20:39.033: I/pi_draw(24404): delta_time: 0 13327
+07-07 12:20:39.043: I/pi_draw(24404): delta_time: 0 14842
+07-07 12:20:39.073: I/pi_draw(24404): delta_time: 0 29188
+07-07 12:20:39.093: I/pi_draw(24404): delta_time: 0 14850
+
+
+
+
+
+音声ない
+07-07 12:20:38.383: I/pi_draw(24404): delta_time: 0 12682
+07-07 12:20:38.403: I/pi_draw(24404): delta_time: 0 20895
+07-07 12:20:38.413: I/pi_draw(24404): delta_time: 0 10667
+07-07 12:20:38.433: I/pi_draw(24404): delta_time: 0 13258
+07-07 12:20:38.453: I/pi_draw(24404): delta_time: 0 21405
+07-07 12:20:38.473: I/pi_draw(24404): delta_time: 0 18593
+07-07 12:20:38.483: I/pi_draw(24404): delta_time: 0 10773
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 20099
+07-07 12:20:38.503: I/pi_draw(24404): delta_time: 0 5409
+07-07 12:20:38.523: I/pi_draw(24404): delta_time: 0 14301
+07-07 12:20:38.543: I/pi_draw(24404): delta_time: 0 18369
+07-07 12:20:38.553: I/pi_draw(24404): delta_time: 0 9403
+07-07 12:20:38.563: I/pi_draw(24404): delta_time: 0 13387
+07-07 12:20:38.583: I/pi_draw(24404): delta_time: 0 19050
+07-07 12:20:38.593: I/pi_draw(24404): delta_time: 0 11196
+07-07 12:20:38.603: I/pi_draw(24404): delta_time: 0 14056
+07-07 12:20:38.623: I/pi_draw(24404): delta_time: 0 16267
+07-07 12:20:38.643: I/pi_draw(24404): delta_time: 0 17043
+07-07 12:20:38.653: I/pi_draw(24404): delta_time: 0 12077
+07-07 12:20:38.673: I/pi_draw(24404): delta_time: 0 24995
+07-07 12:20:38.693: I/pi_draw(24404): delta_time: 0 17285
+07-07 12:20:38.723: I/pi_draw(24404): delta_time: 0 29876
+07-07 12:20:38.733: I/pi_draw(24404): delta_time: 0 11995
+07-07 12:20:38.763: I/pi_draw(24404): delta_time: 0 30144
+07-07 12:20:38.783: I/pi_draw(24404): delta_time: 0 15056
+07-07 12:20:38.793: I/pi_draw(24404): delta_time: 0 15393
+07-07 12:20:38.813: I/pi_draw(24404): delta_time: 0 17410
+07-07 12:20:38.843: I/pi_draw(24404): delta_time: 0 28109
+07-07 12:20:38.853: I/pi_draw(24404): delta_time: 0 8568
+07-07 12:20:38.863: I/pi_draw(24404): delta_time: 0 7577
+07-07 12:20:38.883: I/pi_draw(24404): delta_time: 0 25298
+07-07 12:20:38.903: I/pi_draw(24404): delta_time: 0 19028
+07-07 12:20:38.923: I/pi_draw(24404): delta_time: 0 22194
+07-07 12:20:38.933: I/pi_draw(24404): delta_time: 0 10336
+07-07 12:20:38.943: I/pi_draw(24404): delta_time: 0 11625
+07-07 12:20:38.973: I/pi_draw(24404): delta_time: 0 25339
+07-07 12:20:38.993: I/pi_draw(24404): delta_time: 0 18462
+07-07 12:20:39.013: I/pi_draw(24404): delta_time: 0 26393
+07-07 12:20:39.033: I/pi_draw(24404): delta_time: 0 13327
+07-07 12:20:39.043: I/pi_draw(24404): delta_time: 0 14842
+07-07 12:20:39.073: I/pi_draw(24404): delta_time: 0 29188
+07-07 12:20:39.093: I/pi_draw(24404): delta_time: 0 14850
+
+
+
+
+
+The renderer produces time and the simulation consumes it in discrete dt sized chunks.
+
+    double t = 0.0;
+    const double dt = 0.01;
+
+    double currentTime = hires_time_in_seconds();
+    double accumulator = 0.0;
+
+    while ( !quit )
+    {
+         double newTime = hires_time_in_seconds();
+         double frameTime = newTime - currentTime;
+         currentTime = newTime;
+
+         accumulator += frameTime;
+
+         while ( accumulator >= dt )
+         {
+              integrate( state, t, dt );
+              accumulator -= dt;
+              t += dt;
+         }
+
+         render(state);
+    }
+
+//======================
+
+    double t = 0.0;
+    const double dt = 0.01;
+
+    double currentTime = hires_time_in_seconds();
+    double accumulator = 0.0;
+
+    State previous;
+    State current;
+
+    while ( !quit )
+    {
+         double newTime = time();
+         double frameTime = newTime - currentTime;
+         if ( frameTime > 0.25 )
+              frameTime = 0.25;	  // note: max frame time to avoid spiral of death
+         currentTime = newTime;
+
+         accumulator += frameTime;
+
+         while ( accumulator >= dt )
+         {
+              previousState = currentState;
+              integrate( currentState, t, dt );
+              t += dt;
+              accumulator -= dt;
+         }
+
+         const double alpha = accumulator / dt;
+
+         State state = currentState*alpha + previousState * ( 1.0 - alpha );
+
+         render( state );
+    }
+
+
+
+
+
+
+
+＝＝＝＝＝＝＝＝
+
+
+Constant Game Speed independent of Variable FPS
+Implementation
+Would it be possible to improve the above solution even further to run faster on slow hardware, and be visually more atractive on faster hardware? Well, lucky for us, this is possible. The game state itself doesn’t need to be updated 60 times per second. Player input, AI and the updating of the game state have enough with 25 frames per second. So let’s try to call the update_game() 25 times per second, no more, no less. The rendering, on the other hand, needs to be as fast as the hardware can handle. But a slow frame rate shouldn’t interfere with the updating of the game. The way to achieve this is by using the following game loop:
+
+    const int TICKS_PER_SECOND = 25;
+    const int SKIP_TICKS = 1000 / TICKS_PER_SECOND;
+    const int MAX_FRAMESKIP = 5;
+
+    DWORD next_game_tick = GetTickCount();
+    int loops;
+    float interpolation;
+
+    bool game_is_running = true;
+    while( game_is_running ) {
+
+        loops = 0;
+        while( GetTickCount() > next_game_tick && loops < MAX_FRAMESKIP) {
+            update_game();
+
+            next_game_tick += SKIP_TICKS;
+            loops++;
+        }
+
+        interpolation = float( GetTickCount() + SKIP_TICKS - next_game_tick )
+                        / float( SKIP_TICKS );
+        display_game( interpolation );
+    }
+
+Both of these are valid approaches. 
+The key is to draw the current state whenever onDrawFrame is called, 
+and to update state as infrequently as possible.
+
+
+＝＝＝＝＝＝＝＝
+
+2013年7月8日
+X違和感なくの書き方・調べて。
+
+
+2013年7月９日
+まずはマルチスレッド記事を読んでみ・今のままでいいのかも
+しかし加速度するために固定的な時間帯が必要のかも
+TICKS_PER_SECOND = 10;　って方法を使用しないと
+fixed_time_step機能
+
+2013年7月10日
+x今はもう決めた。マルチスレッドは駄目だ。これから出来ればひとつのスレッドへ(処理ループなど)それから速度向上へ
+
+2013年7月11日
+Galaxy
+07-11 11:17:03.121: D/init_cmds(28268): GL_VENDOR: Imagination Technologies
+07-11 11:17:03.121: D/init_cmds(28268): GL_RENDERER: PowerVR SGX 540
+07-11 11:17:03.121: D/init_cmds(28268): GL_VERSION: OpenGL ES 2.0 build 1.8.GOOGLENEXUS.ED945322@2112805
+
+iPod 4G
+OpenGL ES 2.0 IMGSGX535-73.16.1
+
+Apad
+07-11 11:22:19.474: D/init_cmds(2548): GL_VENDOR: ARM
+07-11 11:22:19.474: D/init_cmds(2548): GL_RENDERER: Mali-400 MP
+07-11 11:22:19.474: D/init_cmds(2548): GL_VERSION: OpenGL ES 2.0
+
+X四角形を書く
+
+2013-07-12
+Xタッチ操作によって円形を描くってこと
+
+2013年7月13日
+
+Xアルファ機能
+X順番配列
+
+2013年7月14日
+
+X円形を描く
+
+平成25年7月15日
+
+平成25年7月16日
+X拡大・縮小
+X別のモデル座標変更アプリを作れぇ
+
+
+平成25年7月17日
+XTex座標
+XTTL機能
+
+X配列の位置によってタッチ反応が遅れます:touch_shape_draw_orderとは関係ないと思う
+X時間によって変わるってことですかね？本当に理由わかんないんだ
+X他の原因という可能性がある：
+X・タイマー calc_frame_delta_timeのせいじゃないらしい
+X・画面以外の形を永遠までに描くってこと・ない
+XTTLが必要？やっぱTTLは原因だったか
+
+
+2013年7月19日
+Googleで学んだ調べる方法を実行しなきゃ
+Xでも、今日は、一番大事なのは最終期限である・きめなくちゃいけない
+
+
+
+平成25年7月20日
+x円形の色はパートによって変わるって機能
+	やっぱ既に定義した色のほうが
+
+平成25年7月21日
+X色の初期化問題・解決しなきゃ
+X円形を描く時にチラチラする問題
+X問題の原因見つけったのかも
+Xttlのせいじゃないのかも
+
+平成25年7月22日
+Xチラチラする原因が分かるようになった
+X音を再生スレッドと円形を描くスレッドの間に発生する可能性が高いと思う
+
+平成25年7月23日
+XMUTEXを練習するためのプログラムを作ろ
+XMUTEXが駄目なら、drawbufferのほうが一番容易のかも
+
+平成25年7月24日
+
+X音量によって円形の半径が小さく・大きくなる
+
+Xアルファフェードイン。
+
+
+2013年7月27日
+
+今日の思考：
+必要：サービスみたいな機能
+背景なしの機能？（時々）
+
+無料版：３調音。
+有料版：＋１０〜調音？＋もう一つの音
+
+X別のアプリを作る・GLSLフラグメントシェーダを試すためだけ
+	
+
+xシェーダーの色を変わる機能
+
+
+
+音量によって最大のアルファ値を設定し
+
+x背景・ムードによってかえる
+
+ムードを変えるボタン
+
+GLSL入門を御見続けろ
+
+平成25年8月14日
+
+2013/08/20
+X背景フェード
+
+2013/08/21
+スケールを変える機能・操作する為のテキスチャー
+タイトル画面
+
+2013年8月23日
+X音調を変えるときフェードしてない問題・解決しました...かな
+
+x自動的に円形を描くとき、上端から少し離れた位置の機能。
+2013年8月26日
+タイトル画面・タッチを無効・有効機能
+オーディオのフェード時間を伸ばせ
+一番大切なのは、スリープしながら再生する機能。此のアプリにとって大切だよ！
+自動再生しながら、
+
+自動再生プリセット？
+
+2013年8月31日
+08-31 15:21:57.187: D/pi_SurfaceCreate(22439): pi_SurfaceCreate() called
+08-31 15:21:57.976: D/pi_SurfaceCreate(22439): g_sc.width: 800
+08-31 15:21:57.976: D/pi_SurfaceCreate(22439): g_sc.height: 480
+
+本当の画面の面積
+442X800 (Gimpによって)
+
+	// 横置きの向き (APad)
+	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getWidth: 800
+	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getHeight: 432
+	
+2013年9月1日
+09-01 12:55:20.070: D/get_screen_dimensions(3329): ANativeWindow_getWidth: 800
+09-01 12:55:20.070: D/get_screen_dimensions(3329): ANativeWindow_getHeight: 480
+09-01 12:55:20.070: D/get_screen_dimensions(3329): screen_height_reduced: 384
+
+2013/09/02　
+(Galaxy S)
+09-02 15:51:11.657: D/pi_SurfaceCreate(21339): g_sc.width: 800
+09-02 15:51:11.657: D/pi_SurfaceCreate(21339): g_sc.height: 480
+09-02 15:51:11.661: D/get_true_screen_dims(21339): w: 800
+09-02 15:51:11.661: D/get_true_screen_dims(21339): h: 480
+
+(Apad)q	
+09-02 16:08:42.309: D/pi_SurfaceCreate(24094): g_sc.width: 800
+09-02 16:08:42.309: D/pi_SurfaceCreate(24094): g_sc.height: 432
+09-02 16:08:42.309: D/get_true_screen_dims(24094): w: 800
+09-02 16:08:42.309: D/get_true_screen_dims(24094): h: 432
+
+
+2013年9月22日
+このアプリを完了するための４つの柱：
+xスプラッシュ画面
+Xテクスチャの比率を自動的に相応しい値へ
+Xスプラッシュ画面アプリの大掃除
+Xスプラッシュコードと音声コードを合併
+音調を変える設定機能
+バックグラウンドで再生する機能
+IAP機能
+
+2013年10月10日
+xスプラッシュの時のプロセスの起動順番
+2013-10-12
+X問題の原因：ファイルを読みながらアプリは反応しないから、「問題が発生」っていうのポップアップが起きて、SIGSEVが起きる
+Xそれで、別のスレッドが必要のかも、ファイルを読むためのスレッド。
+
+平成25年10月14日
+Xボイスの問題・最初のボイズを殺す方法。
+xbackgroundで再生する昨日。 そうしたいならサービスを使わないといけない
+
+The sounds are awesome.  Really peaceful and quite unique.  My feedback is:
+- Youre right that it's a bit quiet. Hard to hear unless fully cranked.
+- When you background it, it crashes.
+
+Galaxy S:
+
+アプリを起動：
+10-14 18:34:21.273: D/engine_handle_cmd(12673): APP_CMD_START
+10-14 18:34:21.343: D/engine_handle_cmd(12673): APP_CMD_INIT_WINDOW
+10-14 18:34:21.644: D/engine_handle_cmd(12673): APP_CMD_GAINED_FOCUS
+
+電源ボタン：
+10-14 18:29:50.152: D/engine_handle_cmd(11906): APP_CMD_SAVE_STATE
+10-14 18:29:50.179: D/engine_handle_cmd(11906): APP_CMD_STOP
+10-14 18:29:55.574: D/engine_handle_cmd(11906): APP_CMD_TERM_WINDOW
+10-14 18:29:55.652: D/engine_handle_cmd(11906): APP_CMD_DESTROY
+10-14 18:29:55.699: D/engine_handle_cmd(11906): APP_CMD_START
+10-14 18:29:55.765: D/engine_handle_cmd(11906): APP_CMD_INIT_WINDOW
+
+
+ロック解除：
+10-14 18:31:07.906: D/engine_handle_cmd(11906): APP_CMD_SAVE_STATE
+10-14 18:31:07.906: D/engine_handle_cmd(11906): APP_CMD_STOP
+10-14 18:31:07.910: D/engine_handle_cmd(11906): APP_CMD_TERM_WINDOW
+10-14 18:31:07.910: D/engine_handle_cmd(11906): APP_CMD_DESTROY
+10-14 18:31:07.949: D/engine_handle_cmd(11906): APP_CMD_START
+10-14 18:31:08.457: D/engine_handle_cmd(11906): APP_CMD_INIT_WINDOW
+10-14 18:31:08.937: D/engine_handle_cmd(11906): APP_CMD_GAINED_FOCUS
+
+ホームボタン：
+10-16 16:14:53.323: D/engine_handle_cmd(27334): APP_CMD_TERM_WINDOW
+10-16 16:14:53.374: D/engine_handle_cmd(27334): APP_CMD_LOST_FOCUS
+
+10-16 16:14:53.304: E/BufferQueue(136): [nz.kapsy.hontouniiioto/android.app.NativeActivity] dequeueBuffer: SurfaceTexture has been abandoned!
+
+OpenSLESを無効場合：
+10-16 17:16:13.901: D/engine_handle_cmd(30990): APP_CMD_LOST_FOCUS
+10-16 17:16:13.921: D/engine_handle_cmd(30990): APP_CMD_TERM_WINDOW
+10-16 17:16:15.046: D/engine_handle_cmd(30990): APP_CMD_SAVE_STATE
+10-16 17:16:15.050: D/engine_handle_cmd(30990): APP_CMD_STOP
+
+
+
+
+
+戻るボタン：
+
+10-16 16:18:04.311: D/engine_handle_cmd(28236): APP_CMD_TERM_WINDOW
+10-16 16:18:04.370: D/engine_handle_cmd(28236): APP_CMD_LOST_FOCUS
+
+
+OpenSLESを無効場合：
+10-16 17:17:03.600: D/engine_handle_cmd(30990): APP_CMD_LOST_FOCUS
+10-16 17:17:03.874: D/engine_handle_cmd(30990): APP_CMD_TERM_WINDOW
+10-16 17:17:04.292: D/engine_handle_cmd(30990): APP_CMD_STOP
+10-16 17:17:04.319: D/engine_handle_cmd(30990): APP_CMD_DESTROY
+
+
+
+
+Apad 7：
+
+アプリを起動：
+10-14 18:49:40.002: D/engine_handle_cmd(11830): APP_CMD_START
+10-14 18:49:40.172: D/engine_handle_cmd(11830): APP_CMD_INIT_WINDOW
+10-14 18:49:40.862: D/engine_handle_cmd(11830): APP_CMD_GAINED_FOCUS
+
+電源ボタン：
+10-14 18:52:13.262: D/engine_handle_cmd(11830): APP_CMD_SAVE_STATE
+10-14 18:52:13.282: D/engine_handle_cmd(11830): APP_CMD_STOP
+
+
+
+
+ロックした時：（後20秒）
+10-14 18:52:44.222: D/engine_handle_cmd(11830): APP_CMD_LOST_FOCUS
+
+10-14 18:59:03.812: W/ActivityManager(162): Activity idle timeout for ActivityRecord{416c1bb8 nz.kapsy.hontouniiioto/android.app.NativeActivity}
+
+
+ロック解除：　この時にフェードインが必要のかも
+10-14 18:55:09.492: D/engine_handle_cmd(12248): APP_CMD_START
+
+
+
+
+ホームボタン：
+10-16 16:27:15.262: D/engine_handle_cmd(3408): APP_CMD_LOST_FOCUS
+10-16 16:27:15.602: D/engine_handle_cmd(3408): APP_CMD_TERM_WINDOW
+10-16 16:27:16.042: D/engine_handle_cmd(3408): APP_CMD_SAVE_STATE
+10-16 16:27:16.042: D/engine_handle_cmd(3408): APP_CMD_STOP
+起動：
+10-17 10:37:04.678: D/engine_handle_cmd(6396): APP_CMD_START
+10-17 10:37:04.748: D/engine_handle_cmd(6396): APP_CMD_INIT_WINDOW
+10-17 10:37:05.168: D/engine_handle_cmd(6396): APP_CMD_GAINED_FOCUS
+
+
+戻るボタン：
+10-16 16:28:36.692: D/engine_handle_cmd(3408): APP_CMD_LOST_FOCUS
+10-16 16:28:36.992: D/engine_handle_cmd(3408): APP_CMD_TERM_WINDOW
+10-16 16:28:37.462: D/engine_handle_cmd(3408): APP_CMD_STOP
+10-16 16:28:37.472: D/engine_handle_cmd(3408): APP_CMD_DESTROY
+起動：
+10-17 10:37:04.678: D/engine_handle_cmd(6396): APP_CMD_START
+10-17 10:37:04.748: D/engine_handle_cmd(6396): APP_CMD_INIT_WINDOW
+10-17 10:37:05.168: D/engine_handle_cmd(6396): APP_CMD_GAINED_FOCUS
+
+
+
+
+
+
+2013年10月18日
+
+X`漣みたいな円形
+	
+XAMMOが足りない場合には赤い円形を描く
+XやっぱゲームみたいなAMMO計算機のほうが一番わかり易い
+
+
+
+2013年10月21日
+XMenuボタンをオーバーライド
+
+2013年10月22日
+取り敢えず、最初の位置によってベロシティが減る程度が変えるってのは一番いい
+X673: if (n->tic == p->current_tic && n->vel > 0.1F) {
+
+X透明なテキスチャーを描く
+
+
+
+
+
+
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biSize: 56
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biWidth: 256
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biHeight: 128
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biPlanes: 1
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biBitCount: 32
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biCompression: 3
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biSizeImage: 131072
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biXPixPerMeter: 2835
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biYPixPerMeter: 2835
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biClrUsed: 0
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biClrImporant: 0
+10-23 15:14:44.972: D/bmpCheck(17827): (tt->bmpinfo->biSize != 40) 
+10-23 15:14:44.976: D/makeTexture(17827): malloc(), tex_malloc: 0
+10-23 15:14:44.976: D/makeTexture(17827): tt->BmpHeight: 0
+10-23 15:14:44.976: D/makeTexture(17827): tt->BmpWidth: 0
+10-23 15:14:44.976: D/engine_handle_cmd(17827): APP_CMD_GAINED_FOCUS
+10-23 15:14:53.093: D/engine_handle_cmd(17827): APP_CMD_LOST_FOCUS
+10-23 15:14:53.496: D/engine_handle_cmd(17827): APP_CMD_GAINED_FOCUS
+
+
+10-23 15:28:28.539: D/bmpCheck(3465): (tt->bmpinfo->biSize: 124
+10-23 15:28:28.543: D/bmpCheck(3465): (tt->bmpinfo->biWidth: 256
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biHeight: 128
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biPlanes: 1
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biBitCount: 32
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biCompression: 3
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biSizeImage: 131072
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biXPixPerMeter: 2835
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biYPixPerMeter: 2835
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biClrUsed: 0
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biClrImporant: 0
+10-23 15:28:28.546: D/bmpCheck(3465): (tt->bmpinfo->biSize != 40) 
+10-23 15:28:28.546: D/makeTexture(3465): malloc(), tex_malloc: 0
+10-23 15:28:28.546: D/makeTexture(3465): tt->BmpHeight: 0
+10-23 15:28:28.546: D/makeTexture(3465): tt->BmpWidth: 0
+10-23 15:28:28.546: D/engine_handle_cmd(3465): APP_CMD_GAINED_FOCUS
+
+
+
+2013年11月27日
+
+X音声ファイル全部ノーマライズ
+X音量は大丈夫？
+
+xボタンのテキスチャー
+Xボタンの配列
+
+
+
+
+Xボタン機能
+
+	if (!parts_active && not_active_count < SILENCE_BEFORE_AUTO_PLAY) {
+
+Xボタンのアニメーション・フェードイン
+
+
+Xタイトル画面
+Xタイトル画面の脈動型消灯
+
+2013年12月4日
+X説明書みたいのメニューのボタンの機能
+Xテキスチャーのパラメータを設定する機能
+X書道の写真を撮る
+
+
+
+2013年12月17日
+X背景の色・完全に更新しないと
+
+xボタン・無視する機能
+x説明書みたいな画面・一回のクリクして、それで無視する
+x新しい円形映像
+X背景を変えるボタンを押すと自動的に背景を変える機能をレセットしないと chord_count
+xAMMOの問題
+X音声の大きさを下がるための機能
+
+2013年12月19日
+Xパートによって色が変更する機能
+X無作為の色・値は。５以上ならやり直す
+Xパートの色のマスク？
+xtruncate vel to 1.0, bgs down .1 rnd notes a bit louder!
+X無作為にノートを作る機能・頻繁さを増やす
+
+平成25年12月20日
+x最初の画面の流れ
+X無作為のノートの端の周り:
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_x_l: 104
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_x_r: 92
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_y_t: 89
+12-20 16:35:22.962: D/get_screen_dimensions(21567): screen_margin_y_b: 124
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_x_l: 104
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_x_r: 92
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_y_t: 89
+12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_y_b: 124
+
+Xテキスチャー問題
+
+このエラーメッセージ：
+12-20 17:25:06.333: E/SurfaceTextureClient(27746): 
+	queueBuffer: error queuing buffer to SurfaceTexture, -19
+
+説明書・自動的に終了
+
+戻るボタンの処理→終了？
+
+ムードのボタンを押すと無作為に次のムードを選ぶ
+
+githubへ
+-> git ignore
+-> readme
+-> 大掃除
+->　コメントが日本語と英語両方に変わる。
+
+
+新しいムード
+アイコン
+LiteとFullの違いバージョン（ifndefによって）
+説明書みたいな画面
+泡
+
+
+	
+＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
+＋　　やるべきリスト　(優先順位)　＋
+＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋
+
+ファイルシステム??
+
+スレッドを終末しなきゃ
+値全部初期化しなきゃ。
+Got　through the native code and check for any static variables, and make
+sure you add code to initialize them to a valid value when the app
+starts.
+
+
+
+
+
+Xこれからどうすべきか
+X？何をする積りたいのか？目的は何なんだろ？
+
+X玩具
+X今回、このソフトは作品だ、作った曲というのは私自分で全部作った。ってわけっすね
+
+
+Xで、保存する機能は駄目
+X複数の設定も駄目
+
+で、必要最低限の機能：
+音階を変わる・ボタンとか
+Xこれ以上はあまり期待してない。
+
+ロードする時に選択した音階だけをメモリに格納する機能？
+必要なのは一瞬的な音。次回。タイミングを診断するため。
+
+キューベースで音階を作れ 最初のバージョンに10個くらいで十分
+
+GLをする前に音系の機能を全部週末してやれ
+
+
+
+
+
+GLのこと
+マルチタッチによる円形を描く
+
+ZIPファイルを使うほうがマシかも
+その代わりにOBBでもいいじゃん?
+
+売ること
+音
+同時に複数の音を再生する機能
+音階！！！いいなって思う
+
+
+06-05 09:23:34.592: W/ActivityManager(173): No content provider found for permission revoke: file:///data/local/tmp/hontouniiioto.apk
+
+
+ファイル管理：
+APad:
+06-08 16:10:18.066: D/android_main(16231): nativeActivity->externalDataPath: /mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files
+06-08 16:10:18.066: D/android_main(16231): nativeActivity->internalDataPath: /data/data/nz.kapsy.hontouniiioto/files
+Galaxy:
+06-08 16:46:57.175: D/android_main(4645): nativeActivity->externalDataPath: /storage/sdcard0/Android/data/nz.kapsy.hontouniiioto/files
+06-08 16:46:57.175: D/android_main(4645): nativeActivity->internalDataPath: /data/data/nz.kapsy.hontouniiioto/files
+
+
+＋＋＋＋＋＋＋＋＋＋＋
+＋　　　　　アイデア　　　　＋
+＋＋＋＋＋＋＋＋＋＋＋
+
+今考えるのはこのあぷりとBloomの違い点は、基本的にこのアプリはユーザカラの入力を受けません。
+その気にならば、ユーザがその設定を変えるけど、初期化の設定で入力を受けません。
+そのほうがいいかも
+Bloomの短所というのは、正直を言うと、入力と設定でアプリの流れは複雑過ぎる。
+
+今思えば、あまりグラフィクスが必要ないかも。理由はこのアプリを長時間に聞くと、あまり本格的なグラフィクスが必要ない。
+必要ないというよりちょっと邪魔な感じだし。
+で、音を鳴らすと画面全体の色を光ることは十分のかも。
+
+ｇｌｓｌならそれでも十分。
+
+このアプリはアルバムのほうがいいかも、音楽を作るためのソフトではない。
+
+録音したノートが時間とともに変化
+
+録音したノートを別の配列に保存して、いつでも再生できるってキの
+
+無長の音を使って、無作為にループする機能（打楽器とか）
+
+アイディア：円形を描くというより、画面の色を変えるだけで十分かも
+＋＋＋＋＋＋＋＋＋＋＋
+＋　　　必要ない機能　　＋
+＋＋＋＋＋＋＋＋＋＋＋
+
+
+保存機能?
+再生するとき、音の大きさがどんどん減る?
+「曲」みたいな機能・ループ、一発的な音、ノートをいつか鳴らす情報・一つのファイルに纏めるってこと
+アイディア：録音したパートを全部保存して、無作為に再生している（Bloomとは違うかもな）
+アイデア：時間がかかると、ループのスリープ時間がどんどん遅くなります？？面倒くさい
+今複数の音の機能を忘れてまえ

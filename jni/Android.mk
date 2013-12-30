@@ -16,6 +16,9 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_CFLAGS := -DANDROID_NDK \
+	-include $(LOCAL_PATH)/common.h
+
 LOCAL_MODULE    := and_main
 LOCAL_SRC_FILES := and_main.c
 LOCAL_SRC_FILES += snd_scal.c
@@ -36,12 +39,14 @@ LOCAL_SRC_FILES += gfx/frame_delta.c
 LOCAL_SRC_FILES += gfx/touch_circle.c
 LOCAL_SRC_FILES += math/trig_sampler.c
 LOCAL_SRC_FILES += gfx/tex_circle.c
-LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM -lGLESv2
+LOCAL_LDLIBS    := -llog -landroid -lEGL -lGLESv1_CM -lGLESv2 -lc -lm
 # for native audio
 LOCAL_LDLIBS    += -lOpenSLES
 # for native asset manager
 LOCAL_LDLIBS    += -landroid
 LOCAL_STATIC_LIBRARIES := android_native_app_glue
+
+APP_STL := gnustl_static
 
 include $(BUILD_SHARED_LIBRARY)
 

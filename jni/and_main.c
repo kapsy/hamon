@@ -5,30 +5,6 @@
  *      Author: Michael
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-
-#include <jni.h>
-#include <errno.h>
-
-#include <android/sensor.h>
-#include <android/log.h>
-#include <android_native_app_glue.h>
-
-// kapsy
-#include <android/asset_manager.h>
-#include <android/storage_manager.h>
-#include <android/window.h>
-
-
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
-#include <EGL/egl.h>
-#include <GLES/gl.h>
-
-#include <stddef.h>
 #include "and_main.h"
 #include "hon_type.h"
 #include "snd_sles.h"
@@ -45,14 +21,13 @@
 
 #include "gfx/frame_delta.h"
 
-#include <pthread.h>
 #include "gfx/touch_circle.h"
 #include "gfx/tex_circle.h"
 
 
 #include "math/trig_sampler.h"
 
-
+#include "gfx_asst.h"
 
 
 
@@ -82,8 +57,8 @@ extern screen_settings g_sc;
 typedef void* EGLNativeDisplayType;
 size_t screen_width;
 size_t screen_height;
-//size_t screen_height_reduced; // Šù‚ÉŒvZ‚µ‚½’lE©“®“IÄ¶‚Ì‚½‚ß‚É‚±‚±‚ÅŒvZ
-//size_t screen_margin; // ‰~Œ`‚ğ’[‚ÉØ‚ê‚È‚¢‚æ‚¤‚É•`‚­‚½‚ß‚Ì’lA‰æ–Êc‚Ì‚Q‚O“
+//size_t screen_height_reduced; // ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½lï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Z
+//size_t screen_margin; // ï¿½~ï¿½`ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½cï¿½ï¿½ï¿½Qï¿½Oï¿½ï¿½
 //size_t screen_margin_y;
 //size_t screen_margin_x;
 size_t screen_margin_x_l;
@@ -99,7 +74,7 @@ static float touch_segment_width;
 int sles_init_called = FALSE;
 int sles_init_finished = FALSE;
 int show_gameplay = FALSE;
-int touch_enabled = FALSE; // ƒ^ƒbƒ`‘€ì‚Ì‚½‚ß
+int touch_enabled = FALSE; // ï¿½^ï¿½bï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int buttons_activated = FALSE;
 int splash_fading_in = FALSE;
 int splash_bg_fading_in = FALSE;
@@ -123,7 +98,7 @@ unsigned long touch_enable_time = 0;
 //
 //unsigned long elapsed_time = 0;
 
-// ƒvƒƒgƒ^ƒCƒv
+// ï¿½vï¿½ï¿½ï¿½gï¿½^ï¿½Cï¿½v
 void first_init(engine* e);
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
@@ -131,7 +106,7 @@ void touch_branching(float x, float y);
 void create_init_sles_thread(struct android_app* state);
 void* init_sles_thread(void* args);
 
-// gfx_init.c‚ÉˆÚ“®‚µ‚½
+// gfx_init.cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ///**
 // * Tear down the EGL context currently associated with the display.
 // */
@@ -270,7 +245,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 				//AMotionEvent_getPointerCount(event);
 
 
-				// ƒ}ƒ‹ƒ`ƒ^ƒbƒ`ƒoƒO‚ğ‰ğŒˆ‚·‚é‚½‚ßA‚±‚¤‚â‚ê‚Îˆê”Ô‚¢‚¢B
+				// ï¿½}ï¿½ï¿½ï¿½`ï¿½^ï¿½bï¿½`ï¿½oï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B
 				size_t pointer_index_mask = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
 						>> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 
@@ -404,7 +379,7 @@ void trigger_note(float x, float y) {
 	int seg = find_screen_segment(x);
 	float vel = find_vel_value(y);
 
-	if (decrease_ammo()) { // AMMO‚Ì—Ê‚ğŠm”F‚·‚é‚½‚ß
+	if (decrease_ammo()) { // AMMOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½mï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		activate_tex_circle(x, y, (parts + current_rec_part)->rgb, &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
@@ -436,8 +411,8 @@ static int find_screen_segment(float pos_x) {
 	LOGD("find_screen_segment", "touch_segment_width: %f", touch_segment_width);
 	LOGD("find_screen_segment", "int seg: %d", segment);
 
-	// •K—v‚È‚¢‚©‚à
-/*	// x_pos‚Æscreen_width‚ª“¯‚¶‚È‚ç
+	// ï¿½Kï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+/*	// x_posï¿½ï¿½screen_widthï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (segment == TOTAL_SEGMENTS) {
 		segment = TOTAL_SEGMENTS -  1;
 	}*/
@@ -456,7 +431,7 @@ static float find_vel_value(float pos_y) {
 
 	//SLmillibel vol = (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
 
-	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // ‘‚«’¼‚·‚µ‚È‚«‚á
+	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	LOGD("find_vel_value", "vel: %f", vel);
 
 	return vel;
@@ -465,14 +440,14 @@ static float find_vel_value(float pos_y) {
 
 
 
-// ‚±‚ÌŠÖ”‚Í•K—v‚È‚¢
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½vï¿½ï¿½ï¿½ï¿½
 static void get_screen_dimensions(engine* e) {
 
-	// c’u‚«‚ÌŒü‚« (APad)
+	// ï¿½cï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (APad)
 	//	06-04 15:47:33.845: D/get_screen_dimensions(13014): ANativeWindow_getWidth: 480
 	//	06-04 15:47:33.845: D/get_screen_dimensions(13014): ANativeWindow_getHeight: 752
 
-	// ‰¡’u‚«‚ÌŒü‚« (APad)
+	// ï¿½ï¿½ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (APad)
 	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getWidth: 800
 	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getHeight: 432
 
@@ -482,7 +457,7 @@ static void get_screen_dimensions(engine* e) {
 
 	screen_margin_x_l = screen_width*0.13f;
 	screen_margin_x_r = screen_width*0.110f;
-	screen_margin_y_t = screen_height*0.186f;
+	screen_margin_y_t = screen_height*0.187f;
 	screen_margin_y_b = screen_height*0.26f;
 
 /*
@@ -542,8 +517,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-        	// ƒRƒR‚ç‚Ö‚ñ‚Í‘åä•v
-        	// ‚¯‚ÇA‘|œ‚µ‚È‚¢‚Æc
+        	// ï¿½Rï¿½Rï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½v
+        	// ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½|ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½c
         	if (e->app->window != NULL) {
 
 				LOGD("call_order", "APP_CMD_INIT_WINDOW");
@@ -626,11 +601,11 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
         	if (sles_init_called)wake_from_paused = TRUE;
 //        	show_gameplay = FALSE;
 
-        	// ƒ^ƒbƒ`‚Ì‰~Œ`‘S•”–³ŒøƒX‚×‚«
+        	// ï¿½^ï¿½bï¿½`ï¿½ï¿½ï¿½~ï¿½`ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½
 
             pause_all_voices();
-//    		usleep(1000000); // 100ƒ~ƒŠ•b
-    		usleep(5000000); // 100ƒ~ƒŠ•b
+//    		usleep(1000000); // 100ï¿½~ï¿½ï¿½ï¿½b
+    		usleep(5000000); // 100ï¿½~ï¿½ï¿½ï¿½b
     		shutdown_audio();
 
 
@@ -653,7 +628,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-// Å‰‚Ì‰Šú‰»‚·‚é‚½‚ß‚ÌŠÖ”
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void first_init(engine* e) {
 
 	init_all_trig_samples();
@@ -713,7 +688,7 @@ void init_sles_components(struct android_app* state) {
 
 
 
-	// snd_ctrl‚Ì‚±‚Æ
+	// snd_ctrlï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //	start_loop();
 //	init_control_loop();
 
@@ -731,6 +706,14 @@ void init_sles_gain_focus(struct android_app* state) {
 	create_sl_engine();
 	init_all_voices();
 	start_loop();
+
+
+	int i;
+	for(i=0;i<sizeof_textures_elements;i++) {
+		struct texture_file* tf = textures+i;
+		setup_texture(tf, 0.0f);
+	}
+
 
 
 }

@@ -940,10 +940,23 @@ X無作為のノートの端の周り:
 12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_y_t: 89
 12-20 16:36:28.872: D/get_screen_dimensions(22103): screen_margin_y_b: 124
 
-テキスチャー問題
-ホームボタンと戻るボタンの処理
+Xテキスチャー問題
 
+このエラーメッセージ：
+12-20 17:25:06.333: E/SurfaceTextureClient(27746): 
+	queueBuffer: error queuing buffer to SurfaceTexture, -19
 
+説明書・自動的に終了
+
+戻るボタンの処理→終了？
+
+ムードのボタンを押すと無作為に次のムードを選ぶ
+
+githubへ
+-> git ignore
+-> readme
+-> 大掃除
+->　コメントが日本語と英語両方に変わる。
 
 
 新しいムード

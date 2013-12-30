@@ -1,222 +1,248 @@
 obj/local/armeabi/objs/and_main/gfx/touch_circle.o: \
- jni/gfx/touch_circle.c \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/errno.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/cdefs.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/api-level.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/errno.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/errno.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno-base.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/sensor.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdint.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/_types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/_types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/posix_types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/stddef.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/compiler.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/posix_types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/kernel.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/looper.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h \
- C:/Android/android-ndk-r8d/sources/android/native_app_glue/android_native_app_glue.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/poll.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/poll.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/poll.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/time.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/time.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/signal.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/limits.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/limits.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/limits.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/internal_types.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/limits.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/syslimits.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/page.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/string.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/malloc.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/signal.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/signal.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/sigcontext.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/configuration.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/asset_manager.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_activity.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/capability.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h \
- jni/gfx/vertex.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h \
- jni/hon_type.h jni/gfx/touch_circle.h jni/gfx/frame_delta.h \
- jni/gfx_gles.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h \
- C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h
+ jni/gfx/touch_circle.c jni/common.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/stdint.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/_types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/_types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/_wchar_limits.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/api-level.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/cdefs.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/cdefs_elf.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/posix_types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/stddef.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/compiler.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/posix_types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/kernel.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/sysmacros.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/stdio.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/stdlib.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/string.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/malloc.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/alloca.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/strings.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/memory.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/math.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/limits.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/limits.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/limits.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/internal_types.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/limits.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/syslimits.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/page.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/time.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/time.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/time.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/siginfo.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/siginfo.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/jni.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/errno.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/errno.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/errno.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/errno.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/errno-base.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/sensor.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/looper.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/log.h \
+ /Users/mike/Android/android-ndk-r9c/sources/android/native_app_glue/android_native_app_glue.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/poll.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/poll.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/poll.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/pthread.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/signal.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/signal.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/signal.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/sigcontext.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sched.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/configuration.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/asset_manager.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/native_activity.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/input.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/keycodes.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/native_window.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/rect.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/storage_manager.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/window.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_Platform.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_Android.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/EGL/egl.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/EGL/eglplatform.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/KHR/khrplatform.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/GLES/gl.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/GLES/glplatform.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/unistd.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/select.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/sysconf.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/capability.h \
+ /Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/pathconf.h \
+ jni/gfx/vertex.h jni/hon_type.h jni/gfx/touch_circle.h \
+ jni/gfx/frame_delta.h jni/gfx_gles.h
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/jni.h:
+jni/common.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/errno.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/cdefs.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/stdint.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/cdefs_elf.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/_types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/api-level.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/_types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/errno.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/_wchar_limits.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/errno.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/api-level.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/cdefs.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/errno-base.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/cdefs_elf.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/sensor.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/posix_types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/stddef.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdint.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/compiler.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/_types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/posix_types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/_types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/posix_types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/stddef.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/kernel.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/compiler.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/sysmacros.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/posix_types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/stdio.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/stdlib.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/string.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/kernel.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/malloc.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysmacros.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/alloca.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/looper.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/strings.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/log.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/memory.h:
 
-C:/Android/android-ndk-r8d/sources/android/native_app_glue/android_native_app_glue.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/math.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/poll.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/limits.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/poll.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/limits.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/poll.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/limits.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pthread.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/internal_types.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/time.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/machine/limits.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/time.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/syslimits.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/time.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/page.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/siginfo.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/time.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/siginfo.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/time.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/signal.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/time.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/limits.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/siginfo.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/limits.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/siginfo.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/limits.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/jni.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/internal_types.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/errno.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/machine/limits.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/errno.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/syslimits.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/errno.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/page.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/errno.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/string.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/errno-base.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/malloc.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/sensor.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/signal.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/looper.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm-generic/signal.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/log.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/asm/sigcontext.h:
+/Users/mike/Android/android-ndk-r9c/sources/android/native_app_glue/android_native_app_glue.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sched.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/poll.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/configuration.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/poll.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/asset_manager.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/poll.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_activity.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/pthread.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/input.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/signal.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/keycodes.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/signal.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/native_window.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm-generic/signal.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/rect.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/asm/sigcontext.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/storage_manager.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sched.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/android/window.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/configuration.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/unistd.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/asset_manager.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/select.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/native_activity.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/sys/sysconf.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/input.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/linux/capability.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/keycodes.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/pathconf.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/native_window.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/math.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/rect.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/stdlib.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/storage_manager.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/alloca.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/android/window.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/strings.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES.h:
 
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/memory.h:
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_Platform.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_Android.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_AndroidConfiguration.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/SLES/OpenSLES_AndroidMetadata.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/EGL/egl.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/EGL/eglplatform.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/KHR/khrplatform.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/GLES/gl.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/GLES/glplatform.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/unistd.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/select.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/sys/sysconf.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/linux/capability.h:
+
+/Users/mike/Android/android-ndk-r9c/platforms/android-18/arch-arm/usr/include/pathconf.h:
 
 jni/gfx/vertex.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/gl.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/GLES/glplatform.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/KHR/khrplatform.h:
 
 jni/hon_type.h:
 
@@ -225,7 +251,3 @@ jni/gfx/touch_circle.h:
 jni/gfx/frame_delta.h:
 
 jni/gfx_gles.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/egl.h:
-
-C:/Android/android-ndk-r8d/platforms/android-14/arch-arm/usr/include/EGL/eglplatform.h:

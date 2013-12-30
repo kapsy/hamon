@@ -53,7 +53,7 @@
 // 自動的な再生
 #define SILENCE_BEFORE_AUTO_PLAY 150
 #define SILENCE_BEFORE_AUTO_PLAY_INIT 115
-#define ONE_SHOT_RND 200//90//230 // この値が変わるといいな
+#define ONE_SHOT_RND 220//90//230 // この値が変わるといいな
 #define ONE_SHOT_RND_INIT 10 // この値が変わるといいな
 #define TOTAL_START_SHOTS 2
 #define MIN_CHORD_TIME 1800 // 2000のほうがいいのかも
@@ -72,7 +72,7 @@ part parts[TOTAL_PARTS];
 pthread_t control_loop;
 pthread_attr_t thread_attr;
 
-size_t one_shot_rnd[] = {110, 160, 230, 300, 400};
+size_t one_shot_rnd[] = {110, 230, 400, 160, 300};
 
 static int control_loop_running = TRUE;
 
