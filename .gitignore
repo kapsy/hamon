@@ -9,7 +9,7 @@
 *.lo
 *.Plo
 build/
-objs/
+obj/
 
 # Compiled Object files
 *.slo
