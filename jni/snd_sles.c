@@ -7,19 +7,19 @@
  */
 // OpenSL ES management
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <assert.h>
-#include <jni.h>
-#include <string.h>
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <time.h>
+//#include <assert.h>
+//#include <jni.h>
+//#include <string.h>
 
-// for native audio
-#include <SLES/OpenSLES.h>
-#include <SLES/OpenSLES_Android.h>
-
-// for native asset manager
-#include <sys/types.h>
+//// for native audio
+//#include <SLES/OpenSLES.h>
+//#include <SLES/OpenSLES_Android.h>
+//
+//// for native asset manager
+//#include <sys/types.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 

@@ -6,12 +6,14 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <assert.h>
 
 #include <jni.h>
 #include <errno.h>
 
 #include <android/sensor.h>
 #include <android/log.h>
+#include <android/input.h>
 #include <android_native_app_glue.h>
 
 // kapsy
