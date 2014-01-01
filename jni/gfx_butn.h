@@ -10,7 +10,7 @@
 //#ifndef FUGA_H
 //#define FUGA_H
 //
-//struct hoge_t;@/* ‘O•ûéŒ¾ */
+//struct hoge_t;ã€€/* å‰æ–¹å®£è¨€ */
 //
 //typedef struct fuga_t
 //{

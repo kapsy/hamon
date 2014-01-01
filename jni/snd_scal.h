@@ -4,7 +4,7 @@
  *  Created on: 2013/06/02
  *      Author: Michael
  *
- *      ‰¹ŠKŠÇ—
+ *      éŸ³éšŽç®¡ç†
  *
  *      Scale Management
  */
@@ -15,7 +15,7 @@
 #define TOTAL_NOTES 24
 
 //#define TOTAL_SCALES 5
-#define START_NOTE 48// MIDI”Ô†
+#define START_NOTE 48// MIDIç•ªå·
 
 //#include "snd_asst.h"
 
@@ -40,12 +40,12 @@ struct sample_def* get_scale_sample(int seg);
 
 //typedef struct scale {
 //
-//	//int id; //ƒoƒbƒtƒ@[‚Ì‚½‚ß
+//	//int id; //ãƒãƒƒãƒ•ã‚¡ãƒ¼ã®ãŸã‚
 ////	char* name;
 //
-//	// ‰æ–Ê‚Ì•”•ª‚ðMIDIƒm[ƒg‚Ö
+//	// ç”»é¢ã®éƒ¨åˆ†ã‚’MIDIãƒŽãƒ¼ãƒˆã¸
 //	int midimap[TOTAL_NOTES];
-////	int chord_loop; // ‘¼‚Ì•û–@‚ª‚ ‚é‚Í‚¸‚¾
+////	int chord_loop; // ä»–ã®æ–¹æ³•ãŒã‚ã‚‹ã¯ãšã 
 //
 //	sample_def* looping_sample;
 //

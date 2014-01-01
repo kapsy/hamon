@@ -8,7 +8,7 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
-#include <unistd.h>  // sleep()‚ð’è‹`
+#include <unistd.h>  // sleep()ã‚’å®šç¾©
 #include <pthread.h>
 #include <math.h>
 #include <stdlib.h>

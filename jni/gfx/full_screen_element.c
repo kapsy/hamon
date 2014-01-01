@@ -119,7 +119,7 @@ void full_scr_mod(struct full_scr_el* fs) {
 }
 
 
-void full_scr_xfade() { //一発な関数
+void full_scr_xfade() { //荳逋ｺ縺ｪ髢｢謨ｰ
 
 	LOGD("bg_xfade", "selected_background: %d", selected_background);
 	struct full_scr_el* fs = backgrounds + selected_background;
@@ -171,7 +171,7 @@ int all_bgs_fading() {
 	return r;
 }
 
-// ---------- ポインターの関数
+// ---------- 繝昴う繝ｳ繧ｿ繝ｼ縺ｮ髢｢謨ｰ
 
 void help_screen_end() {
 

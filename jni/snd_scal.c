@@ -5,7 +5,7 @@
  *      Author: Michael
  */
 
-// �����̏���������邽��
+// 音調の情報を方損するため
 #include <android/asset_manager.h>
 #include <android/storage_manager.h>
 //#include "snd_sles.h"
@@ -27,20 +27,20 @@
 
 //typedef struct {
 //
-//	//int id; //�o�b�t�@�[�̂���
+//	//int id; //バッファーのため
 //	char* name;
 //
-//	// ��ʂ̕�����MIDI�m�[�g��
+//	// 画面の部分をMIDIノートへ
 //	int midimap[TOTAL_NOTES];
-//	int chord_loop; // ���̕��@������͂���
+//	int chord_loop; // 他の方法があるはずだ
 //
 //} scale_def;
 
 
-// ���l����Έ�ԊȒP�ȕ��@�Ƃ����̂�
-// �󔒂ȂƂ���͗~������΁A�����m�[�g�����Ă��\���܂���B
+// 今考えれば一番簡単な方法というのは
+// 空白なところは欲しければ、同じノートを入れても構いません。
 
-// ���̔z��̒��Ƀ��[�v���Ă��鉹�̏������ׂ��I
+// この配列の中にループしている音の情報を入るべき！
 //scale_def scales[] = {
 //
 //		{ "major",
@@ -93,8 +93,8 @@
 //};
 
 
-// ���̊֐��͕K�v�Ȃ�����
-// �����������邽�߂����̊֐�
+// この関数は必要ないかも
+// 初期化をするためだけの関数
 void start_loop() {
 	int success = enqueue_seamless_loop(looping_samples + selected_mood);
 }
@@ -132,7 +132,7 @@ struct sample_def* get_scale_sample(int seg) {
 
 //int cycle_scale() {
 //
-//	// �����Ńt�F�[�h�����ĂȂ������m�F���Ȃ���
+//	// ここでフェードをしてないかを確認しなきゃ
 //	if(current_voice_fading() || bg_fading()) {
 //
 //		LOGD("cycle_scale", "current_voice_fading() || bg_fading()");

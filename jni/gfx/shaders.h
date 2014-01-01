@@ -27,11 +27,11 @@
 //	"}\n";
 
 
-// スプラッシュ画面のシェーダー
+// 繧ｹ繝励Λ繝�繧ｷ繝･逕ｻ髱｢縺ｮ繧ｷ繧ｧ繝ｼ繝繝ｼ
 extern const char v_shdr_splash[];
 extern const char f_shdr_splash[];
 
-// 本体のアプリのシェーダー
+// 譛ｬ菴薙�ｮ繧｢繝励Μ縺ｮ繧ｷ繧ｧ繝ｼ繝繝ｼ
 extern const char v_shdr_main[];
 extern const char f_shdr_main[];
 

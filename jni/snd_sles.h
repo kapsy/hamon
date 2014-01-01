@@ -38,7 +38,7 @@ typedef struct {
 	int fading_in;
 	int fading_out;
 
-	// ‚±‚Ì’l‚Á‚Ä‚Ç‚¤‚¢‚¤ˆÓ–¡H
+	// ã“ã®å€¤ã£ã¦ã©ã†ã„ã†æ„å‘³ï¼Ÿ
 	float vol_fade_factor;
 //	float vol_auto_factor;
 

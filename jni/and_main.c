@@ -5,6 +5,30 @@
  *      Author: Michael
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+#include <jni.h>
+#include <errno.h>
+
+#include <android/sensor.h>
+#include <android/log.h>
+#include <android_native_app_glue.h>
+
+// kapsy
+#include <android/asset_manager.h>
+#include <android/storage_manager.h>
+#include <android/window.h>
+
+
+#include <SLES/OpenSLES.h>
+#include <SLES/OpenSLES_Android.h>
+#include <EGL/egl.h>
+#include <GLES/gl.h>
+
+#include <stddef.h>
 #include "and_main.h"
 #include "hon_type.h"
 #include "snd_sles.h"
@@ -21,6 +45,7 @@
 
 #include "gfx/frame_delta.h"
 
+#include <pthread.h>
 #include "gfx/touch_circle.h"
 #include "gfx/tex_circle.h"
 
@@ -57,8 +82,8 @@ extern screen_settings g_sc;
 typedef void* EGLNativeDisplayType;
 size_t screen_width;
 size_t screen_height;
-//size_t screen_height_reduced; // �����v�Z�����l�E�����I�������������������v�Z
-//size_t screen_margin; // �~�`���[�����������������`���������l�A�����c���Q�O��
+//size_t screen_height_reduced; // 既に計算した値・自動的再生のためにここで計算
+//size_t screen_margin; // 円形を端に切れないように描くための値、画面縦の２０％
 //size_t screen_margin_y;
 //size_t screen_margin_x;
 size_t screen_margin_x_l;
@@ -74,7 +99,7 @@ static float touch_segment_width;
 int sles_init_called = FALSE;
 int sles_init_finished = FALSE;
 int show_gameplay = FALSE;
-int touch_enabled = FALSE; // �^�b�`����������
+int touch_enabled = FALSE; // タッチ操作のため
 int buttons_activated = FALSE;
 int splash_fading_in = FALSE;
 int splash_bg_fading_in = FALSE;
@@ -98,7 +123,7 @@ unsigned long touch_enable_time = 0;
 //
 //unsigned long elapsed_time = 0;
 
-// �v���g�^�C�v
+// プロトタイプ
 void first_init(engine* e);
 static int find_screen_segment(float pos_x);
 static float find_vel_value(float pos_y);
@@ -106,7 +131,7 @@ void touch_branching(float x, float y);
 void create_init_sles_thread(struct android_app* state);
 void* init_sles_thread(void* args);
 
-// gfx_init.c����������
+// gfx_init.cに移動した
 ///**
 // * Tear down the EGL context currently associated with the display.
 // */
@@ -245,7 +270,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 				//AMotionEvent_getPointerCount(event);
 
 
-				// �}���`�^�b�`�o�O���������������A�������������������B
+				// マルチタッチバグを解決するため、こうやれば一番いい。
 				size_t pointer_index_mask = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
 						>> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 
@@ -379,7 +404,7 @@ void trigger_note(float x, float y) {
 	int seg = find_screen_segment(x);
 	float vel = find_vel_value(y);
 
-	if (decrease_ammo()) { // AMMO�������m�F��������
+	if (decrease_ammo()) { // AMMOの量を確認するため
 		activate_tex_circle(x, y, (parts + current_rec_part)->rgb, &vel);
 		enqueue_one_shot(get_scale_sample(seg), float_to_slmillibel(vel, 1.0F), get_seg_permille(seg));
 		record_note(x, y, seg, vel);
@@ -411,8 +436,8 @@ static int find_screen_segment(float pos_x) {
 	LOGD("find_screen_segment", "touch_segment_width: %f", touch_segment_width);
 	LOGD("find_screen_segment", "int seg: %d", segment);
 
-	// �K�v��������
-/*	// x_pos��screen_width����������
+	// 必要ないかも
+/*	// x_posとscreen_widthが同じなら
 	if (segment == TOTAL_SEGMENTS) {
 		segment = TOTAL_SEGMENTS -  1;
 	}*/
@@ -431,7 +456,7 @@ static float find_vel_value(float pos_y) {
 
 	//SLmillibel vol = (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
 
-	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // ����������������
+	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // 書き直すしなきゃ
 	LOGD("find_vel_value", "vel: %f", vel);
 
 	return vel;
@@ -440,14 +465,14 @@ static float find_vel_value(float pos_y) {
 
 
 
-// �����������K�v����
+// この関数は必要ない
 static void get_screen_dimensions(engine* e) {
 
-	// �c�u�������� (APad)
+	// 縦置きの向き (APad)
 	//	06-04 15:47:33.845: D/get_screen_dimensions(13014): ANativeWindow_getWidth: 480
 	//	06-04 15:47:33.845: D/get_screen_dimensions(13014): ANativeWindow_getHeight: 752
 
-	// ���u�������� (APad)
+	// 横置きの向き (APad)
 	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getWidth: 800
 	//	06-04 15:48:38.785: D/get_screen_dimensions(13098): ANativeWindow_getHeight: 432
 
@@ -517,8 +542,8 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-        	// �R�R�������������v
-        	// �����A�|�����������c
+        	// ココらへんは大丈夫
+        	// けど、掃除しないと…
         	if (e->app->window != NULL) {
 
 				LOGD("call_order", "APP_CMD_INIT_WINDOW");
@@ -601,11 +626,11 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
         	if (sles_init_called)wake_from_paused = TRUE;
 //        	show_gameplay = FALSE;
 
-        	// �^�b�`���~�`�S�������X����
+        	// タッチの円形全部無効スべき
 
             pause_all_voices();
-//    		usleep(1000000); // 100�~���b
-    		usleep(5000000); // 100�~���b
+//    		usleep(1000000); // 100ミリ秒
+    		usleep(5000000); // 100ミリ秒
     		shutdown_audio();
 
 
@@ -628,7 +653,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 
 
 
-// ��������������������������
+// 最初の初期化するための関数
 void first_init(engine* e) {
 
 	init_all_trig_samples();
@@ -688,7 +713,7 @@ void init_sles_components(struct android_app* state) {
 
 
 
-	// snd_ctrl������
+	// snd_ctrlのこと
 //	start_loop();
 //	init_control_loop();
 

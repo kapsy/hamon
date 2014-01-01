@@ -14,10 +14,10 @@
 #define TRUE 1
 #define FALSE 0
 
-// APad�̍Œ�l�A���ꂢ���ɂ��܂�ω����Ȃ��i���ԍ��ɂƂ��āj
+// APadの最低値、それいかにあまり変化がない（時間差にとって）
 // #define BUFFER_SIZE 256
 
-// Galaxy S�̍Œ��
+// Galaxy Sの最低限
 //#define BUFFER_SIZE 128 // 0.72562358276643990929705215419501ms
 
 

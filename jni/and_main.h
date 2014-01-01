@@ -25,17 +25,12 @@ extern unsigned long buttons_activated_time;
 
 
 extern size_t screen_width;
-//extern size_t screen_height_reduced;
 extern size_t screen_height;
-//extern size_t screen_margin_y;
-//extern size_t screen_margin_x;
-
 
 extern size_t screen_margin_x_l;
 extern size_t screen_margin_x_r;
 extern size_t screen_margin_y_t;
 extern size_t screen_margin_y_b;
-//extern unsigned long elapsed_time;
 
 
 #endif /* AND_MAIN_H_ */

@@ -30,7 +30,7 @@ struct mood {
 	struct vertex_rgb* rgb_circ;
 	struct vertex_rgb* rgb_circ_mask;
 
-	int color_index; //GLES ÇÃÇΩÇﬂ
+	int color_index; //GLES „ÅÆ„Åü„ÇÅ
 
 
 	struct scale* scale;

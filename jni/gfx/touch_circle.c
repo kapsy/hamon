@@ -16,7 +16,7 @@
 #include <android/storage_manager.h>
 #include <android/window.h>
 
-#include <unistd.h>  // sleep()‚ð’è‹`
+#include <unistd.h>  // sleep()ã‚’å®šç¾©
 #include <pthread.h>
 #include <math.h>
 #include <stdlib.h>
@@ -124,7 +124,7 @@ void activate_touch_circle(float x, float y, size_t col, float* vel) {
 	ts->alpha = 0.0F; // TODO
 
 
-	ts->scale = *vel * *vel * 1.7; // TODO Šù‚ÉŒvŽZ‚·‚ê‚Î‚¢‚¢‚Ì‚©‚à
+	ts->scale = *vel * *vel * 1.7; // TODO æ—¢ã«è¨ˆç®—ã™ã‚Œã°ã„ã„ã®ã‹ã‚‚
 //	LOGI("activate_touch_shape", "ts->scale: %f", ts->scale);
 
 	ts->alpha_max = ts->scale / 2.0; // TODO
@@ -141,7 +141,7 @@ void activate_touch_circle(float x, float y, size_t col, float* vel) {
 	tr->rgb[1] = part_colors[col].g;
 	tr->rgb[2] = part_colors[col].b;
 	tr->alpha = 0.0F; // TODO
-	tr->scale = *vel * *vel * 1.7; // TODO Šù‚ÉŒvŽZ‚·‚ê‚Î‚¢‚¢‚Ì‚©‚à
+	tr->scale = *vel * *vel * 1.7; // TODO æ—¢ã«è¨ˆç®—ã™ã‚Œã°ã„ã„ã®ã‹ã‚‚
 
 	tr->alpha_max = *vel;
 	if (tr->alpha_max >= 1.0) tr->alpha_max = 1.0;

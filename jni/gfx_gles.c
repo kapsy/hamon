@@ -17,7 +17,7 @@
 #include <android/log.h>
 #include <android_native_app_glue.h>
 
-#include <unistd.h>  // sleep()‚ğ’è‹`
+#include <unistd.h>  // sleep()ã‚’å®šç¾©
 #include <pthread.h>
 #include <math.h>
 #include <stdlib.h>
@@ -110,7 +110,7 @@ shader_params_main    g_sp_m;
 screen_settings  g_sc;
 
 
-// gl •‚“®¬”“_”‚©‚ç‰æ–Ê‚Ì‰ğ‘œ“x‚Ì’l‚Ö
+// gl æµ®å‹•å°æ•°ç‚¹æ•°ã‹ã‚‰ç”»é¢ã®è§£åƒåº¦ã®å€¤ã¸
 float gl_to_scr(float gl, int is_x) {
 	float scr;
 	if (is_x)
@@ -141,7 +141,7 @@ GLuint gles_prog_tex_circ;
 GLuint g_prog_main;
 GLuint bg_cols [TOTAL_MOODS];
 
-// ƒeƒLƒXƒ`ƒƒ[‚ÌƒtƒB[ƒ‹ƒh
+// ãƒ†ã‚­ã‚¹ãƒãƒ£ãƒ¼ã®ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰
 shader_params_tex g_sp_t;
 GLuint g_prog_splash;
 
@@ -337,15 +337,15 @@ int gles_init() {
 
 	glViewport(0, 0, g_sc.width, g_sc.height);
 
-	/* •½s“Š‰e•ÏŠ·s—ñ‚ğ‹‚ß‚é */
+	/* å¹³è¡ŒæŠ•å½±å¤‰æ›è¡Œåˆ—ã‚’æ±‚ã‚ã‚‹ */
 	orthogonalMatrix(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, projectionMatrix);
 
-	/* uniform •Ï” projectionMatrix ‚ÌêŠ‚ğ“¾‚é */
+	/* uniform å¤‰æ•° projectionMatrix ã®å ´æ‰€ã‚’å¾—ã‚‹ */
 	projectionMatrixLocation = glGetUniformLocation(g_prog_main, "projectionMatrix");
 
 
 
-	// gles2_py_texture ‚©‚ç‚ÌŠÖ”
+	// gles2_py_texture ã‹ã‚‰ã®é–¢æ•°
 
 
 	g_sp_t.display = glGetUniformLocation(g_prog_splash, "display");
@@ -384,7 +384,7 @@ int gles_init() {
 		int i;
 
 
-//		ƒAƒhƒŒƒX‚Ì“à—e‚ğQÆ . ‘ã“ü
+//		ã‚¢ãƒ‰ãƒ¬ã‚¹ã®å†…å®¹ã‚’å‚ç…§ . ä»£å…¥
 //		*ary_p[n] = var;
 
 		for (i=0; i<sizeof_textures_elements; i++) {
@@ -414,7 +414,7 @@ int gles_init() {
 
 
 
-//// and_main.c ‚©‚ç‚Éæ‚Á‚½ƒR[ƒh
+//// and_main.c ã‹ã‚‰ã«å–ã£ãŸã‚³ãƒ¼ãƒ‰
 ///**
 // * Tear down the EGL context currently associated with the display.
 // */
@@ -437,7 +437,7 @@ int gles_init() {
 
 
 
-// and_main.c ‚©‚ç‚Éæ‚Á‚½ƒR[ƒh
+// and_main.c ã‹ã‚‰ã«å–ã£ãŸã‚³ãƒ¼ãƒ‰
 /**
  * Tear down the EGL context currently associated with the display.
  */
@@ -531,62 +531,62 @@ int init_shaders(GLuint *program, char const *vShSrc, char const *fShSrc)
 
 
 
-// GPUã‚Ìƒoƒbƒtƒ@ƒIƒuƒWƒFƒNƒg‚Éƒf[ƒ^‚ğ“]‘—
+// GPUä¸Šã®ãƒãƒƒãƒ•ã‚¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ãƒ‡ãƒ¼ã‚¿ã‚’è»¢é€
 void create_gl_buffers()
 {
 
 
-	// VBO‚Ì¶¬
+	// VBOã®ç”Ÿæˆ
 	glGenBuffers(1, &tex_circ_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, tex_circ_vbo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 	glBufferData(GL_ARRAY_BUFFER, sizeof_tex_circle_v, tex_circle_v, GL_STATIC_DRAW);
 
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìì¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆ
 	glGenBuffers(1, &tex_circ_ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tex_circ_ibo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof_tex_circle_i, tex_circle_i, GL_STATIC_DRAW);
 
 
-	// VBO‚Ì¶¬
+	// VBOã®ç”Ÿæˆ
 	glGenBuffers(1, &btn_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, btn_vbo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 	glBufferData(GL_ARRAY_BUFFER, sizeof_btn_quad, btn_quad, GL_STATIC_DRAW);
 
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìì¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆ
 	glGenBuffers(1, &btn_ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, btn_ibo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof_btn_quad_index, btn_quad_index, GL_STATIC_DRAW);
 
 
-	// VBO‚Ì¶¬
+	// VBOã®ç”Ÿæˆ
 	glGenBuffers(1, &sc_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, sc_vbo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 	glBufferData(GL_ARRAY_BUFFER, sizeof_solid_circle_v, solid_circle_v, GL_STATIC_DRAW);
 
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìì¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆ
 	glGenBuffers(1, &sc_ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sc_ibo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof_solid_circle_i, solid_circle_i, GL_STATIC_DRAW);
 
 
 
-	// VBO‚Ì¶¬
+	// VBOã®ç”Ÿæˆ
 	glGenBuffers(1, &fs_quad_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, fs_quad_vbo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 //	glBufferData(GL_ARRAY_BUFFER, sizeof(fs_quad), fs_quad, GL_STATIC_DRAW);
 	glBufferData(GL_ARRAY_BUFFER, sizeof_fs_quad, fs_quad, GL_STATIC_DRAW);
 
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìì¬
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆ
 	glGenBuffers(1, &fs_quad_ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fs_quad_ibo);
-	// ƒf[ƒ^‚Ì“]‘—
+	// ãƒ‡ãƒ¼ã‚¿ã®è»¢é€
 //	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(fs_quad_index), fs_quad_index, GL_STATIC_DRAW);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof_fs_quad_index, fs_quad_index, GL_STATIC_DRAW);
 
@@ -850,7 +850,7 @@ void draw_tex_circles() {
 	glEnableVertexAttribArray(gles_sp_tex_circ.position);
 	glEnableVertexAttribArray(gles_sp_tex_circ.tex);
 
-	// ’¸“_î•ñ‚ÌƒTƒCƒYAƒIƒtƒZƒbƒg‚ğw’è
+	// é ‚ç‚¹æƒ…å ±ã®ã‚µã‚¤ã‚ºã€ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’æŒ‡å®š
 	glVertexAttribPointer(gles_sp_tex_circ.position, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
 	glVertexAttribPointer(gles_sp_tex_circ.tex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
 
@@ -916,7 +916,7 @@ void draw_touch_circles() {
 	glEnableVertexAttribArray(g_sp_m.aposition);
 	glEnableVertexAttribArray(g_sp_m.atex);
 
-	// ’¸“_î•ñ‚ÌƒTƒCƒYAƒIƒtƒZƒbƒg‚ğw’è
+	// é ‚ç‚¹æƒ…å ±ã®ã‚µã‚¤ã‚ºã€ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’æŒ‡å®š
 	glVertexAttribPointer(g_sp_m.aposition, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) 0);
 	glVertexAttribPointer(g_sp_m.atex, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*) (sizeof(GL_FLOAT) * 3));
 
@@ -967,7 +967,7 @@ void draw_touch_circles() {
 //  m3,  m7,  m11, m15,
 //};
 ///*
-//** •½s“Š‰e•ÏŠ·s—ñ‚ğ‹‚ß‚é
+//** å¹³è¡ŒæŠ•å½±å¤‰æ›è¡Œåˆ—ã‚’æ±‚ã‚ã‚‹
 //*/
 //void orthogonalMatrix(
 //			float left, 			float right,
@@ -977,11 +977,11 @@ void draw_touch_circles() {
 //{
 //
 //
-//  /* ‚±‚Ì•”•ª‚ğl‚¦‚Ü‚µ‚å‚¤ */
+//  /* ã“ã®éƒ¨åˆ†ã‚’è€ƒãˆã¾ã—ã‚‡ã† */
 //}
 
 /*
-** •½s“Š‰e•ÏŠ·s—ñ‚ğ‹‚ß‚é
+** å¹³è¡ŒæŠ•å½±å¤‰æ›è¡Œåˆ—ã‚’æ±‚ã‚ã‚‹
 */
 void orthogonalMatrix(
 			float left, 		float right,
@@ -1005,7 +1005,7 @@ void orthogonalMatrix(
 }
 
 /*
-** “§‹“Š‰e•ÏŠ·s—ñ‚ğ‹‚ß‚é
+** é€è¦–æŠ•å½±å¤‰æ›è¡Œåˆ—ã‚’æ±‚ã‚ã‚‹
 */
 void perspectiveMatrix(
 			float left, 		float right,

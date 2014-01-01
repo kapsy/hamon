@@ -1,5 +1,5 @@
 
-// ‰¹ºƒtƒ@ƒCƒ‹‚ğƒ[ƒh‚·‚é‚½‚ß
+// éŸ³å£°ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹ãŸã‚
 
 #include <assert.h>
 #include <jni.h>
@@ -18,7 +18,7 @@
 #include <android/log.h>
 #include <time.h>
 
-#include <unistd.h>  // sleep()‚ğ’è‹`
+#include <unistd.h>  // sleep()ã‚’å®šç¾©
 #include <pthread.h>
 
 //#include <android/log.h>;
@@ -72,7 +72,7 @@ struct sample_def looping_samples[] = {
 //		{"/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/scale_loop_16_cirrostratus_002.wav", 48, NULL, NULL, 0, 0, 0.6F}
 //
 //};
-// ¡‚Ì—§ê4ŒÂ‚¾‚¯‚Å‚¢‚¢‚©‚à
+// ä»Šã®ç«‹å ´4å€‹ã ã‘ã§ã„ã„ã‹ã‚‚
 struct sample_def oneshot_samples[] = {
 //
 //		{"hontouniiioto_heavy_48.wav", 48, NULL, NULL},
@@ -163,14 +163,14 @@ struct sample_def oneshot_samples[] = {
 
 
 
-// •Ê‚ÌƒXƒŒƒbƒh‚Ö
+// åˆ¥ã®ã‚¹ãƒ¬ãƒƒãƒ‰ã¸
 void load_all_assets(AAssetManager* mgr) {
 	LOGD("sound_load_thread", "load_all_assets");
 
 
 	init_silence_chunk();
 
-	int success; //•K—v‚È‚¢
+	int success; //å¿…è¦ãªã„
 
 	int i;
 
@@ -282,7 +282,7 @@ char* string_join(const char* a, const char* b, const char* c) {
 
 
 // so these are copies of the pointer not the pointer itself, just like any other argument
-// •œQ‚µ‚È‚«‚áE¡‚Ì—§ê‚Á‚ÄŒ¾‚¦‚ÎAOBB•û®‚Ìƒtƒ@ƒCƒ‹‚Íˆê”Ô‚Æv‚¤
+// å¾©è®ã—ãªãã‚ƒãƒ»ä»Šã®ç«‹å ´ã£ã¦è¨€ãˆã°ã€OBBæ–¹å¼ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯ä¸€ç•ªã¨æ€ã†
 void open_external_file(struct sample_def* s) {
 
 	LOGD("open_external_file", "open_external_file(sample_def* s) called");
@@ -301,7 +301,7 @@ void open_external_file(struct sample_def* s) {
 		fread(s->buffer_header, 1, HEADER_SIZE, fp);
 	}
 
-	// •Ï”‚ÌT—Ş‚Íƒ|ƒCƒ“ƒ^[‚Å‚ ‚é
+	// å¤‰æ•°ã®é€±é¡ã¯ãƒã‚¤ãƒ³ã‚¿ãƒ¼ã§ã‚ã‚‹
 	unsigned short* fmttype;
 	unsigned long* databytes;
 
@@ -315,7 +315,7 @@ void open_external_file(struct sample_def* s) {
 
 	s->data_size = *databytes;
 
-	// •K—v‚Èˆ—
+	// å¿…è¦ãªå‡¦ç†
 	malloc_to_buffer_factor(s);
 
 	//s->buffer_data = (unsigned short*) malloc(*databytes);
@@ -392,16 +392,16 @@ void malloc_to_buffer_factor(struct sample_def* s) {
 //
 ////	unsigned short* buffer_header = oneshot_samples[samp].buffer_header;
 //
-//	// “®‚©‚È‚¢——R‚Í‘S‚­‚í‚©‚Ë‚¥
+//	// å‹•ã‹ãªã„ç†ç”±ã¯å…¨ãã‚ã‹ã­ã‡
 //
-//	// NULLH
+//	// NULLï¼Ÿ
 ////	unsigned short* buffer_data = oneshot_samples[samp].buffer_data;
 //
 //
 //	oneshot_samples[samp].buffer_header = (unsigned short*) malloc(HEADER_SIZE);
 //	AAsset_read(asset, oneshot_samples[samp].buffer_header, HEADER_SIZE);
 //
-//	// •Ï”‚ÌT—Ş‚Íƒ|ƒCƒ“ƒ^[‚Å‚ ‚é
+//	// å¤‰æ•°ã®é€±é¡ã¯ãƒã‚¤ãƒ³ã‚¿ãƒ¼ã§ã‚ã‚‹
 //	unsigned short* fmttype;
 //	unsigned long* databytes;
 //
@@ -423,10 +423,10 @@ void malloc_to_buffer_factor(struct sample_def* s) {
 //	AAsset_read(asset, oneshot_samples[samp].buffer_data, oneshot_samples[samp].data_size);
 //
 //
-//	/*	‚¶‚Â‚ÍAƒ|ƒCƒ“ƒ^•Ï”–¼‚Ì‘O‚ÉƒAƒXƒ^ƒŠƒXƒN(*)‚ğ‚Â‚¯‚ÄQÆ‚·‚é‚Æ
-//	 ƒ|ƒCƒ“ƒ^•Ï”‚ªŠi”[‚µ‚Ä‚¢‚éƒƒ‚ƒŠƒAƒhƒŒƒX‚Ì“à—e‚ğQÆ‚µ‚Ü‚·
+//	/*	ã˜ã¤ã¯ã€ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°åã®å‰ã«ã‚¢ã‚¹ã‚¿ãƒªã‚¹ã‚¯(*)ã‚’ã¤ã‘ã¦å‚ç…§ã™ã‚‹ã¨
+//	 ãƒã‚¤ãƒ³ã‚¿å¤‰æ•°ãŒæ ¼ç´ã—ã¦ã„ã‚‹ãƒ¡ãƒ¢ãƒªã‚¢ãƒ‰ãƒ¬ã‚¹ã®å†…å®¹ã‚’å‚ç…§ã—ã¾ã™
 //
-//	 ƒAƒXƒ^ƒŠƒXƒN‚ğ‚Â‚¯‚È‚¢ŒãÒ‚Ìprintf()ŠÖ”‚Ì po ‚Å‚ÍAŠi”[‚³‚ê‚Ä‚¢‚éƒƒ‚ƒŠƒAƒhƒŒƒX‚ğw‚µ‚Ü‚·*/
+//	 ã‚¢ã‚¹ã‚¿ãƒªã‚¹ã‚¯ã‚’ã¤ã‘ãªã„å¾Œè€…ã®printf()é–¢æ•°ã® po ã§ã¯ã€æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ãƒ¡ãƒ¢ãƒªã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’æŒ‡ã—ã¾ã™*/
 //
 //	__android_log_print(ANDROID_LOG_DEBUG, "ASSET", "fmttype: %x", fmttype);
 //	__android_log_print(ANDROID_LOG_DEBUG, "ASSET", "*fmttype: %x", *fmttype);

@@ -7,7 +7,7 @@
 
 #ifndef GFX_INIT_H_
 #define GFX_INIT_H_
-#include <unistd.h>  // sleep()‚ð’è‹`
+#include <unistd.h>  // sleep()ã‚’å®šç¾©
 #include <pthread.h>
 #include <EGL/egl.h>
 #include <GLES/gl.h>

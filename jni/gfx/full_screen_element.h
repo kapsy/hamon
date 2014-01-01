@@ -44,7 +44,7 @@ struct full_scr_el {
 	struct modulator* mod_a;
 	float pulse;
 	float pulse_size;
-	float pulse_dir; // ³Œ·”g‚Ì‚Ù‚¤‚ª‚¢‚¢‚Ì‚©‚à
+	float pulse_dir; // æ­£å¼¦æ³¢ã®ã»ã†ãŒã„ã„ã®ã‹ã‚‚
 
 	func_ptr fade_in_start;
 	func_ptr fade_out_end;

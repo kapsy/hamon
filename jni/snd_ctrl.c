@@ -1,5 +1,5 @@
-// ƒm[ƒg‚ÌÄ¶‚Æ˜^‰¹‚ÌŠÇ—A©“®“I‚ÈÄ¶iAI)
-// ’e‚¢‚Ü‚µ‚½ƒI[ƒg‚ğ‘S•”‚±‚±‚É’Ê‚³‚È‚¢‚Æ‚¢‚¯‚È‚¢
+// ãƒãƒ¼ãƒˆã®å†ç”Ÿã¨éŒ²éŸ³ã®ç®¡ç†ã€è‡ªå‹•çš„ãªå†ç”Ÿï¼ˆAI)
+// å¼¾ã„ã¾ã—ãŸã‚ªãƒ¼ãƒˆã‚’å…¨éƒ¨ã“ã“ã«é€šã•ãªã„ã¨ã„ã‘ãªã„
 //
 
 #include <android/log.h>
@@ -7,7 +7,7 @@
 
 
 // for threading
-#include <unistd.h>  // sleep()‚ğ’è‹`
+#include <unistd.h>  // sleep()ã‚’å®šç¾©
 #include <pthread.h>
 
 #include <stdbool.h>
@@ -44,20 +44,20 @@
 
 
 
-#define AMMO_INCREASE_RATE 40//50 // ŒÂ‚Ìtics‚ğ‰ß‚²‚·‚ÆAAMMO‚ª1‚É‘‚â‚·
-// ‚±‚Ì’l‚Í‹L˜^‚µ‚½Œã‚ÌÄ¶”‚ğ”‚¦‚é
+#define AMMO_INCREASE_RATE 40//50 // å€‹ã®ticsã‚’éã”ã™ã¨ã€AMMOãŒ1ã«å¢—ã‚„ã™
+// ã“ã®å€¤ã¯è¨˜éŒ²ã—ãŸå¾Œã®å†ç”Ÿæ•°ã‚’æ•°ãˆã‚‹
 #define PART_TTL 9
 #define FADE_OUT_POINT 4
 #define FADE_OUT_FACTOR 0.9F
 
-// ©“®“I‚ÈÄ¶
+// è‡ªå‹•çš„ãªå†ç”Ÿ
 #define SILENCE_BEFORE_AUTO_PLAY 150
 #define SILENCE_BEFORE_AUTO_PLAY_INIT 115
-#define ONE_SHOT_RND 220//90//230 // ‚±‚Ì’l‚ª•Ï‚í‚é‚Æ‚¢‚¢‚È
-#define ONE_SHOT_RND_INIT 10 // ‚±‚Ì’l‚ª•Ï‚í‚é‚Æ‚¢‚¢‚È
+#define ONE_SHOT_RND 220//90//230 // ã“ã®å€¤ãŒå¤‰ã‚ã‚‹ã¨ã„ã„ãª
+#define ONE_SHOT_RND_INIT 10 // ã“ã®å€¤ãŒå¤‰ã‚ã‚‹ã¨ã„ã„ãª
 #define TOTAL_START_SHOTS 2
-#define MIN_CHORD_TIME 1800 // 2000‚Ì‚Ù‚¤‚ª‚¢‚¢‚Ì‚©‚à
-#define CHORD_CHANGE_RND 4000 // 3500‚Ì•û‚Ö i2000‚¾‚Á‚½j
+#define MIN_CHORD_TIME 1800 // 2000ã®ã»ã†ãŒã„ã„ã®ã‹ã‚‚
+#define CHORD_CHANGE_RND 4000 // 3500ã®æ–¹ã¸ ï¼ˆ2000ã ã£ãŸï¼‰
 #define MIN_REST_TIME 4000
 #define AUTO_PLAY_REST_RND 4000
 //#define TOTAL_NOTES_PER_PART 32
@@ -88,7 +88,7 @@ size_t ammo_current = AMMO_MAX;
 //size_t ammo_max = AMMO_MAX;
 size_t ammo_increase_counter;
 
-// ©“®“I‚ÈÄ¶
+// è‡ªå‹•çš„ãªå†ç”Ÿ
 size_t not_active_count = SILENCE_BEFORE_AUTO_PLAY_INIT;
 int parts_active = FALSE;
 
@@ -174,25 +174,25 @@ void init_auto_vals() {
 
 }
 
-// ƒRƒŠƒ‰‚Ì‚Ù‚¤‚ª«Ši“I‚É³‚µ‚¢
+// ã‚³ãƒªãƒ©ã®ã»ã†ãŒæ€§æ ¼çš„ã«æ­£ã—ã„
 void* timing_loop(void* args) {
 
 	while (control_loop_running) {
 //		__android_log_write(ANDROID_LOG_DEBUG, "timing_loop", "while (1)");
 //		clock_gettime(CLOCK_MONOTONIC, &timing.start_time_s);
-//		// ˆ—
+//		// å‡¦ç†
 //
 //	    clock_gettime(CLOCK_MONOTONIC, &timing.finish_time_s);
 //
-//	    // StackOverflow‚©‚ç‚Ì
-////	    (timing.finish_time_s.tv_sec * NS_IN_SEC + timing.finish_time_s.tv_nsec) - (timing.start_time_s.tv_nsec * NS_IN_SEC + timing.start_time_s.tv_nsec)G
+//	    // StackOverflowã‹ã‚‰ã®
+////	    (timing.finish_time_s.tv_sec * NS_IN_SEC + timing.finish_time_s.tv_nsec) - (timing.start_time_s.tv_nsec * NS_IN_SEC + timing.start_time_s.tv_nsec)ï¼›
 //
 //	    timing.diff_time_s.tv_nsec = (5000000 - (timing.finish_time_s.tv_nsec - timing.start_time_s.tv_nsec));
 //		nanosleep(&timing.diff_time_s, NULL);
 
 
-		// ‚±‚ê‚¾‚¯‚Å\•ª‚ ‚Ü‚è«Ši“I‚Èƒ^ƒCƒ~ƒ“ƒO‚ª•K—v‚È‚¢‚©‚à
-		usleep(100000); // 100ƒ~ƒŠ•b
+		// ã“ã‚Œã ã‘ã§ååˆ†ã‚ã¾ã‚Šæ€§æ ¼çš„ãªã‚¿ã‚¤ãƒŸãƒ³ã‚°ãŒå¿…è¦ãªã„ã‹ã‚‚
+		usleep(100000); // 100ãƒŸãƒªç§’
 //		general_tic_counter();
 		vol_automation();
 		increase_ammo();
@@ -229,7 +229,7 @@ void increase_ammo() {
 	}
 }
 
-int decrease_ammo() { // ƒ^ƒbƒ`‚·‚é‚Æ‚«‚Ìˆ—EAMMO‚ğŒ¸‚é‚½‚ß
+int decrease_ammo() { // ã‚¿ãƒƒãƒã™ã‚‹ã¨ãã®å‡¦ç†ãƒ»AMMOã‚’æ¸›ã‚‹ãŸã‚
 	if (ammo_current > 0) {
 		ammo_current--;
 		ammo_increase_counter = 0;
@@ -241,7 +241,7 @@ int decrease_ammo() { // ƒ^ƒbƒ`‚·‚é‚Æ‚«‚Ìˆ—EAMMO‚ğŒ¸‚é‚½‚ß
 
 
 
-// main‚©‚çŒÄ‚Ô
+// mainã‹ã‚‰å‘¼ã¶
 void record_note(float x, float y, int seg, float vel){
 //	LOGI("record_note", "x: %f", x);
 //	LOGI("record_note", "y: %f", y);
@@ -277,8 +277,8 @@ void record_note(float x, float y, int seg, float vel){
 
 
 
-// –ˆTICÀs‚µ‚È‚«‚á //
-// tic‚ğ‘S•”i‚ß‚È‚¢‚Æ‚¢‚¯‚È‚¢
+// æ¯TICå®Ÿè¡Œã—ãªãã‚ƒ //
+// ticã‚’å…¨éƒ¨é€²ã‚ãªã„ã¨ã„ã‘ãªã„
 void part_tic_counter() {
 
 	if (!playback_paused) {
@@ -307,7 +307,7 @@ void part_tic_counter() {
 
 
 
-int get_free_part() { // ‚à‚µ‚©‚µ‚Äget_free_part()
+int get_free_part() { // ã‚‚ã—ã‹ã—ã¦get_free_part()
 
 	int i;
 	for (i = 0; i < TOTAL_PARTS; i++) {
@@ -423,7 +423,7 @@ void auto_play() {
 
 		if (rest_count == rest_interval) { // FIXME
 
-			parts_active = TRUE; // FIXME ‚±‚ê–â‘è‚ÌŒ´ˆö‚©‚à>>>???
+			parts_active = TRUE; // FIXME ã“ã‚Œå•é¡Œã®åŸå› ã‹ã‚‚>>>???
 			not_active_count = 0;
 
 			rest_count =0;
@@ -449,10 +449,10 @@ void auto_play() {
 
 
 
-// ‰Šú‰»‚·‚é‚½‚ß‚¾‚¯
+// åˆæœŸåŒ–ã™ã‚‹ãŸã‚ã ã‘
 void init_all_parts() {
 
-	// ˜^‰¹‚µ‚½ƒm[ƒg‚ğƒŒƒZƒbƒg‚·‚é‚½‚ß
+	// éŒ²éŸ³ã—ãŸãƒãƒ¼ãƒˆã‚’ãƒ¬ã‚»ãƒƒãƒˆã™ã‚‹ãŸã‚
 
 	parts_active = FALSE;
 	if (touch_enabled) not_active_count = 0;
@@ -541,7 +541,7 @@ void reset_all_notes(part* p) {
 	}
 }
 
-// ƒp[ƒg‚Ì’·‚³‚ğˆÙ‚È‚é
+// ãƒ‘ãƒ¼ãƒˆã®é•·ã•ã‚’ç•°ãªã‚‹
 //void add_tic_increment(int inc) {
 //	tic_increment += inc;
 //}
@@ -560,12 +560,12 @@ void play_all_parts() {
 		if (!p->is_recording && p->is_alive) {
 
 			int j;
-			int total_notes = p->current_note; // ‚±‚Ì•û‚ªˆê”Ô‘‚¢
+			int total_notes = p->current_note; // ã“ã®æ–¹ãŒä¸€ç•ªæ—©ã„
 			for (j = 0; j < total_notes; j++) {
 
 				note* n = (p->note_info) + j;
 
-				//æ‚èŠ¸‚¦‚¸AÅ‰‚ÌˆÊ’u‚É‚æ‚Á‚ÄƒxƒƒVƒeƒB‚ªŒ¸‚é’ö“x‚ª•Ï‚¦‚é‚Á‚Ä‚Ì‚Íˆê”Ô‚¢‚¢
+				//å–ã‚Šæ•¢ãˆãšã€æœ€åˆã®ä½ç½®ã«ã‚ˆã£ã¦ãƒ™ãƒ­ã‚·ãƒ†ã‚£ãŒæ¸›ã‚‹ç¨‹åº¦ãŒå¤‰ãˆã‚‹ã£ã¦ã®ã¯ä¸€ç•ªã„ã„
 				if (n->tic == p->current_tic) {
 //				if (n->tic == p->current_tic && n->vel > 0.45F) {
 
@@ -599,7 +599,7 @@ void count_part_ttl(part* p) {
 		p->play_count = 0;
 		//p->current_note = 0;
 		p->is_alive = FALSE;
-		//reset_all_notes(p); // ŒÄ‚Ô•K—v‚È‚¢‚©‚à
+		//reset_all_notes(p); // å‘¼ã¶å¿…è¦ãªã„ã‹ã‚‚
 
 		parts_are_active();
 
@@ -608,7 +608,7 @@ void count_part_ttl(part* p) {
 
 }
 
-//// —L‚éƒp[ƒg‚Ìƒm[ƒg‚Ìvel‘S•”‘‚â‚·EŒ¸‚é‚Ì‚½‚ß‚ÌŠÖ”
+//// æœ‰ã‚‹ãƒ‘ãƒ¼ãƒˆã®ãƒãƒ¼ãƒˆã®velå…¨éƒ¨å¢—ã‚„ã™ãƒ»æ¸›ã‚‹ã®ãŸã‚ã®é–¢æ•°
 //void factor_part_vel(part* p, float factor) {
 //	int j;
 //	int total_notes = p->current_note;

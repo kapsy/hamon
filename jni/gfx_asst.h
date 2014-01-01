@@ -51,20 +51,20 @@ static unsigned char g_bmpbuffer[MAXSIZE];
 //
 //typedef struct {
 //    int  fsize;
-//    unsigned char *pdata;    // ‰æ‘œƒtƒ@ƒCƒ‹‚ÌƒsƒNƒZƒ‹ƒf[ƒ^
-//    unsigned char *TexData;  // ƒeƒNƒXƒ`ƒƒ‚ÌƒsƒNƒZƒ‹ƒf[ƒ^
+//    unsigned char *pdata;    // ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿
+//    unsigned char *TexData;  // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿
 //    BITMAPFILEHEADER *bmpheader;
 //    BITMAPINFOHEADER *bmpinfo;
 //    int  BmpSize;
 //    int  BmpOffBits;
-//    int  BmpWidth;           // ‰æ‘œ‚Ì•
-//    int  BmpHeight;          // ‰æ‘œ‚Ì‚‚³i•‰‚È‚ç‚Î”½“]j
+//    int  BmpWidth;           // ç”»åƒã®å¹…
+//    int  BmpHeight;          // ç”»åƒã®é«˜ã•ï¼ˆè² ãªã‚‰ã°åè»¢ï¼‰
 //
 //    float bitmap_ratio;
 //
 //    float alpha;
 //
-//    int  BmpBit;             // ‰æ‘œ‚Ìƒrƒbƒg[“x
+//    int  BmpBit;             // ç”»åƒã®ãƒ“ãƒƒãƒˆæ·±åº¦
 //    int  BmpLine;
 ////    int  initial_alpha;
 //    GLuint  texname;
@@ -108,20 +108,20 @@ struct bitmap_info_header {
 
 struct texture_type{
     int  fsize;
-    unsigned char *pdata;    // ‰æ‘œƒtƒ@ƒCƒ‹‚ÌƒsƒNƒZƒ‹ƒf[ƒ^
-    unsigned char *TexData;  // ƒeƒNƒXƒ`ƒƒ‚ÌƒsƒNƒZƒ‹ƒf[ƒ^
+    unsigned char *pdata;    // ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿
+    unsigned char *TexData;  // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿
     struct bitmap_file_header *bmpheader;
     struct bitmap_info_header *bmpinfo;
     int  BmpSize;
     int  BmpOffBits;
-    int  BmpWidth;           // ‰æ‘œ‚Ì•
-    int  BmpHeight;          // ‰æ‘œ‚Ì‚‚³i•‰‚È‚ç‚Î”½“]j
+    int  BmpWidth;           // ç”»åƒã®å¹…
+    int  BmpHeight;          // ç”»åƒã®é«˜ã•ï¼ˆè² ãªã‚‰ã°åè»¢ï¼‰
 
     float bitmap_ratio;
 
     float alpha;
 
-    int  BmpBit;             // ‰æ‘œ‚Ìƒrƒbƒg[“x
+    int  BmpBit;             // ç”»åƒã®ãƒ“ãƒƒãƒˆæ·±åº¦
     int  BmpLine;
 //    int  initial_alpha;
     GLuint  texname;

@@ -122,18 +122,18 @@ const char fShaderSrc[] =
 
 //typedef struct {
 //    int  fsize;
-//    unsigned char *pdata;    // ‰æ‘œƒtƒ@ƒCƒ‹‚ÌƒsƒNƒZƒ‹ƒf[ƒ^
-//    unsigned char *TexData;  // ƒeƒNƒXƒ`ƒƒ‚ÌƒsƒNƒZƒ‹ƒf[ƒ^
+//    unsigned char *pdata;    // ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿
+//    unsigned char *TexData;  // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿
 //    BITMAPFILEHEADER *bmpheader;
 //    BITMAPINFOHEADER *bmpinfo;
 //    int  BmpSize;
 //    int  BmpOffBits;
-//    int  BmpWidth;           // ‰æ‘œ‚Ì•
-//    int  BmpHeight;          // ‰æ‘œ‚Ì‚‚³i•‰‚È‚ç‚Î”½“]j
+//    int  BmpWidth;           // ç”»åƒã®å¹…
+//    int  BmpHeight;          // ç”»åƒã®é«˜ã•ï¼ˆè² ãªã‚‰ã°åè»¢ï¼‰
 //
 //    float bitmap_ratio;
 //
-//    int  BmpBit;             // ‰æ‘œ‚Ìƒrƒbƒg[“x
+//    int  BmpBit;             // ç”»åƒã®ãƒ“ãƒƒãƒˆæ·±åº¦
 //    int  BmpLine;
 //    int  initial_alpha;
 //    GLuint  texname;
@@ -227,7 +227,7 @@ int load_bitmap(char *filename, void *buffer)
 		//    int count =0;
 		//    unsigned int* header = buffer + 14;
 		//   	LOGD("LoadFile", "*hd: %d", *header);
-		//   	// ‚â‚Á‚Ï–â‘è‚ÍŒˆ‚µ‚ÄLoadFile‚Å‚Í‚È‚¢
+		//   	// ã‚„ã£ã±å•é¡Œã¯æ±ºã—ã¦LoadFileã§ã¯ãªã„
 		//    for (count =0; count < 1200; count++) {
 		//    	LOGD("LoadFile", "\t%d: \t%x", count, g_bmpbuffer[count]);
 		//    }
@@ -244,7 +244,7 @@ int load_bitmap(char *filename, void *buffer)
 int check_bitmap(struct texture_type *tt, void* buffer)
 {
 	tt->bmpheader = (struct bitmap_file_header *)buffer;
-	// bmp ƒtƒH[ƒ}ƒbƒg‚ÌƒVƒOƒlƒ`ƒƒ‚Ìƒ`ƒFƒbƒN
+	// bmp ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®ã‚·ã‚°ãƒãƒãƒ£ã®ãƒã‚§ãƒƒã‚¯
 	if (tt->bmpheader->bfType != ('B' | ('M' << 8))) {
 		LOGD("bmpCheck", "(tt->bmpheader->bfType != ('B' | ('M' << 8)))");
 		return 0;
@@ -267,7 +267,7 @@ int check_bitmap(struct texture_type *tt, void* buffer)
 	LOGD("bmpCheck", "(tt->bmpinfo->biClrUsed: %d", tt->bmpinfo->biClrUsed);
 	LOGD("bmpCheck", "(tt->bmpinfo->biClrImporant: %d", tt->bmpinfo->biClrImporant);
 
-	// bmp ƒtƒH[ƒ}ƒbƒg‚ÌŒ`®ƒ`ƒFƒbƒN
+	// bmp ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®å½¢å¼ãƒã‚§ãƒƒã‚¯
 	if (tt->bmpinfo->biSize == 40 || tt->bmpinfo->biSize == 124) {
 		LOGD("bmpCheck", "(tt->bmpinfo->biSize == 40) ");
 		tt->BmpWidth = tt->bmpinfo->biWidth;
@@ -277,7 +277,7 @@ int check_bitmap(struct texture_type *tt, void* buffer)
 		LOGD("bmpCheck", "tt->BmpLine %d", tt->BmpLine);
 		tt->BmpLine = (tt->BmpLine + 3) / 4 * 4;
 		LOGD("bmpCheck", "tt->BmpLine %d", tt->BmpLine);
-		// ‰æ‘œƒtƒ@ƒCƒ‹‚ÌƒsƒNƒZƒ‹ƒf[ƒ^‚Ìæ“ªƒAƒhƒŒƒX
+		// ç”»åƒãƒ•ã‚¡ã‚¤ãƒ«ã®ãƒ”ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿ã®å…ˆé ­ã‚¢ãƒ‰ãƒ¬ã‚¹
 		tt->pdata = buffer + tt->bmpheader->bfOffBits;
 
 		int* w = &tt->BmpWidth;

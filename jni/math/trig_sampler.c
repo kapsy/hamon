@@ -43,11 +43,11 @@ void calc_samples_per_us(struct modulator* m);
 
 
 
-//ƒ‰ƒWƒAƒ“‚©‚çŠp“x‚Ö‚Ì•ÏŠ·ŒvŽZŽ® :
-//Šp“x = ƒ‰ƒWƒAƒ“ x 180 / ‰~Žü—¦
+//ãƒ©ã‚¸ã‚¢ãƒ³ã‹ã‚‰è§’åº¦ã¸ã®å¤‰æ›è¨ˆç®—å¼ :
+//è§’åº¦ = ãƒ©ã‚¸ã‚¢ãƒ³ x 180 / å††å‘¨çŽ‡
 //
-//Šp“x‚©‚çƒ‰ƒWƒAƒ“‚Ö‚Ì•ÏŠ·ŒvŽZŽ® :
-//ƒ‰ƒWƒAƒ“ = Šp“x x ‰~Žü—¦ / 180
+//è§’åº¦ã‹ã‚‰ãƒ©ã‚¸ã‚¢ãƒ³ã¸ã®å¤‰æ›è¨ˆç®—å¼ :
+//ãƒ©ã‚¸ã‚¢ãƒ³ = è§’åº¦ x å††å‘¨çŽ‡ / 180
 
 double deg_to_rad(double deg) {
 
