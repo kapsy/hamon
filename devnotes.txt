@@ -942,6 +942,13 @@ X無作為のノートの端の周り:
 
 Xテキスチャー問題
 
+
+2014年1月7日
+Xアイコン
+
+AMMOがないときの処理
+
+
 このエラーメッセージ：
 12-20 17:25:06.333: E/SurfaceTextureClient(27746): 
 	queueBuffer: error queuing buffer to SurfaceTexture, -19
@@ -953,17 +960,17 @@ Xテキスチャー問題
 ムードのボタンを押すと無作為に次のムードを選ぶ
 
 githubへ
--> git ignore
+X-> git ignore
 -> readme
--> 大掃除
+X-> 大掃除
 ->　コメントが日本語と英語両方に変わる。
 
 
 新しいムード
-アイコン
 LiteとFullの違いバージョン（ifndefによって）
 説明書みたいな画面
 泡
+
 
 
 	

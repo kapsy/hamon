@@ -7,29 +7,24 @@
 
 // OpenGL ES 2.0 code
 
-#include <jni.h>
-
-#include <EGL/egl.h>
-#include <GLES/gl.h>
+//#include <jni.h>
+//
+//#include <EGL/egl.h>
+//#include <GLES/gl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-
-#include <android/log.h>
-#include <android_native_app_glue.h>
-
+//#include <android/log.h>
+//#include <android_native_app_glue.h>
 #include <unistd.h>  // sleep()を定義
-#include <pthread.h>
-#include <math.h>
-#include <stdlib.h>
+//#include <pthread.h>
+//#include <math.h>
+//#include <stdlib.h>
 
 
 #include "gfx/vertex.h"
-
 #include "hon_type.h"
 #include "gfx/full_screen_element.h"
 #include "gfx/full_screen_quad.h"
-
-
 #include "gfx_gles.h"
 #include "and_main.h"
 #include "gfx_asst.h"
@@ -38,11 +33,9 @@
 
 #include <time.h>
 #include "gfx/frame_delta.h"
-
 #include <pthread.h>
 #include "gfx/touch_circle.h"
 #include "gfx/shaders.h"
-
 #include "gfx/tex_circle.h"
 
 
@@ -168,28 +161,28 @@ EGLBoolean create_window_surface(ANativeWindow* nw) {
 
 //    LOGD("create_window_surface", "memset");
 
-//	EGLint attrib[] = {
-//		EGL_RED_SIZE,       8,
-//		EGL_GREEN_SIZE,     8,
-//		EGL_BLUE_SIZE,      8,
-//		EGL_ALPHA_SIZE,     8,
-//		EGL_DEPTH_SIZE,     24,
-//		EGL_RENDERABLE_TYPE,
-//		EGL_OPENGL_ES2_BIT,
-//		EGL_NONE
-//	};
-
-
 	EGLint attrib[] = {
-		EGL_RED_SIZE,       		EGL_DONT_CARE,
-		EGL_GREEN_SIZE,     	EGL_DONT_CARE,
-		EGL_BLUE_SIZE,      	EGL_DONT_CARE,
-		EGL_ALPHA_SIZE,     	EGL_DONT_CARE,
-		EGL_DEPTH_SIZE,     	EGL_DONT_CARE,
+		EGL_RED_SIZE,       8,
+		EGL_GREEN_SIZE,     8,
+		EGL_BLUE_SIZE,      8,
+		EGL_ALPHA_SIZE,     8,
+		EGL_DEPTH_SIZE,     24,
 		EGL_RENDERABLE_TYPE,
 		EGL_OPENGL_ES2_BIT,
 		EGL_NONE
 	};
+
+
+//	EGLint attrib[] = {
+//		EGL_RED_SIZE,       		EGL_DONT_CARE,
+//		EGL_GREEN_SIZE,     	EGL_DONT_CARE,
+//		EGL_BLUE_SIZE,      	EGL_DONT_CARE,
+//		EGL_ALPHA_SIZE,     	EGL_DONT_CARE,
+//		EGL_DEPTH_SIZE,     	EGL_DONT_CARE,
+//		EGL_RENDERABLE_TYPE,
+//		EGL_OPENGL_ES2_BIT,
+//		EGL_NONE
+//	};
 
 
 	LOGD("create_window_surface", "create_window_surface debug b");

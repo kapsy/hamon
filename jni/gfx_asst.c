@@ -167,18 +167,18 @@ GLuint g_program;
 
 
 struct texture_file textures[] = {
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_main_001_480x960.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_bg_001_480x960.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_main_002_480x960.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/splash_bg_002_480x960.bmp", GL_NEAREST},
 
 
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_001_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_002_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_B_003_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_C_001_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_C_002_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_C_003_128.bmp", GL_NEAREST},
 
 
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_001_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_002_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Bt_003_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Ct_001_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Ct_002_128.bmp", GL_NEAREST},
+		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/but_Ct_003_128.bmp", GL_NEAREST},
 
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/test_tex_01.bmp", GL_LINEAR},
 		{0, "/mnt/sdcard/Android/data/nz.kapsy.hontouniiioto/files/bubble_001.bmp", GL_LINEAR},
