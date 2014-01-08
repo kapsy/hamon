@@ -1,9 +1,4 @@
-/*
- * shaders.c
- *
- *  Created on: 2013/12/10
- *      Author: Michael
- */
+// shaders.c
 
 
 #include <stdio.h>

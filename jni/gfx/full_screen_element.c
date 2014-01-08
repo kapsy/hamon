@@ -1,23 +1,14 @@
-/*
- * full_screen_element.c
- *
- *  Created on: 2013/12/05
- *      Author: Michael
- */
+// full_screen_element.c
+
 #include <android/log.h>
 #include <time.h>
-
 #include "hon_type.h"
 #include "gfx/full_screen_element.h"
 #include "gfx_asst.h"
 #include "gfx_gles.h"
-
 #include "gfx/vertex.h"
 #include "game/moods.h"
-
 #include "math/trig_sampler.h"
-
-
 #include "snd_ctrl.h"
 
 struct full_scr_el screens[] = {
@@ -42,26 +33,17 @@ struct full_scr_el backgrounds[] = {
 				 NULL, NULL, 1},
 };
 
-
-
 int sizeof_screens_elements = sizeof screens/sizeof screens[0];
 int sizeof_screens = sizeof screens;
 int sizeof_backgrounds_elements = sizeof backgrounds/sizeof backgrounds[0];
 int sizeof_backgrounds = sizeof backgrounds;
-
-
 int selected_background = 0;
-
-//int splash_delay = 0;
-
 
 void full_scr_anim(struct full_scr_el* fs) {
 
 	full_scr_alpha_anim(fs);
-//	draw_full_screen_image(fs);
 	fs->alpha_mod = fs->alpha;
 }
-
 
 void full_scr_alpha_anim(struct full_scr_el* fs) {
 
@@ -73,21 +55,14 @@ void full_scr_alpha_anim(struct full_scr_el* fs) {
 		}
 
 		if (fs->fading_out && fs->alpha > 0.0) {
-
-
 			fs->alpha -= (float)frame_delta * fs->fade_rate;
 		} else if (fs->fading_out && fs->alpha <= 0.0) {
-
 			fs->fading_out = FALSE;
 			fs->alpha = 0.0;
 			fs->is_showing = FALSE;
-
 			if (fs->fade_out_end != NULL) (fs->fade_out_end)();
-
 		}
 }
-
-
 
 void full_scr_alpha_mod (struct full_scr_el* fs) {
 
@@ -107,7 +82,6 @@ float sum_alpha(struct full_scr_el* fs) {
 		a =  fs->alpha * (fs->mod_a->mod_cycle[fs->mod_a->curr_samp]);
 	else
 		a =  fs->alpha;
-
 	return a;
 }
 
@@ -117,7 +91,6 @@ void full_scr_mod(struct full_scr_el* fs) {
 	if (fs->pulse_dir == -1.0F &&  fs->pulse < 0.2) fs->pulse_dir = 1.0F;
 	//	LOGD("bg_pulse", "bg->pulse: %f", bg->pulse);
 }
-
 
 void full_scr_xfade() { //一発な関数
 
@@ -147,7 +120,6 @@ void full_scr_xfade() { //一発な関数
 //		}
 }
 
-
 int full_scr_fading(struct full_scr_el* fs) {
 	int r = FALSE;
 	if (fs->is_showing) {
@@ -156,8 +128,6 @@ int full_scr_fading(struct full_scr_el* fs) {
 	}
 	return r;
 }
-
-
 
 int all_bgs_fading() {
 
@@ -171,13 +141,10 @@ int all_bgs_fading() {
 	return r;
 }
 
-// ---------- ポインターの関数
-
+// pointer functions
+// ポインターの関数
 void help_screen_end() {
 
 	LOGD("help_screen_end", "help_screen_end() called");
 	playback_paused = FALSE;
-
-
-
 }

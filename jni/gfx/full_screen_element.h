@@ -1,9 +1,4 @@
-/*
- * full_screen_element.h
- *
- *  Created on: 2013/12/05
- *      Author: Michael
- */
+// full_screen_element.h
 
 #ifndef FULL_SCREEN_ELEMENT_H_
 #define FULL_SCREEN_ELEMENT_H_
@@ -14,8 +9,6 @@
 #define HELP_FADE_RATE (0.8F/(float)SEC_IN_US)
 #define BG_FADE_RATE (0.11F/(float)SEC_IN_US)
 #define BG_PULSE_FADE_RATE (0.41F/(float)SEC_IN_US)
-//#define BG_PULSE_FADE_RATE (0.21F/(float)SEC_IN_US)
-
 #define DELAY_BEFORE_SPLASH (1 * SEC_IN_US)
 #define DELAY_BEFORE_SPLASH_BG (2.3 * SEC_IN_US)
 #define SPLASH_COUNT_SECS 10
@@ -29,19 +22,16 @@ struct full_scr_el {
 	char* title;
 	struct texture_file* main_texture;
 
-
 	float alpha;
-
 	float alpha_mod;
-
 	float fade_rate;
 
 	int fading_in;
 	int fading_out;
 	int is_showing;
 
-
 	struct modulator* mod_a;
+
 	float pulse;
 	float pulse_size;
 	float pulse_dir; // 正弦波のほうがいいのかも
@@ -50,9 +40,7 @@ struct full_scr_el {
 	func_ptr fade_out_end;
 
 	int color_index;
-
 };
-
 
 extern struct full_scr_el screens[];
 extern struct full_scr_el backgrounds[];
@@ -67,7 +55,6 @@ void full_scr_alpha_anim(struct full_scr_el* fs);
 void full_scr_alpha_mod (struct full_scr_el* fs);
 int full_scr_fading(struct full_scr_el* fs);
 int all_bgs_fading();
-
 
 void full_scr_mod(struct full_scr_el* fs);
 void full_scr_xfade();
