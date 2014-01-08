@@ -6,10 +6,10 @@ Audio playback is based around a polyphonic sampler that implements a buffer loo
 
 The human ear is particularly sensitive to disparities between the timing of sonic events, especially those of a rhythmic, repetitive nature. Such precise timing was not possible even when using native timer functions.
 
-This project would be a good starting point for anyone who wants to know how to build a completely native Android graphics and sound based application. Please note that this repository contains no sound and graphics asset files. A placeholder set of media assets is planned for future versions.
+This project would also be a good starting point for those who want to build completely native Android software using OpenGL ES 2 and OpenSL ES. Please note that this repository contains no sound and graphics asset files. A placeholder set of media assets is planned for future versions.
 
 ### INSTALLATION
-
+---
         git clone git@github.com:kapsy/hamon.git
 
 #### ECLIPSE SETUP:
@@ -21,7 +21,7 @@ This project would be a good starting point for anyone who wants to know how to 
 If any error messages are encountered you may have to select *Project > Clean* and then select *Clean all projects*. 
 
 ### OUTLINE
-
+---
 There are two modes of play with **ha-mon**. The first mode, *auto mode*, is set upon startup, and is where note events are automatically triggered at random intervals. The second, interactive mode, is set as soon as the player touches the play space. If all note events are exhausted, *auto mode* automatically starts after a short while.
 
 In either mode, all note events are recorded and looped back over a short period. Once the currently recording loop is finished, all events from that point are recorded on the next available loop. There are slight time differences in the loop lengths, meaning that the set of note events from any loop never quite play in sync with the others. This subtlty creates complex, never-repeating, ever evolving musical patterns. 
