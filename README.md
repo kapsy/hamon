@@ -1,8 +1,10 @@
 # ha-mon 0.8
 
-**ha-mon** is a *generative music instrument* for *Android*, written entirely in C. It consists of a native activity and primarily uses OpenGL ES 2 and OpelSL ES for drawing graphics and playing sounds.
+**ha-mon** is a *generative music instrument* for **Android**, written entirely in C. It consists of a native activity and primarily uses **OpenGL ES 2** and **OpelSL ES** for drawing graphics and playing sounds.
 
-Audio playback is based around a polyphonic sampler that implements a buffer loop callback to stream sample data. Playback and recording of note event data piggybacks upon OpenSL ES's high priority thread to provide robust and reliable sample-accurate timing. The human ear is particularly sensitive to disparities between the timing of sonic events, especially those of a rhythmic, repetitive nature. Such precise timing was not possible even when using native timer functions.
+Audio playback is based around a polyphonic sampler that implements a buffer loop callback to stream sample data. Playback and recording of note event data piggybacks upon OpenSL ES's high priority thread to provide robust and reliable sample-accurate timing. 
+
+The human ear is particularly sensitive to disparities between the timing of sonic events, especially those of a rhythmic, repetitive nature. Such precise timing was not possible even when using native timer functions.
 
 This project would be a good starting point for anyone who wants to know how to build a completely native Android graphics and sound based application. Please note that this repository contains no sound and graphics asset files. A placeholder set of media assets is planned for future versions.
 
@@ -28,5 +30,5 @@ All recorded note events also have a limited life span to make way for new ones,
 
 At any one time, the sound that the note events trigger entirely depends on what *sound color* is currently selected. The *sound color*, represented pictorally by the color of the ripple shapes and background, ensures that all notes played are part of a coherent musical scale. In *auto mode* the selected *sound color* is cycled over a random period, in *interactive mode* it can be changed at any time by the player.
 
-The player has a limited amout of *ammunition* that can be used to record note events. When all *ammuntion* is exhausted, a small, non-event sound and animation is played on each tap. The *ammunition* always regenerates at a slow rate. The main reason for the feature is to prevent excessive notes being recorded - leading to the undesirable side-effects of voice overload and drops in framerate.
+The player has a limited amout of *ammunition* that can be used to record note events. When all *ammuntion* is exhausted, a small, non-event sound and animation is played on each tap. The *ammunition* always regenerates at a slow rate. This is to prevent excessive notes being recorded - leading to the undesirable side-effects of voice overload and drops in framerate.
 
