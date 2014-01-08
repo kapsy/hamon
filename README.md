@@ -1,6 +1,6 @@
 # ha-mon 0.8
 
-**bass bender** explores an alternative audio and synthesizer control interface that is more suitable for a smartphone/tablet touch screen environment. It is built for the **Android** platform, and uses the *libpd* library to run a real time *Pure Data* FM synthesis patch.
+**ha-mon** 
 
 Please note that **bass bender** requires *libpd* in order to run the *Pure Data* patches. If you're unfamiliar with what *libpd* and *Pure Data* are, more info can be found at <http://github.com/libpd> and <http://puredata.info/>.
 
