@@ -10,6 +10,8 @@ This project would also be a good starting point for those who want to build com
 
 # INSTALLATION
 
+To clone, run the following:
+
         git clone git@github.com:kapsy/hamon.git
 
 #### ECLIPSE SETUP:
