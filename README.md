@@ -1,50 +1,32 @@
 # ha-mon 0.8
 
-**ha-mon** 
+**ha-mon** is a *generative music instrument* for *Android*, written entirely in C. It consists of a native activity and primarily uses OpenGL ES 2 and OpelSL ES for drawing graphics and playing sounds.
 
-Please note that **bass bender** requires *libpd* in order to run the *Pure Data* patches. If you're unfamiliar with what *libpd* and *Pure Data* are, more info can be found at <http://github.com/libpd> and <http://puredata.info/>.
+Audio playback is based around a polyphonic sampler that implements a buffer loop callback to stream sample data. Playback and recording of note event data piggybacks upon OpenSL ES's high priority thread to provide robust and reliable sample-accurate timing. The human ear is particularly sensitive to disparities between the timing of sonic events, especially those of a rhythmic, repetitive nature. Such precise timing was not possible even when using native timer functions.
+
+This project would be a good starting point for anyone who wants to know how to build a completely native Android graphics and sound based application. Please note that this repository contains no sound and graphics asset files. A placeholder set of media assets is planned for future versions.
 
 ### INSTALLATION
 
-        git clone git@github.com:kapsy/bass-bender.git
-
-PD for Android install:
-
-        git clone git://github.com/libpd/pd-for-android.git
-        cd pd-for-android
-        git submodule init
-        git submodule update
+        git clone git@github.com:kapsy/hamon.git
 
 #### ECLIPSE SETUP:
 
-* From the main menu bar, select *File > Import...*, and the *Import wizard* opens.
-* Select *General > Existing Project into Workspace* and click *Next*.
-* Browse to locate the directory containing the previously cloned projects.
-* Under *Projects* select *bass-bender*, *PDCore*, *AndroidMidi*.
-* Click *Finish* to start the import.
+* Select *File > Import...*, then *General > Existing Project into Workspace* and then *Next*.
+* Browse to the directory containing the cloned project.
+* Under *Projects* select *hamon*, and then *Finish* to start the import.
 
 If any error messages are encountered you may have to select *Project > Clean* and then select *Clean all projects*. 
 
-Depending on where you've saved *pd-for-android* you may need to modify the path to *PDCore*. Right click on the project and select *Properties*, then *Android*. On the right there's a dialog to add a reference to the *PDCore* library.
+### OUTLINE
 
-### USAGE
+There are two modes of play with **ha-mon**. The first mode, *auto mode*, is set upon startup, and is where note events are automatically triggered at random intervals. The second, interactive mode, is set as soon as the player touches the play space. If all note events are exhausted, *auto mode* automatically starts after a short while.
 
-The application itself plays a continous loop of FM-synthesized bass notes in a generative fashion. When the user drags one finger across the screen, the X axis applies pitch bending to the notes, and the Y axis changes the pitch of the fundamental FM frequency. 
+In either mode, all note events are recorded and looped back over a short period. Once the currently recording loop is finished, all events from that point are recorded on the next available loop. There are slight time differences in the loop lengths, meaning that the set of note events from any loop never quite play in sync with the others. This subtlty creates complex, never-repeating, ever evolving musical patterns. 
 
-When two fingers are used in a pinch-zoom fashion, the distance between the first and second finger creates a sort of fader, which controls the amplitude of the FM signal, creating a growling sound. 
+All recorded note events also have a limited life span to make way for new ones, meaning the musical pallette is constantly renewing itself - a total contrast to linear, recorded music. 
 
-All touch movements, represented by the green dots, are recorded over a 25 second period then continuously played back, a state that is represented by blue dots. This further adds to the genererative nature of the sounds produced, creating ever changing sound textures that do not become repetitive to the listener.
+At any one time, the sound that the note events trigger entirely depends on what *sound color* is currently selected. The *sound color*, represented pictorally by the color of the ripple shapes and background, ensures that all notes played are part of a coherent musical scale. In *auto mode* the selected *sound color* is cycled over a random period, in *interactive mode* it can be changed at any time by the player.
 
-Any time the screen is touched in a playback state, the current recording is overwritten and the loop is started again. The position in the touch recording/playback loop is represented by the thin bar at the bottom of the screen.
+The player has a limited amout of *ammunition* that can be used to record note events. When all *ammuntion* is exhausted, a small, non-event sound and animation is played on each tap. The *ammunition* always regenerates at a slow rate. The main reason for the feature is to prevent excessive notes being recorded - leading to the undesirable side-effects of voice overload and drops in framerate.
 
-It is recommended to install on devices runnning Android 4.1 and above due to shorter audio playback latency. Also, as the sounds are of a low frequency, they can only be heard properly on full-range speakers or headphones - the built in speakers found in most smartphones and tablets are not recommended. 
-
-### VERSION HISTORY
-
-#### 1.1
-* Updated splash screen design.
-* Removed unused image files for a smaller apk.
-* Tidied project and added .gitignore.
-
-#### 1.0
-* Initial release.
