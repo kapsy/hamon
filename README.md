@@ -1,5 +1,5 @@
 # ha-mon 0.8
-
+---
 **ha-mon** is a *generative music instrument* for **Android**, written entirely in C. It consists of a native activity and primarily uses **OpenGL ES 2** and **OpelSL ES** for drawing graphics and playing sounds.
 
 Audio playback is based around a polyphonic sampler that implements a buffer loop callback to stream sample data. Playback and recording of note event data piggybacks upon OpenSL ES's high priority thread to provide robust and reliable sample-accurate timing. 
