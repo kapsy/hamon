@@ -8,11 +8,15 @@ The human ear is particularly sensitive to disparities between the timing of son
 
 This project would also be a good starting point for those who want to build completely native Android software using OpenGL ES 2 and OpenSL ES. Please note that this repository contains no sound and graphics asset files. A placeholder set of media assets is planned for future versions.
 
+*Note:* as an avid Japanese learner, some of the projects comments are in Japanese. While I've made every effort to provide an English equivelent, some Japanese only comments might exist throughout the source code.
+
 # INSTALLATION
 
-To clone, run the following:
+To clone:
 
         git clone git@github.com:kapsy/hamon.git
+
+To setup assets:
 
 #### ECLIPSE SETUP:
 
@@ -26,7 +30,7 @@ If any error messages are encountered you may have to select *Project > Clean* a
 
 There are two modes of play with **ha-mon**. The first mode, *auto mode*, is set upon startup, and is where note events are automatically triggered at random intervals. The second, interactive mode, is set as soon as the player touches the play space. If all note events are exhausted, *auto mode* automatically starts after a short while.
 
-In either mode, all note events are recorded and looped back over a short period. Once the currently recording loop is finished, all events from that point are recorded on the next available loop. There are slight time differences in the loop lengths, meaning that the set of note events from any loop never quite play in sync with the others. This subtlty creates complex, never-repeating, ever evolving musical patterns. 
+In either mode, all note events are recorded and looped back over a short period. Once the currently recording loop is finished, all events from that point are recorded on the next available loop. There are slight time differences in the loop lengths, meaning that the set of note events from any loop never quite play in sync with each other. This subtlty creates complex, never-repeating, ever evolving musical patterns. 
 
 All recorded note events also have a limited life span to make way for new ones, meaning the musical pallette is constantly renewing itself - a total contrast to linear, recorded music. 
 
