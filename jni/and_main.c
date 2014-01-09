@@ -1,9 +1,5 @@
-/*
- * houtounimain.c
- *
- *  Created on: 2013/05/31
- *      Author: Michael
- */
+// and_main.c
+
 #include "common.h"
 #include "and_main.h"
 #include "hon_type.h"
@@ -24,24 +20,18 @@
 #include "math/trig_sampler.h"
 #include "gfx_asst.h"
 
-/**
- * Our saved state data.
- */
+// saved state
 struct saved_state {
     float angle;
     size_t x;
     size_t y;
 };
 
-/**
- * Shared state for our app.
- */
+// shared state
 typedef struct{
-
     struct android_app* app;
     int animating;
     struct saved_state state;
-
 }engine;
 
 extern screen_settings g_sc;
@@ -52,9 +42,7 @@ size_t screen_margin_x_l;
 size_t screen_margin_x_r;
 size_t screen_margin_y_t;
 size_t screen_margin_y_b;
-
 static float touch_segment_width;
-//int gfx_initialized = FALSE;
 
 // TIMING SWITCHES
 int sles_init_called = FALSE;
@@ -81,9 +69,6 @@ void touch_branching(float x, float y);
 void create_init_sles_thread(struct android_app* state);
 void* init_sles_thread(void* args);
 
-/**
- * Process the next input event.
- */
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
 	engine* e = (engine*)app->userData;
 
@@ -98,8 +83,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 			if (key_action == AKEY_EVENT_ACTION_UP) {
 				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
-
-				//                ANativeActivity_finish(state->activity);
 			}
 
 	        return 1; // <-- prevent default handler
@@ -111,8 +94,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 
 			if (key_action == AKEY_EVENT_ACTION_UP) {
 				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
-
-				//                ANativeActivity_finish(state->activity);
 			}
 
 	        return 1; // <-- prevent default handler
@@ -149,11 +130,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
     int index = 0;
     int touch_max = 5;
 
-
-
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
-
-//		if (show_gameplay && !screens[0].fading_out) {
 
 		if (touch_enabled) {
 
@@ -163,9 +140,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 			case AMOTION_EVENT_ACTION_DOWN:
 				LOGDw("engine_handle_input", "AMOTION_EVENT_ACTION_DOWN");
 				touch_branching(AMotionEvent_getX(event, 0), AMotionEvent_getY(event, 0));
-
 				e->animating = 1;
-
 				break;
 
 			case AMOTION_EVENT_ACTION_POINTER_DOWN:
@@ -178,7 +153,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 				 * index where the data for the pointer going up or down can be found.
 				 */
 				//  AMOTION_EVENT_ACTION_POINTER_INDEX_MASK  = 0xff00,
-				//AMotionEvent_getPointerCount(event);
 				// マルチタッチバグを解決するため、こうやれば一番いい。
 				size_t pointer_index_mask = (action
 						& AMOTION_EVENT_ACTION_POINTER_INDEX_MASK)
@@ -187,14 +161,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 				trigger_note(AMotionEvent_getX(event, pointer_index_mask),
 						AMotionEvent_getY(event, pointer_index_mask));
 				set_parts_active();
-
-				LOGD(
-						"engine_handle_input", "pointer_index_mask: %d", pointer_index_mask);
-
-//				if (pointer_index_mask == 4) {
-//					int s = cycle_mood();
-//				}
-
+				LOGD("engine_handle_input", "pointer_index_mask: %d", pointer_index_mask);
 				break;
 			}
 			return 1;
@@ -203,7 +170,6 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 	return 0;
 }
 
-
 void touch_branching(float x, float y) {
 
 	int s;
@@ -211,53 +177,41 @@ void touch_branching(float x, float y) {
 
 	case TOUCH_EVENT_BUTTON_0:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_0");
-
 		int s = cycle_mood();
 		chord_count = 0;
 		assign_time(&buttons_activated_time);
 		break;
+
 	case TOUCH_EVENT_BUTTON_1:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_1");
-
 		init_all_parts();
 		ammo_current = AMMO_MAX;
 		assign_time(&buttons_activated_time);
 		break;
+
 	case TOUCH_EVENT_BUTTON_2:
 		LOGD("touch_branching", "TOUCH_EVENT_BUTTON_2");
-
 		buttons[0].fade_out_end = &all_btns_fade_end_deactivate_show_help;
-
 		break;
 
 	case TOUCH_EVENT_INTERACTIVE_ON:
 		LOGD("touch_branching", "TOUCH_EVENT_INTERACTIVE_ON");
-
 		buttons[0].fading_in = TRUE;
 		buttons_activated = TRUE;
-
 		assign_time(&buttons_activated_time);
-
 		break;
 
 	case TOUCH_EVENT_HELP:
-
-//		if (!screens[2].fading_out) screens[2].fading_out = TRUE;
-
-
 		if (!screens[2].fading_in && !screens[2].fading_out) {
 			screens[2].fading_out = TRUE;
 			LOGD("touch_branching", "screens[2].fading_out = TRUE");
-
 		}
-
 		break;
 
 	case TOUCH_EVENT_GAME:
 		LOGD("touch_branching", "TOUCH_EVENT_GAME");
 		trigger_note(x, y);
 		set_parts_active();
-
 		break;
 
 	case TOUCH_EVENT_NULL:
@@ -290,35 +244,24 @@ static void calc_segment_width() {
 }
 
 static int find_screen_segment(float pos_x) {
-
 	int segment = (int)floor(pos_x/touch_segment_width);
-
 	LOGD("find_screen_segment", "x_pos: %f", pos_x);
 	LOGD("find_screen_segment", "touch_segment_width: %f", touch_segment_width);
 	LOGD("find_screen_segment", "int seg: %d", segment);
-
 	return segment;
 }
 
 static float find_vel_value(float pos_y) {
 
-
 	LOGD("find_vel_value", "pos_y: %f", pos_y);
 
 	//float vel = 1 - (pos_y/(float)screen_height);
-
 	//SLmillibel vol = (sender_vel * (VEL_SLMILLIBEL_RANGE/sender_range)) + VEL_SLMILLIBEL_MIN;
-
-	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // 書き直すしなきゃ
+	float vel = (pos_y * (-0.6F/screen_height)) + 1.1F; // TODO 書き直すしなきゃ
 	LOGD("find_vel_value", "vel: %f", vel);
-
 	return vel;
 }
 
-
-
-
-// この関数は必要ない
 static void get_screen_dimensions(engine* e) {
 
 	// 縦置きの向き (APad)
@@ -332,21 +275,10 @@ static void get_screen_dimensions(engine* e) {
 	screen_width = (int)ANativeWindow_getWidth(e->app->window);
 	screen_height = (int)ANativeWindow_getHeight(e->app->window);
 
-
 	screen_margin_x_l = screen_width*0.13f;
 	screen_margin_x_r = screen_width*0.110f;
 	screen_margin_y_t = screen_height*0.187f;
 	screen_margin_y_b = screen_height*0.26f;
-
-/*
-	if (ANativeWindow_lock(e->app->window, &buffer, NULL) < 0) {
-	        LOGW("Unable to lock window buffer");
-	        return;
-	    }
-
-	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "buffer.height: %d", buffer.height);
-	__android_log_print(ANDROID_LOG_DEBUG, "get_screen_dimensions", "buffer.width: %d", buffer.width);
-*/
 
 	LOGD("get_screen_dimensions", "ANativeWindow_getWidth: %d", screen_width);
 	LOGD("get_screen_dimensions", "ANativeWindow_getHeight: %d", screen_height);
@@ -354,102 +286,64 @@ static void get_screen_dimensions(engine* e) {
 	LOGD("get_screen_dimensions", "screen_margin_x_r: %d", screen_margin_x_r);
 	LOGD("get_screen_dimensions", "screen_margin_y_t: %d", screen_margin_y_t);
 	LOGD("get_screen_dimensions", "screen_margin_y_b: %d", screen_margin_y_b);
-
 }
 
-
-/**
- * Process the next main command.
- */
 static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
     engine* e = (engine*)app->userData;
 
-
-
     switch (cmd) {
+
         case APP_CMD_SAVE_STATE:
         	LOGDw("engine_handle_cmd", "APP_CMD_SAVE_STATE");
-
-
-            // The system has asked us to save our current state.  Do so.
         	e->app->savedState = malloc(sizeof(struct saved_state));
             *((struct saved_state*)e->app->savedState) = e->state;
             e->app->savedStateSize = sizeof(struct saved_state);
-
-
             break;
 
         case APP_CMD_INIT_WINDOW:
         	LOGDw("engine_handle_cmd", "APP_CMD_INIT_WINDOW");
-            // The window is being shown, get it ready.
-
-
-
-        	// ココらへんは大丈夫
-        	// けど、掃除しないと…
         	if (e->app->window != NULL) {
-
 				LOGD("call_order", "APP_CMD_INIT_WINDOW");
 				first_init(e);
 			}
-
-
             break;
+
         case APP_CMD_START:
         	LOGDw("engine_handle_cmd", "APP_CMD_START");
-
 			ANativeActivity_setWindowFlags(app->activity, AWINDOW_FLAG_KEEP_SCREEN_ON, 0);
-
         	break;
+
         case APP_CMD_TERM_WINDOW:
         	LOGDw("engine_handle_cmd", "APP_CMD_TERM_WINDOW");
-            // The window is being hidden or closed, clean it up.
-
-
 			gles_term_display(&g_sc);
-
-
             break;
+
         case APP_CMD_GAINED_FOCUS:
         	LOGDw("engine_handle_cmd", "APP_CMD_GAINED_FOCUS");
-            // When our app gains focus, we start monitoring the accelerometer.
-//            if (engine->accelerometerSensor != NULL) {
-//                ASensorEventQueue_enableSensor(engine->sensorEventQueue,
-//                        engine->accelerometerSensor);
-//                // We'd like to get 60 events per second (in us).
-//                ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-//                        engine->accelerometerSensor, (1000L/60)*1000);
-//            }
-
         	kill_all_touch_circles();
         	draw_frame();
         	e->animating = 1;
-
             break;
+
         case APP_CMD_LOST_FOCUS:
         	LOGDw("engine_handle_cmd", "APP_CMD_LOST_FOCUS");
-            // When our app loses focus, we stop monitoring the accelerometer.
-            // This is to avoid consuming battery while not being used.
-
         	kill_all_touch_circles();
         	draw_frame();
         	e->animating = 0;
         	if (sles_init_called)wake_from_paused = TRUE;
-//        	show_gameplay = FALSE;
 
         	// タッチの円形全部無効スべき
-
             pause_all_voices();
-//    		usleep(1000000); // 100ミリ秒
-    		usleep(5000000); // 100ミリ秒
+    		usleep(5000000);
     		shutdown_audio();
 //    		join_control_loop();
 //    		e->app->destroyRequested = 1; // RvA
-
             break;
+
         case APP_CMD_STOP:
         	LOGDw("engine_handle_cmd", "APP_CMD_STOP");
         	break;
+
         case APP_CMD_DESTROY:
         	LOGDw("engine_handle_cmd", "APP_CMD_DESTROY");
         	break;
@@ -459,6 +353,7 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 // 最初の初期化するための関数
 void first_init(engine* e) {
 
+	LOGD("call_order", "first_init() called");
 	init_all_trig_samples();
 	int suc = create_window_surface(e->app->window);
 	LOGD("call_order", "create_window_surface, suc: %d", suc);
@@ -468,7 +363,6 @@ void first_init(engine* e) {
 	get_screen_dimensions(e);
 	calc_segment_width();
 	e->animating = TRUE;
-
 }
 
 pthread_t init_sles;
@@ -486,14 +380,10 @@ void join_init_sles_thread() {
 }
 
 void* init_sles_thread(void* args) {
-
 	LOGD("init_sles_thread", "init_sles_thread(void* args)");
 	init_sles_components(args);
 	return NULL;
 }
-
-
-
 
 void init_sles_components(struct android_app* state) {
 
@@ -510,10 +400,6 @@ void init_sles_components(struct android_app* state) {
 	init_random_seed();
 	init_all_parts();
 	init_auto_vals();
-
-	// snd_ctrlのこと
-//	start_loop();
-//	init_control_loop();
 
 	sles_init_finished = TRUE;
 	LOGD("init_sles_thread", "sles_init_finished = TRUE");
@@ -533,10 +419,8 @@ void init_sles_gain_focus(struct android_app* state) {
 void android_main(struct android_app* state) {
 
     engine e;
-
 //    LOGD("android_main", "android_main");
 
-    // Make sure glue isn't stripped.
     app_dummy();
     memset(&e, 0, sizeof(engine));
     state->userData = &e;
@@ -546,78 +430,31 @@ void android_main(struct android_app* state) {
 //	LOGD("call_order", "android_main e.app = state");
 
 	int i = 0;
-
 	int animating = FALSE;
 
 	while (1) {
-
-
-//		if (i < 1) { LOGD("call_order", "while started"); i++; }
-
-
-
 		int ident, events;
 		struct android_poll_source* source;
+
 		while ((ident = ALooper_pollAll(0, NULL, &events, (void**) &source)) >= 0) {
+
 			LOGD("call_order", "while ((ident=ALooper_pollAll...");
 			LOGD("ALooper_pollAll", "ALooper_pollAll");
 			if (source != NULL) {
 				source->process(state, source);
 			}
-
-
-//			 * 4/ Whenever you receive a LOOPER_ID_MAIN or LOOPER_ID_INPUT event,
-//			 *    the returned data will point to an android_poll_source structure.  You
-//			 *    can call the process() function on it, and fill in android_app->onAppCmd
-//			 *    and android_app->onInputEvent to be called for your own processing
-//			 *    of the event.
-//			 *
-//			 *    Alternatively, you can call the low-level functions to read and process
-//			 *    the data directly...  look at the process_cmd() and process_input()
-//			 *    implementations in the glue to see how to do this.
-//			if (source->id == LOOPER_ID_INPUT) {
-//
-//				process_cmd();
-//			}
-
-//			/**
-//			 * Waits for events to be available, with optional timeout in milliseconds.
-//			 * Invokes callbacks for all file descriptors on which an event occurred.
-//			 *
-//			 * If the timeout is zero, returns immediately without blocking.
-//			 * If the timeout is negative, waits indefinitely until an event appears.
-//			 *
-//			 * Returns ALOOPER_POLL_WAKE if the poll was awoken using wake() before
-//			 * the timeout expired and no callbacks were invoked and no other file
-//			 * descriptors were ready.
-//			 *
-//			 * Returns ALOOPER_POLL_CALLBACK if one or more callbacks were invoked.
-//			 *
-//			 * Returns ALOOPER_POLL_TIMEOUT if there was no data before the given
-//			 * timeout expired.
-//			 *
-//			 * Returns ALOOPER_POLL_ERROR if an error occurred.
-//			 *
-//			 * Returns a value >= 0 containing an identifier if its file descriptor has data
-//			 * and it has no callback function (requiring the caller here to handle it).
-//			 * In this (and only this) case outFd, outEvents and outData will contain the poll
-//			 * events and data associated with the fd, otherwise they will be set to NULL.
-//			 *
-//			 * This method does not return until it has finished invoking the appropriate callbacks
-//			 * for all file descriptors that were signalled.
-//			 */
-//			int ALooper_pollOnce(int timeoutMillis, int* outFd, int* outEvents, void** outData);
-
 			if (state->destroyRequested != 0) {
 				return;
 			}
 		}
 
 		if (e.animating) {
+
 			if(wake_from_paused)	{
 				init_sles_gain_focus(state);
 				wake_from_paused = FALSE;
 			}
+
 			calc_frame_delta_time();
 			update_elapsed_time();
 //			calc_frame_rate();
@@ -669,7 +506,7 @@ void android_main(struct android_app* state) {
 				LOGD("android_main", "show_gameplay = TRUE");
 			}
 
-			if(!touch_enabled && compare_times(touch_enable_time, (5*SEC_IN_US))) {
+			if(!touch_enabled && compare_times(touch_enable_time, (2*SEC_IN_US))) {
 				touch_enabled = TRUE;
 				LOGD("android_main", "touch_enabled = TRUE");
 			}

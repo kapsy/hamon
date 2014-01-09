@@ -1,9 +1,4 @@
-/*
- * and_main.h
- *
- *  Created on: 2013/06/21
- *      Author: Michael
- */
+// and_main.h
 
 #ifndef AND_MAIN_H_
 #define AND_MAIN_H_
@@ -15,14 +10,9 @@ void trigger_note(float x, float y);
 extern int sles_init_called;
 extern int show_gameplay;
 extern int touch_enabled;
-
 extern int buttons_activated;
-
-
 extern int show_help;
-
 extern unsigned long buttons_activated_time;
-
 
 extern size_t screen_width;
 extern size_t screen_height;
@@ -31,6 +21,5 @@ extern size_t screen_margin_x_l;
 extern size_t screen_margin_x_r;
 extern size_t screen_margin_y_t;
 extern size_t screen_margin_y_b;
-
 
 #endif /* AND_MAIN_H_ */

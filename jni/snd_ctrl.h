@@ -1,31 +1,21 @@
-/*
- * snd_ctrl.h
- *
- *  Created on: 2013/06/10
- *      Author: Michael
- */
-
-
+// snd_ctrl.h
 
 #ifndef SND_CTRL_H_
 #define SND_CTRL_H_
 
-
 #define AMMO_MAX 5
-
-
 #define TOTAL_NOTES_PER_PART 32
-
 
 struct vertex_rgb;
 
-
 typedef struct {
+
 	float pos_x;
 	float pos_y;
 	int seg;
 	float vel;
 	int tic;
+
 }note;
 
 typedef struct {
@@ -46,40 +36,22 @@ typedef struct {
 
 }part;
 
-
-
 void init_control_loop();
 void join_control_loop();
-
 void record_note(float x, float y, int seg, float vel);
 void init_all_parts();
-
-
 void part_tic_counter();
 void play_all_parts();
-
 int decrease_ammo();
-
 int obtain_random(int modulus);
 void init_random_seed();
-
 void set_parts_active();
-
-//void shutdown_audio_delay();
-
 void init_auto_vals();
-//float* get_part_rgb();
-//size_t current_part_color();
 
 extern part parts[];
-
-
 extern int current_rec_part;
-
 extern size_t ammo_current;
 extern size_t chord_count;
 extern int playback_paused;
-
-//extern int total_tic_counter;
 
 #endif /* SND_CTRL_H_ */
