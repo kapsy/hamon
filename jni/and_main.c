@@ -99,9 +99,7 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 	        return 1; // <-- prevent default handler
 		}
 
-
-/*
-		if (key == AKEYCODE_HOME) {
+/*		if (key == AKEYCODE_HOME) {
 			LOGD( "engine_handle_input", "AKEYCODE_HOME");
 			if (key_action == AKEY_EVENT_ACTION_UP) {
 				LOGD("engine_handle_input", "AKEY_EVENT_ACTION_UP");
@@ -126,10 +124,8 @@ static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) 
 		}*/
 	}
 
-
     int index = 0;
     int touch_max = 5;
-
 	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) {
 
 		if (touch_enabled) {
@@ -385,7 +381,7 @@ void* init_sles_thread(void* args) {
 	return NULL;
 }
 
-void init_sles_components(struct android_app* state) {
+void init_sles_components(struct android_app* state) { // FIXME conflicting types for 'init_sles_components' [enabled by default]
 
 	AAssetManager* asset_manager = state->activity->assetManager;
 //	  ANativeActivity* nativeActivity = state->activity;
@@ -415,19 +411,16 @@ void init_sles_gain_focus(struct android_app* state) {
 		setup_texture(tf, 0.0f);
 	}
 }
-
 void android_main(struct android_app* state) {
+	LOGD("android_main", "android_main() called");
 
     engine e;
-//    LOGD("android_main", "android_main");
-
     app_dummy();
     memset(&e, 0, sizeof(engine));
     state->userData = &e;
     state->onAppCmd = engine_handle_cmd;
     state->onInputEvent = engine_handle_input;
     e.app = state;
-//	LOGD("call_order", "android_main e.app = state");
 
 	int i = 0;
 	int animating = FALSE;
