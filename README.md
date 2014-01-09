@@ -8,7 +8,7 @@ The human ear is particularly sensitive to disparities between the timing of son
 
 This project would also be a good starting point for those who want to build completely native Android software using OpenGL ES 2 and OpenSL ES. Please note that this repository contains no sound and graphics asset files. A placeholder set of media assets is planned for future versions.
 
-*Note:* as an avid Japanese learner, some of the projects comments are in Japanese. While I've made every effort to provide an English equivelent, some Japanese only comments might exist throughout the source code.
+*Note:* as an avid Japanese learner, some of the comments are in Japanese. I've made every effort to provide an English equivelent, but some Japanese only comments might still exist throughout the source code.
 
 # INSTALLATION
 
