@@ -1,4 +1,4 @@
-# HA-MON 0.8
+# ha-mon 0.8
 
 **ha-mon** is a *generative music instrument* for **Android**, written entirely in C. It consists of a native activity and primarily uses **OpenGL ES 2** and **OpelSL ES** for drawing graphics and playing sounds.
 
