@@ -37,3 +37,9 @@ All recorded note events also have a limited life span to make way for new ones,
 At any one time, the sound that the note events trigger entirely depends on what *sound color* is currently selected. The *sound color*, represented pictorally by the color of the ripple shapes and background, ensures that all notes played are part of a coherent musical scale. In *auto mode* the selected *sound color* is cycled over a random period, in *interactive mode* it can be changed at any time by the player.
 
 The player has a limited amout of *ammunition* that can be used to record note events. When all *ammuntion* is exhausted, a small, non-event sound and animation is played on each tap. The *ammunition* always regenerates at a slow rate. This is to prevent excessive notes being recorded - leading to the undesirable side-effects of voice overload and drops in framerate.
+
+# PLANNED CHANGES
+
+* The ability to tap an exisiting event to destroy it.
+* A sonic pallette selector that shows all available pallettes.
+* In-app purchashing functionality.
