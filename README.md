@@ -38,8 +38,9 @@ At any one time, the sound that the note events trigger entirely depends on what
 
 The player has a limited amout of *ammunition* that can be used to record note events. When all *ammuntion* is exhausted, a small, non-event sound and animation is played on each tap. The *ammunition* always regenerates at a slow rate. This is to prevent excessive notes being recorded - leading to the undesirable side-effects of voice overload and drops in framerate.
 
-# PLANNED CHANGES
+### PLANNED CHANGES
 
 * The ability to tap an exisiting event to destroy it.
 * A sonic pallette selector that shows all available pallettes.
 * In-app purchashing functionality.
+* An ammunition meter (interactive mode only).
