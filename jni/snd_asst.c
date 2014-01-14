@@ -63,6 +63,13 @@ struct sample_def oneshot_samples[] = {
 		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_83_n22.wav", 48, NULL, NULL, 0, 0, 1.0F}
 };
 
+
+void load_all_assets(AAssetManager* mgr) { // TODO use open_asset() instead of open_external_file()
+
+}
+
+
+
 void load_all_assets(AAssetManager* mgr) { // TODO use open_asset() instead of open_external_file()
 	LOGD("sound_load_thread", "load_all_assets");
 	init_silence_chunk();
@@ -88,7 +95,19 @@ void load_all_assets(AAssetManager* mgr) { // TODO use open_asset() instead of o
 				i, oneshot_samples[i].file_name);
 
 		open_external_file(oneshot_samples + i);
-		//	open_asset(mgr, oneshot_samples[i].file_name, i);
+
+		// convert Java string to UTF-8
+//		    const char *utf8 = (*env)->GetStringUTFChars(env, filename, NULL);
+//		    assert(NULL != utf8);
+
+//		open_asset(mgr, oneshot_samples[i].file_name, i);
+	    // use asset manager to open asset by filename
+//	    AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
+//	    assert(NULL != mgr);
+//	    AAsset* asset = AAssetManager_open(mgr, utf8, AASSET_MODE_UNKNOWN);
+
+
+
 
 //		 int d;
 //
