@@ -64,7 +64,31 @@ struct sample_def oneshot_samples[] = {
 };
 
 
-void load_all_assets(AAssetManager* mgr) { // TODO use open_asset() instead of open_external_file()
+void load_all_assets_assetman(AAssetManager* mgr) { // TODO use open_asset() instead of open_external_file()
+
+	/**
+	 * Open an asset.
+	 *
+	 * The object returned here should be freed by calling AAsset_close().
+	 */
+//	AAsset* AAssetManager_open(AAssetManager* mgr, const char* filename, int mode);
+
+	AAsset* a;
+
+	a = AAssetManager_open(AAssetManager* mgr, "hontouniiioto_heavy_48_n22.wav", AASSET_MODE_BUFFER);
+
+
+	/**
+	 * Attempt to read 'count' bytes of data from the current offset.
+	 *
+	 * Returns the number of bytes read, zero on EOF, or < 0 on error.
+	 */
+//	int AAsset_read(AAsset* asset, void* buf, size_t count);
+
+	int bytes;
+
+	bytes = AAsset_read(a, void* buf, size_t count);
+
 
 }
 
@@ -169,6 +193,21 @@ char* string_join(const char* a, const char* b, const char* c) {
 
 	return p;
 }
+
+
+// TODO split into two - open_asset and then read wav
+void open_asset_wav(struct sample_def* s) {
+
+
+	s->buffer_header = (unsigned short*) mallXoc(HEADER_SIZE);
+
+
+
+
+}
+
+
+
 
 // TODO rename to open_external_wav
 void open_external_file(struct sample_def* s) {

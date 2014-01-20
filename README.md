@@ -45,3 +45,4 @@ The player has a limited amout of *ammunition* that can be used to record note e
 * A sonic pallette selector that shows all available pallettes.
 * In-app purchashing functionality.
 * An ammunition meter (interactive mode only).
+* Sound packs available through IAP.
