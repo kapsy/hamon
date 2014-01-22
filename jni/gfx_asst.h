@@ -4,6 +4,7 @@
 #define GFX_ASST_H_
 
 #include <GLES/gl.h>
+#include <android/asset_manager.h>
 
 #define MAXSIZE  1024 * 1024 * 4
 
@@ -62,7 +63,7 @@ struct texture_type{
 struct texture_file{
 
 	int size;
-	char* path;
+	char* file_name;
 	GLint param;
 	unsigned char* buffer;
 	struct texture_type tt;
@@ -73,9 +74,7 @@ extern struct texture_file textures[];
 extern int sizeof_textures_elements;
 extern int sizeof_textures;
 
-void setup_texture(struct texture_file *tf, float init_alpha);
-int load_bitmap(char *filename, void *buffer);
-int check_bitmap(struct texture_type *tt, void* buffer);
-void make_texture(struct texture_type *tt, int alpha);
+void setup_texture(struct texture_file *tf, float init_alpha, AAssetManager* am);
+
 
 #endif /* GFX_ASST_H_ */

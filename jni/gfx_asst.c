@@ -3,38 +3,69 @@
 #include "common.h"
 #include "hon_type.h"
 #include "gfx_asst.h"
+#include "and_main.h"
+
+//struct texture_file textures[] = {
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/splash_main_002_480x960.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/splash_bg_002_480x960.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_001_128.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_002_128.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_003_128.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_001_128.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_002_128.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_003_128.bmp", GL_NEAREST},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/test_tex_01.bmp", GL_LINEAR},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_001.bmp", GL_LINEAR},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_002_128.bmp", GL_LINEAR},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_003_128.bmp", GL_LINEAR},
+//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_004_128.bmp", GL_LINEAR}
+//};
 
 struct texture_file textures[] = {
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/splash_main_002_480x960.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/splash_bg_002_480x960.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_001_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_002_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_003_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_001_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_002_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_003_128.bmp", GL_NEAREST},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/test_tex_01.bmp", GL_LINEAR},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_001.bmp", GL_LINEAR},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_002_128.bmp", GL_LINEAR},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_003_128.bmp", GL_LINEAR},
-		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_004_128.bmp", GL_LINEAR}
+		{0, "splash_main_002_480x960.bmp", GL_NEAREST},
+		{0, "splash_bg_002_480x960.bmp", GL_NEAREST},
+		{0, "but_C_001_128.bmp", GL_NEAREST},
+		{0, "but_C_002_128.bmp", GL_NEAREST},
+		{0, "but_C_003_128.bmp", GL_NEAREST},
+		{0, "but_Ct_001_128.bmp", GL_NEAREST},
+		{0, "but_Ct_002_128.bmp", GL_NEAREST},
+		{0, "but_Ct_003_128.bmp", GL_NEAREST},
+		{0, "test_tex_01.bmp", GL_LINEAR},
+		{0, "bubble_001.bmp", GL_LINEAR},
+		{0, "bubble_002_128.bmp", GL_LINEAR},
+		{0, "bubble_003_128.bmp", GL_LINEAR},
+		{0, "bubble_004_128.bmp", GL_LINEAR}
 };
 
 int sizeof_textures_elements = sizeof textures / sizeof textures[0];
 int sizeof_textures = sizeof textures;
 
-void setup_texture(struct texture_file *tf, float init_alpha) {
+int load_bitmap(char *filename, void *buffer);
+int load_bitmap_asset(struct texture_file *tf, AAssetManager* am);
+int check_bitmap(struct texture_type *tt, void* buffer);
+void make_texture(struct texture_type *tt, int alpha);
 
-	LOGD("setup_texture", "tf->path: %c", tf->path);
-//	LOGD("setup_texture", "tf->size: %d", tf->path);
+void setup_texture(struct texture_file *tf, float init_alpha, AAssetManager* am) {
+
+	LOGD("setup_texture", "tf->file_name: %s", tf->file_name);
 
 	tf->buffer = (unsigned char*) malloc(MAXSIZE);
-	tf->size = load_bitmap(tf->path, (void *) tf->buffer);
-	LOGD("setup_texture", "tf->size: %d", tf->size);
-	check_bitmap(&tf->tt, (void *) tf->buffer);
-	make_texture(&tf->tt, 255);
-	create_gl_texture(&tf->tt, tf->param);
-	tf->tt.alpha = 0.0;
+
+	LOGD("setup_texture", "malloc(MAXSIZE)");
+
+//	tf->size = load_bitmap(tf->file_name, (void *) tf->buffer);
+	if (load_bitmap_asset(tf, am)) {
+
+		LOGD("setup_texture", "tf->size: %d", tf->size);
+		check_bitmap(&tf->tt, (void *) tf->buffer);
+		make_texture(&tf->tt, 255);
+		create_gl_texture(&tf->tt, tf->param);
+		tf->tt.alpha = 0.0;
+
+	}
+
+
+
 }
 
 int load_bitmap(char *filename, void *buffer)
@@ -59,6 +90,49 @@ int load_bitmap(char *filename, void *buffer)
 		return n_read;
 	}
 	return -1;
+}
+
+int load_bitmap_asset(struct texture_file *tf, AAssetManager* am) {
+
+	LOGD("load_bitmap_asset", "load_bitmap_asset() called");
+
+	int n_read = 0;
+
+	AAsset* a;
+
+	LOGD("load_bitmap_asset", "debug point A");
+
+	if ((a = AAssetManager_open(asset_manager, tf->file_name, AASSET_MODE_BUFFER)) == NULL) {
+
+
+		LOGD("load_bitmap_asset", "AAssetManager_open() NULL");
+
+
+
+
+
+	} else {
+
+		LOGD("load_bitmap_asset", "AAssetManager_open() !NULL");
+
+		tf->size = AAsset_getLength(a);
+
+		if(tf->size >= MAXSIZE) {
+			LOGD("load_bitmap_asset", "(tf->size >= MAXSIZE) ");
+			AAsset_close(a);
+			return -1;
+		}
+
+
+		AAsset_read(a, tf->buffer, tf->size);
+		LOGD("load_bitmap_asset", "AAsset_read(a, tf->buffer, tf->size)");
+		return 1;
+	}
+
+
+
+
+
 }
 
 int check_bitmap(struct texture_type *tt, void* buffer)

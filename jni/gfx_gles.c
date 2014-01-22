@@ -247,7 +247,7 @@ int gles_init() {
 
 		for (i=0; i<sizeof_textures_elements; i++) {
 			struct texture_file *tf = textures + i;
-			setup_texture(tf, 0.0F);
+			setup_texture(tf, 0.0F, asset_manager);
 		}
 //		LOGD("gles_init", "sizeof textures: %d", sizeof textures);
 //		LOGD("gles_init", "sizeof textures[0]: %d", sizeof textures[0]);

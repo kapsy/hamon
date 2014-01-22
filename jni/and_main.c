@@ -34,6 +34,7 @@ typedef struct{
     struct saved_state state;
 }engine;
 
+AAssetManager* asset_manager;
 extern screen_settings g_sc;
 typedef void* EGLNativeDisplayType;
 size_t screen_width;
@@ -68,6 +69,7 @@ static float find_vel_value(float pos_y);
 void touch_branching(float x, float y);
 void create_init_sles_thread(struct android_app* state);
 void* init_sles_thread(void* args);
+void init_sles_components();
 
 static int32_t engine_handle_input(struct android_app* app, AInputEvent* event) {
 	engine* e = (engine*)app->userData;
@@ -347,9 +349,11 @@ static void engine_handle_cmd(struct android_app* app, int32_t cmd) {
 }
 
 // 最初の初期化するための関数
+// the very first initialization call order
 void first_init(engine* e) {
 
 	LOGD("call_order", "first_init() called");
+	asset_manager = e->app->activity->assetManager;
 	init_all_trig_samples();
 	int suc = create_window_surface(e->app->window);
 	LOGD("call_order", "create_window_surface, suc: %d", suc);
@@ -359,6 +363,8 @@ void first_init(engine* e) {
 	get_screen_dimensions(e);
 	calc_segment_width();
 	e->animating = TRUE;
+
+
 }
 
 pthread_t init_sles;
@@ -377,20 +383,18 @@ void join_init_sles_thread() {
 
 void* init_sles_thread(void* args) {
 	LOGD("init_sles_thread", "init_sles_thread(void* args)");
-	init_sles_components(args);
+	init_sles_components();
 	return NULL;
 }
 
-void init_sles_components(struct android_app* state) { // FIXME conflicting types for 'init_sles_components' [enabled by default]
+//void init_sles_components(struct android_app* state) { // FIXME conflicting types for 'init_sles_components' [enabled by default]
 
-	AAssetManager* asset_manager = state->activity->assetManager;
-//	  ANativeActivity* nativeActivity = state->activity;
+//	AAssetManager* am = state->activity->assetManager;
 
-//	  internal_path = nativeActivity->externalDataPath;
-//		LOGD("android_main", "nativeActivity->externalDataPath: %s", nativeActivity->externalDataPath);
-//		LOGD("android_main", "nativeActivity->internalDataPath: %s", nativeActivity->internalDataPath);
+void init_sles_components() {
 
-	load_all_assets(asset_manager);
+	load_all_assets(asset_manager);// todo only loads sound files... need a to have a seperate Android asset loader that returns buffer data only
+	// init_sound_buffers(); // TODO abstracted sound buffer init
 	create_sl_engine();
 	init_all_voices();
 	init_random_seed();
@@ -402,13 +406,14 @@ void init_sles_components(struct android_app* state) { // FIXME conflicting type
 }
 
 void init_sles_gain_focus(struct android_app* state) {
+
 	create_sl_engine();
 	init_all_voices();
 	start_loop();
 	int i;
 	for(i=0;i<sizeof_textures_elements;i++) {
 		struct texture_file* tf = textures+i;
-		setup_texture(tf, 0.0f);
+		setup_texture(tf, 0.0f, asset_manager);
 	}
 }
 void android_main(struct android_app* state) {
