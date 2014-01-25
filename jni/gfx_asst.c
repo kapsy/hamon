@@ -61,11 +61,7 @@ void setup_texture(struct texture_file *tf, float init_alpha, AAssetManager* am)
 		make_texture(&tf->tt, 255);
 		create_gl_texture(&tf->tt, tf->param);
 		tf->tt.alpha = 0.0;
-
 	}
-
-
-
 }
 
 int load_bitmap(char *filename, void *buffer)
@@ -104,12 +100,7 @@ int load_bitmap_asset(struct texture_file *tf, AAssetManager* am) {
 
 	if ((a = AAssetManager_open(asset_manager, tf->file_name, AASSET_MODE_BUFFER)) == NULL) {
 
-
 		LOGD("load_bitmap_asset", "AAssetManager_open() NULL");
-
-
-
-
 
 	} else {
 
@@ -123,16 +114,10 @@ int load_bitmap_asset(struct texture_file *tf, AAssetManager* am) {
 			return -1;
 		}
 
-
 		AAsset_read(a, tf->buffer, tf->size);
 		LOGD("load_bitmap_asset", "AAsset_read(a, tf->buffer, tf->size)");
 		return 1;
 	}
-
-
-
-
-
 }
 
 int check_bitmap(struct texture_type *tt, void* buffer)
