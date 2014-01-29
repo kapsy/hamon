@@ -5,22 +5,6 @@
 #include "gfx_asst.h"
 #include "and_main.h"
 
-//struct texture_file textures[] = {
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/splash_main_002_480x960.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/splash_bg_002_480x960.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_001_128.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_002_128.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_C_003_128.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_001_128.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_002_128.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/but_Ct_003_128.bmp", GL_NEAREST},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/test_tex_01.bmp", GL_LINEAR},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_001.bmp", GL_LINEAR},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_002_128.bmp", GL_LINEAR},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_003_128.bmp", GL_LINEAR},
-//		{0, "/mnt/sdcard/Android/data/nz.kapsy.hamon/files/bubble_004_128.bmp", GL_LINEAR}
-//};
-
 struct texture_file textures[] = {
 		{0, "splash_main_002_480x960.bmp", GL_NEAREST},
 		{0, "splash_bg_002_480x960.bmp", GL_NEAREST},
