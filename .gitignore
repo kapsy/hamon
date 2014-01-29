@@ -24,6 +24,9 @@ obj/
 *.la
 *.a
 
+# Vim swap files
+*.swp
+
 # Android
 # generated files
 gen/
