@@ -66,63 +66,11 @@ struct sample_def oneshot_samples[] = {
 		{"hontouniiioto_heavy_83_n22.wav", 48, NULL, NULL, 0, 0, 1.0F}
 };
 
-//
-//struct sample_def looping_samples[] = {
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/scale_loop_16_major_001_n22.wav", 48, NULL, NULL, 0, 0, 0.5F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/scale_loop_16_minor_001_n22.wav", 48, NULL, NULL, 0, 0, 0.5F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/scale_loop_16_cirrostratus_004_n22.wav", 48, NULL, NULL, 0, 0, 0.5F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/scale_loop_16_cumulonimbus_003_n22.wav", 48, NULL, NULL, 0, 0, 0.4F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/scale_loop_16_cirrostratus_002_n22.wav", 48, NULL, NULL, 0, 0, 0.4F}
-//};
-//
-//struct sample_def oneshot_samples[] = {
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_48_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_49_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_50_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_51_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_52_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_53_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_54_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_55_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_56_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_57_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_58_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_59_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_60_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_61_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_62_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_63_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_64_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_65_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_66_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_67_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_68_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_69_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_70_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_71_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_72_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_73_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_74_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_75_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_76_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_77_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_78_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_79_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_80_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_81_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_82_n22.wav", 48, NULL, NULL, 0, 0, 1.0F},
-//		{"/mnt/sdcard/Android/data/nz.kapsy.hamon/files/hontouniiioto_heavy_83_n22.wav", 48, NULL, NULL, 0, 0, 1.0F}
-//};
-
-
 //void load_all_assets_assetman(AAssetManager* mgr) { // TODO use open_asset() instead of open_external_file()
-//
 //
 ////	AAsset* a;
 ////
 ////	a = AAssetManager_open(AAssetManager* mgr, "hontouniiioto_heavy_48_n22.wav", AASSET_MODE_BUFFER);
-//
-//
 //
 //	// convert Java string to UTF-8
 ////		    const char *utf8 = (*env)->GetStringUTFChars(env, filename, NULL);
@@ -133,7 +81,6 @@ struct sample_def oneshot_samples[] = {
 ////	    AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
 ////	    assert(NULL != mgr);
 ////	    AAsset* asset = AAssetManager_open(mgr, utf8, AASSET_MODE_UNKNOWN);
-//
 //
 ////		 int d;
 ////
@@ -150,8 +97,6 @@ struct sample_def oneshot_samples[] = {
 ////						oneshot_samples[i].buffer_data[d]);
 ////			}
 //}
-
-
 
 void load_all_assets(AAssetManager* mgr) { // TODO use open_asset() instead of open_external_file()
 	LOGD("sound_load_thread", "load_all_assets");
