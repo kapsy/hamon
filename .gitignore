@@ -26,6 +26,7 @@ obj/
 
 # Vim swap files
 *.swp
+.*.swp
 
 # Android
 # generated files
