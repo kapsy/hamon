@@ -3,7 +3,7 @@
 #ifndef GFX_BUTN_H_
 #define GFX_BUTN_H_
 
-#define BTN_W 128
+#define BTN_W 128 // button width
 #define BTN_ALPHA_MAX 1.0F
 #define BTN_ALPHA_MIN 0.0F
 #define BTN_FADE_IN_RATE (2.0F/(float)SEC_IN_US)
