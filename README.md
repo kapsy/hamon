@@ -47,3 +47,4 @@ The player has a limited amout of *ammunition* that can be used to record note e
 * An ammunition meter (interactive mode only).
 * Sound packs available through IAP.
 * Lite/Full version branching? Would prefer to avoid and just go straight for IAP.
+* Full install/setup instructions.
