@@ -58,3 +58,6 @@ proguard*.*
 
 # Eclipse
 .cproject
+
+# C-Tags
+.tags
