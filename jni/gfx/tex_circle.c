@@ -17,7 +17,7 @@
 #define TEXR_ALPHA_FADE_OUT 0.94f
 #define TEXC_NO_AMMO_SHRINK_RATE (3.0/(float)SEC_IN_US)
 #define TEXC_NO_AMMO_ALPHA_FADE_IN (3.6/(float)SEC_IN_US)
-#define TEXC_NO_AMMO_ALPHA_FADE_OUT (4.0/(float)SEC_IN_US)
+#define TEXC_NO_AMMO_ALPHA_FADE_OUT (5.0/(float)SEC_IN_US)
 #define TEXC_NO_AMMO_SCALE 1.2f
 
 
