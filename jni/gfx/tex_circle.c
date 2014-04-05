@@ -15,6 +15,11 @@
 #define TEXR_GROW_RATE (1.8/(float)SEC_IN_US) //(2.2/(
 #define TEXR_ALPHA_FADE_IN (3.6/(float)SEC_IN_US)
 #define TEXR_ALPHA_FADE_OUT 0.94f
+#define TEXC_NO_AMMO_SHRINK_RATE (3.0/(float)SEC_IN_US)
+#define TEXC_NO_AMMO_ALPHA_FADE_IN (3.6/(float)SEC_IN_US)
+#define TEXC_NO_AMMO_ALPHA_FADE_OUT (4.0/(float)SEC_IN_US)
+#define TEXC_NO_AMMO_SCALE 1.2f
+
 
 struct tex_circle tex_circles[TEX_CIRCLES_MAX];
 unsigned int tex_circle_draw_order[TEX_CIRCLES_MAX];
@@ -84,8 +89,13 @@ void activate_tex_circle(float x, float y, struct vertex_rgb* rgb_p, float* vel)
 	ts->rgb->b = rgb_c->b * (1.0f - (rgb_p->b*rgb_m->b));
 	LOGD("activate_tex_circle", "rgb_p->r: %f, g: %f, b: %f", rgb_p->r, rgb_p->g, rgb_p->b);
 	ts->alpha = 0.0F; // TODO
+
 	ts->scale = *vel * *vel * 1.7; // TODO 既に計算すればいいのかも
+	ts->scale_change_rate = TEXC_SHRINK_RATE;
+
 	ts->alpha_max = ts->scale / 2.0; // TODO
+	ts->alpha_fade_in = TEXC_ALPHA_FADE_IN;
+	ts->alpha_fade_out = TEXC_ALPHA_FADE_OUT;
 	ts->fading_in = TRUE;
 	ts->is_alive = TRUE;
 
@@ -97,36 +107,71 @@ void activate_tex_circle(float x, float y, struct vertex_rgb* rgb_p, float* vel)
 
 	tr->alpha = 0.0F; // TODO
 	tr->scale = *vel * *vel * 1.7; // TODO 既に計算すればいいのかも
+	tr->scale_change_rate = TEXR_GROW_RATE;
+
 	tr->alpha_max = *vel;
 	if (tr->alpha_max >= 1.0) tr->alpha_max = 1.0;
-	tr->alpha_delta_factor = 0.000004F;
+	// tr->alpha_delta_factor = 0.000004F;
+	tr->alpha_fade_in = TEXR_ALPHA_FADE_IN;
+	tr->alpha_fade_out = TEXR_ALPHA_FADE_OUT;
 	tr->fading_in = TRUE;
 	tr->is_alive = TRUE;
 
 	pthread_mutex_unlock(&frame_mutex);
 }
 
+// フェードの大きさと収縮する速度を引く数へ
+void activate_tex_no_ammo(float x, float y, float* vel) {
+	pthread_mutex_lock(&frame_mutex);
+
+	step_tex_circle_draw_order();
+	struct tex_circle* ts = tex_circles + (tex_circle_draw_order[sizeof_tex_circles_e -1]);
+
+	ts->pos_x = ((x/(float)g_sc.width)*2)-1;
+	ts->pos_y = ((1.0F - (y/(float)g_sc.height))*2)-1;
+
+	struct vertex_rgb* rgb = no_ammo_touch_rgb;
+
+	ts->rgb->r = rgb->r;
+	ts->rgb->g = rgb->g;
+	ts->rgb->b = rgb->b;
+
+	LOGD("activate_touch_no_ammo", "rgb->r: %f, g: %f, b: %f", rgb->r, rgb->g, rgb->b);
+
+	ts->alpha = 0.0F; // TODO
+	ts->scale = TEXC_NO_AMMO_SCALE; // TODO 既に計算すればいいのかも
+	ts->scale_change_rate = TEXC_NO_AMMO_SHRINK_RATE;
+	ts->alpha_fade_in = TEXC_NO_AMMO_ALPHA_FADE_IN;
+	ts->alpha_fade_out = TEXC_NO_AMMO_ALPHA_FADE_OUT;
+
+	ts->alpha_max = ts->scale / 2.0; // TODO
+	ts->fading_in = TRUE;
+	ts->is_alive = TRUE;
+
+	pthread_mutex_unlock(&frame_mutex);
+}
+
 void tex_circle_alpha_size(struct tex_circle* ts) {
-	ts->scale -= (float)frame_delta * TEXC_SHRINK_RATE;
+	ts->scale -= (float)frame_delta * ts->scale_change_rate; //TEXC_SHRINK_RATE;
 	if (ts->fading_in) {
-		ts->alpha += (float)frame_delta * TEXC_ALPHA_FADE_IN;
+		ts->alpha += (float)frame_delta * ts->alpha_fade_in;
 		if (ts->alpha >= ts->alpha_max) ts->fading_in = FALSE;
 	}
 	if (!ts->fading_in) {
-		ts->alpha -= (float)frame_delta * TEXC_ALPHA_FADE_OUT;
+		ts->alpha -= (float)frame_delta * ts->alpha_fade_out;
 		if (ts->alpha <= 0) ts->is_alive = FALSE;
 	}
 }
 
 void tex_ripple_alpha_size(struct tex_circle* tr) {
 
-	tr->scale += (float)frame_delta * TEXR_GROW_RATE;
+	tr->scale += (float)frame_delta * tr->scale_change_rate;
 	if (tr->fading_in) {
-		tr->alpha += (float)frame_delta *  TEXR_ALPHA_FADE_IN;
+		tr->alpha += (float)frame_delta *  tr->alpha_fade_in;
 		if (tr->alpha >= (tr->alpha_max * 0.95)) tr->fading_in = FALSE;
 	}
 	if (!tr->fading_in) {
-		tr->alpha *= TEXR_ALPHA_FADE_OUT;
+		tr->alpha *= tr->alpha_fade_out;
 //		ts->alpha *= (frame_delta_ratio * 0.98);
 		if (tr->alpha < 0.005) tr->is_alive = FALSE;
 	}
