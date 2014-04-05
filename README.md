@@ -40,6 +40,7 @@ The player has a limited amout of *ammunition* that can be used to record note e
 
 ### PLANNED CHANGES
 
+* A non-tap sound and shape/animation when ammo is 0 and the screen is tapped.
 * Seperate AAssetManager from file buffer array management. 
 * The ability to tap an exisiting event to destroy it.
 * A sonic pallette selector that shows all available pallettes.
