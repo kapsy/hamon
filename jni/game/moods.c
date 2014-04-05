@@ -39,36 +39,39 @@ struct vertex_rgb mood_colors[5][4] = {
 		{
 			{0.0f, 		0.0f, 		0.0f},
 			{0.0f, 		0.0f, 		0.0f},
-			{0.55f,	0.12f, 		0.35f},
-			{0.25f,	0.0f, 		0.25f}
+			{0.55f,		0.12f, 		0.35f},
+			{0.25f,		0.0f, 		0.25f}
 		},
 		{
-				{0.0f, 		0.0f, 		0.0f},
-				{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
 			{0.1f, 		0.4f, 		0.9f},
-			{0.5f, 		0.4f, 			0.8f}
+			{0.5f, 		0.4f, 		0.8f}
 		},
 		{
-				{0.0f, 		0.0f, 		0.0f},
-				{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
 			{0.8f, 		0.43f, 		0.0f},
 			{1.0f, 		0.43f, 		0.0f}
 		},
 		{
-				{0.0f, 		0.0f, 		0.0f},
-				{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
 			{0.0f, 		0.6f, 		0.45f},
 			{0.0f, 		0.6f, 		0.15f}
 		},
 		{
-				{0.0f, 		0.0f, 		0.0f},
-				{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
+			{0.0f, 		0.0f, 		0.0f},
 			{1.0f, 		0.2f, 		0.3f},
 			{0.0f, 		1.0f, 		1.0f}
 		}
 };
 
 int sizeof_mood_colors_set = sizeof mood_colors/ (sizeof mood_colors/sizeof mood_colors[0]);
+
+struct vertex_rgb* no_ammo_touch_rgb = &(struct vertex_rgb) {0.0f, 0.0f, 0.0f};
+
 
 struct mood moods[] = {
 
