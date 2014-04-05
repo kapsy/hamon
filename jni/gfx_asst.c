@@ -48,8 +48,7 @@ void setup_texture(struct texture_file *tf, float init_alpha, AAssetManager* am)
 	}
 }
 
-int load_bitmap(char *filename, void *buffer)
-{
+int load_bitmap(char *filename, void *buffer) {
 	FILE *fp;
 	long fsize;
 	int n_read = 0;
