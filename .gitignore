@@ -61,3 +61,6 @@ proguard*.*
 
 # C-Tags
 .tags
+
+# Build
+build.sh
