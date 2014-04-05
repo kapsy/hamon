@@ -22,6 +22,8 @@ extern int selected_mood;
 extern int sizeof_moods_elements;
 extern int sizeof_mood_colors_set;
 
+extern struct vertex_rgb* no_ammo_touch_rgb;
+
 int init_mood();
 int cycle_mood();
 
